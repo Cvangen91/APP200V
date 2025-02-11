@@ -6,18 +6,17 @@ from .schemas import UserCreateSchema, UserLoginSchema
 from ninja.security import HttpBearer
 from ninja_jwt.controller import NinjaJWTDefaultController
 
-
-api = NinjaExtraAPI()  
-api.register_controllers(NinjaJWTDefaultController)  
+api = NinjaExtraAPI()
+api.register_controllers(NinjaJWTDefaultController)
 
 
 @api.post("/register", auth=None)
 def register_user(request, payload: UserCreateSchema):
     if User.objects.filter(username=payload.username).exists():
-        return {"error": "Username já registrado"}
+        return {"error": "Username already registered"}
 
     if User.objects.filter(email=payload.email).exists():
-        return {"error": "Email já cadastrado"}
+        return {"error": "Email already registered"}
 
     user = User.objects.create_user(
         username=payload.username,
@@ -28,7 +27,7 @@ def register_user(request, payload: UserCreateSchema):
     return {
         "id": user.id,
         "username": user.username,
-        "message": "Usuário criado com sucesso",
+        "message": "User created successfully",
     }
 
 
@@ -40,6 +39,6 @@ def login_user(request, payload: UserLoginSchema):
 
     if user:
         return {
-            "detail": "Autenticação bem-sucedida (use endpoints JWT para token real)"
+            "detail": "Authentication successful (use JWT endpoints for actual token)"
         }
-    return {"error": "Credenciais inválidas"}
+    return {"error": "Invalid credentials"}

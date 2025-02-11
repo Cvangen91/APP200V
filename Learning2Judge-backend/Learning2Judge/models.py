@@ -6,5 +6,5 @@ from django.db import models
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    is_judge = models.BooleanField(default=False)  # Exemplo de campo adicional
+    is_judge = models.BooleanField(default=False) 
     created_at = models.DateTimeField(auto_now_add=True)
