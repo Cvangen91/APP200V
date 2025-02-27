@@ -1,126 +1,82 @@
 # Learning2Judge API
 
-This repository contains a Django project that demonstrates a simple REST API built using [django-ninja](https://django-ninja.rest-framework.com/) with JWT authentication. The project includes a custom user model with an additional field (`is_judge`), user registration, login endpoints, and a protected endpoint that returns the authenticated user's profile information.
-
-## Project Overview
-
-- **Custom User Model:** Extends Django’s default user model by adding an `email` field (which is unique) and an `is_judge` boolean field.
-- **API Endpoints:**  
-  - **Registration:** Create a new user.
-  - **Login:** Authenticate user credentials.
-  - **JWT Authentication:** Utilize django-ninja-jwt for generating and refreshing JWT tokens.
-  - **Protected Route:** Example `/profile` endpoint that requires JWT authentication to access user details.
-- **Interactive API Docs:** Automatically generated using django-ninja, accessible at `/api/docs` when the server is running.
+This repository contains a Django project using [django-ninja](https://django-ninja.rest-framework.com/) to build a REST API.
 
 ## Prerequisites
 
 - Python 3.8 or higher
-- [pip](https://pip.pypa.io/en/stable/)
+- [Docker](https://www.docker.com/get-started)
+- [Make](https://www.gnu.org/software/make/)
 
-## Installation
+## Running the Project with Docker
+
+The project includes a `Dockerfile` and `docker-compose.yml` to simplify setup.
 
 1. **Clone the Repository**
-
    ```bash
    git clone <repository-url>
    cd <repository-directory>
    ```
 
-2. **Create and Activate a Virtual Environment**
-
-   For Linux/macOS:
+2. **Build and Start the Services**
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate
-   ```
-   For Windows:
-   ```bash
-   python -m venv .venv
-   .venv\Scripts\activate
+   make build
+   make up
    ```
 
-3. **Install Dependencies**
+3. **Access the API**
+   - The API runs at: [http://localhost:8000](http://localhost:8000)
+   - Interactive docs: [http://localhost:8000/api/docs](http://localhost:8000/api/docs)
 
-   If you have a `requirements.txt` file:
+4. **Stop the Services**
+   ```bash
+   make down
+   ```
+
+## Running Without Docker
+
+If you prefer to run the project manually:
+
+1. **Create and Activate a Virtual Environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+   ```
+
+2. **Install Dependencies**
    ```bash
    pip install -r requirements.txt
    ```
-   Otherwise, install the necessary packages manually:
+
+3. **Apply Migrations**
    ```bash
-   pip install django django-ninja python-decouple django-ninja-jwt
+   python manage.py migrate
    ```
 
-## Useful Commands
+4. **Run the Server**
+   ```bash
+   python manage.py runserver
+   ```
 
-Below are some commonly used commands for developing and managing the project:
+The API will be available at [http://localhost:8000](http://localhost:8000).
 
-- **Activate Virtual Environment**
+## Makefile Commands
 
-  - Linux/macOS:
-    ```bash
-    source .venv/bin/activate
-    ```
-  - Windows:
-    ```bash
-    .venv\Scripts\activate
-    ```
+To simplify common tasks, a `Makefile` is included:
 
-- **Run Database Migrations**
+```bash
+make build    # Build Docker images
+make up       # Start the containers
+make down     # Stop the containers
+make migrate  # Apply database migrations
+make superuser  # Create a superuser
+make logs     # Show logs
+```
 
-  Generate and apply database migrations:
-  ```bash
-  python manage.py makemigrations
-  python manage.py migrate
-  ```
+## Additional Notes
+- Ensure Docker is installed and running before using `make up`.
+- The database runs inside a PostgreSQL container.
+- If needed, update environment variables in `.env`.
 
-- **Run the Development Server**
+This setup ensures a consistent development environment for all team members. 🚀
 
-  Start the server locally:
-  ```bash
-  python manage.py runserver
-  ```
-  Once the server is running, you can access the interactive API documentation at:
-  [http://localhost:8000/api/docs](http://localhost:8000/api/docs)
-
-- **Create a Superuser**
-
-  To access the Django admin panel:
-  ```bash
-  python manage.py createsuperuser
-  ```
-
-- **Check Project Status**
-
-  See the current status of your Git repository:
-  ```bash
-  git status
-  ```
-
-- **Commit Changes**
-
-  Add changes and commit:
-  ```bash
-  git add .
-  git commit -m "Your commit message"
-  ```
-
-- **Push Changes to GitHub**
-
-  If you already have the remote configured and your branch (e.g., main) is set up:
-  ```bash
-  git push -u origin main
-  ```
-
-## Running the API
-
-After installing dependencies and setting up your virtual environment:
-
-1. **Activate the virtual environment.**
-2. **Run the migrations.**
-3. **Start the server.**
-4. **Access the interactive documentation at** [http://localhost:8000/api/docs](http://localhost:8000/api/docs).
-
-## Additional Recommendations
-
-- **Email Verification:**  
-  Consider implementing email confirmation after registration using libraries such as [django-allauth](https://django-allauth.readthedocs.io/en/latest/).
