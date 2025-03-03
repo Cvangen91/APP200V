@@ -1,0 +1,92 @@
+/* Globale variabler. Root definerer globale variabler som kan brukes
+ flere steder i CSS og gjør det lettere å endre farger */
+:root {
+    --lightblue: #05C8F0;  /* Lysere blågrønn */
+    --primaryblue: #057EF0;   /* vanlig blå */
+    --darkwhite: #DFF6FF;  /* hvitgrå*/
+    --darkblue: #0040A0;   /* Mørkere, blå */
+    --font: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font); /*bruker varibel font, inter*/
+    margin: 0; /*fjerner standardmargin og padding fra body*/
+    padding: 0;
+    background-color: var(--darkwhite); /**/
+}
+
+/* Header */
+header {
+    background: var(--primaryblue);
+    padding: 15px 20px; /**/
+}
+
+nav {
+    display: flex; /*fleksibel navbar*/
+    justify-content: space-between; /*logo til venstre, meny til høyre*/
+    align-items: center;
+    max-width: 1200px; /*hindrer at inhold blir for spredt på større skjermer*/
+    margin: auto;
+}
+
+.logo {
+    font-size: 24px; /*midlertidig tekst for logo*/
+    font-weight: bold;
+    color: white;
+}
+ /*horisontal liste meny*/
+.nav-links {
+    list-style: none; 
+    display: flex;
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+
+.nav-links a {
+    text-decoration: none; /*fjerner understrekning fra lenker*/
+    color: white;
+    font-weight: 600;
+}
+
+/* Hamburgermeny */
+.menu-toggle {
+    display: none;
+    font-size: 30px; /*hamburgerikon større*/
+    color: white;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .nav-links {
+        display: none; /*skjuler meny i mobilvisning*/
+        flex-direction: column; /*vertikal meny*/
+        position: absolute; 
+        background: var(--lightblue); 
+        width: 100%; /*meny dekker hele bredden*/
+        top: 60px;
+        left: 0;
+        padding: 15px 0;
+        text-align: center;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}
+
+/* Footer */
+footer {
+    background: var(--darkblue);
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+    position: fixed;
+    bottom: 0%;
+}
