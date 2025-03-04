@@ -2,9 +2,11 @@
  flere steder i CSS og gjør det lettere å endre farger */
 :root {
     --lightblue: #05C8F0;  /* Lysere blågrønn */
-    --primaryblue: #057EF0;   /* vanlig blå */
+    --lightgreen: #A5D7BB;
+    --primaryblue: #75A1EA;   /* vanlig blå */
     --darkwhite: #DFF6FF;  /* hvitgrå*/
     --darkblue: #0040A0;   /* Mørkere, blå */
+    --darkgreen: #146136;
     --font: 'Inter', sans-serif;
 }
 
