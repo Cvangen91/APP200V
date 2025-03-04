@@ -1,43 +1,42 @@
-/* Globale variabler. Root definerer globale variabler som kan brukes
- flere steder i CSS og gjør det lettere å endre farger */
+/* Global variables. Root define global variables that can be
+  used different places in CSS, it makes it easier to change colors.*/
 :root {
-  --lightblue: #05c8f0; /* Lysere blågrønn */
+  --lightblue: #05c8f0;
   --lightgreen: #a5d7bb;
-  --primaryblue: #75a1ea; /* vanlig blå */
-  --darkwhite: #dff6ff; /* hvitgrå*/
-  --darkblue: #0040a0; /* Mørkere, blå */
+  --primaryblue: #75a1ea;
+  --darkwhite: #dff6ff;
+  --darkblue: #0040a0;
   --darkgreen: #146136;
   --black: #000000;
   --font: 'Inter', sans-serif;
 }
 
 body {
-  font-family: var(--font); /*bruker varibel font, inter*/
-  margin: 0; /*fjerner standardmargin og padding fra body*/
+  font-family: var(--font); /*uses varibel font, inter*/
+  margin: 0; /*removes standardmargin, and padding from body*/
   padding: 0;
   background-color: var(--darkwhite); /**/
 }
 
-/* Header */
 header {
   background: var(--primaryblue);
   padding: 15px 20px; /**/
 }
 
 nav {
-  display: flex; /*fleksibel navbar*/
-  justify-content: space-between; /*logo til venstre, meny til høyre*/
+  display: flex; /*flexible navbar*/
+  justify-content: space-between; /*logo to left, menu to right*/
   align-items: center;
-  max-width: 1200px; /*hindrer at inhold blir for spredt på større skjermer*/
+  max-width: 1200px; /*removes possibility that elements get spread on bigger screens*/
   margin: auto;
 }
 
 .logo {
-  font-size: 24px; /*midlertidig tekst for logo*/
+  font-size: 24px;
   font-weight: bold;
   color: white;
 }
-/*horisontal liste meny*/
+/*horisontal list menu*/
 .nav-links {
   list-style: none;
   display: flex;
@@ -48,26 +47,26 @@ nav {
 }
 
 .nav-links a {
-  text-decoration: none; /*fjerner understrekning fra lenker*/
+  text-decoration: none; /*removes lines under links*/
   color: white;
   font-weight: 600;
 }
 
-/* Hamburgermeny */
+/* Hamburgermenu */
 .menu-toggle {
   display: none;
-  font-size: 30px; /*hamburgerikon større*/
+  font-size: 30px; /*bigger hamburgericon*/
   color: white;
   cursor: pointer;
 }
 
 @media screen and (max-width: 768px) {
   .nav-links {
-    display: none; /*skjuler meny i mobilvisning*/
-    flex-direction: column; /*vertikal meny*/
+    display: none; /* hides menu in phoneview.*/
+    flex-direction: column; /*vertical menu*/
     position: absolute;
     background: var(--lightblue);
-    width: 100%; /*meny dekker hele bredden*/
+    width: 100%; /*menu cover the whole width of the site*/
     top: 60px;
     left: 0;
     padding: 15px 0;

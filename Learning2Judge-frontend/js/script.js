@@ -1,12 +1,12 @@
-/*Javascript for hamburgermenyen */
+/*Javascript for hamburgermenu */
 document.addEventListener('DOMContentLoaded', function () {
-  /*venter til dokumentet kjører før scriptet kjører */
+  /*waits for the document to run before the script*/
   const menuToggle =
-    document.querySelector('.menu-toggle'); /*henter hemburgermeny knappen */
+    document.querySelector('.menu-toggle'); /*gets hamburgermenu button */
   const navLinks =
-    document.querySelector('.nav-links'); /*henter navigasjonsmenyen */
+    document.querySelector('.nav-links'); /*gets navigationmenu */
   /*legger til en klikkhendelse på hamburgermenyen */
   menuToggle.addEventListener('click', function () {
-    navLinks.classList.toggle('active'); //veksle mellom å vise/skjule menyen
+    navLinks.classList.toggle('active'); //switch showcasing the menu
   });
 });
