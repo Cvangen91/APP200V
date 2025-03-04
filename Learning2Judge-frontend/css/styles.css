@@ -58,6 +58,7 @@ nav {
   font-size: 30px; /*bigger hamburgericon*/
   color: white;
   cursor: pointer;
+  padding-bottom: 10px;
 }
 
 @media screen and (max-width: 768px) {
