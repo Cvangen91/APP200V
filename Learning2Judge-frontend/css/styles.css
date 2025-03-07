@@ -17,6 +17,22 @@ body {
   padding: 0;
   background-color: var(--darkwhite); /**/
 }
+.skiplink { /*Skip to main conent link*/
+  position: absolute;
+  top: -40px; /*hides link so user cant see before pressing tab*/
+  left: 10px;
+  background: var(--primaryblue);
+  color: white;
+  padding: 10px;
+  text-decoration: none; /*removes underline from text*/
+  font-weight: bold; /*thick text*/
+  z-index: 100; /*link stays on top*/
+  transition: top 0.2s; /*transition speed for animation*/
+}
+
+.skiplink:focus {
+  top: 20px; /*moves link into view when focused*/
+}
 
 header {
   background: var(--primaryblue);
