@@ -1,0 +1,63 @@
+main{
+    max-width: 1200px;
+    margin: auto;
+}
+.container {
+    display: flex;   /* Aktiverer Flexbox */
+    gap: 30px;       /* Avstand mellom div-ene */
+    margin: 20px ;
+}
+
+.line{
+    height: 10px;
+    width: 100;
+    background-color: var(--primaryblue);
+    margin: 10px;
+}
+
+#testcontainer, #statscontainer {
+    margin: 20px;
+}
+
+#completeTestsTable {
+    width: 80%;
+    font-size: 14px;
+    text-align: left;
+}
+
+#completeTestsTable td, #completeTestsTable th  {
+    padding-bottom: 10px;
+}
+
+#completeTestsTable tr:hover {background-color: var(--lightgreen)}
+
+#completeTestsTable th{
+    background-color: var(--darkwhite);
+}
+
+#statsTable {
+    width: 100%;
+    font-size: 14px;
+    text-align: left;
+     
+}
+#statsTable th{
+    padding-right: 20px;
+  
+}
+
+#statscontainer{
+    position: absolute;
+    bottom: 80px;
+} 
+
+h3{
+    font-size: 16px;
+}
+
+#personalInfo label{
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
