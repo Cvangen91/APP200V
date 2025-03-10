@@ -1,0 +1,59 @@
+.information {
+  display: flex;
+  flex-direction: column;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px; /* Begrens maksbredden */
+  padding-bottom: 56.25%; /* 16:9-aspektforhold */
+  height: 0;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.character-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.character-table th,
+.character-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.character-table tbody tr {
+  transition: all 0.3s ease-in-out;
+}
+
+.inactive {
+  filter: blur(3px);
+  opacity: 0.5;
+}
+
+.active {
+  filter: none;
+  opacity: 1;
+}
+
+#give-characters {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 100px;
+  background-color: var(--white);
+  max-width: 1200px;
+}
+
+#success-message {
+  text-align: center;
+}
