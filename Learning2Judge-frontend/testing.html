@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <!--utf8 for specialcharacters-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--responsive design on phone-->
+    <title>Learning2Judge</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/testing.css" />
+    <!--link to css file-->
+  </head>
+  <body>
+    <a href="#maincontent" class="skiplink">Skip to main content</a>
+
+    <header>
+      <nav>
+        <div class="logo">Learning2judge</div>
+        <!--logo should be put here-->
+        <div class="menu-toggle">&#9776;</div>
+        <!--hamburgermenu for phone-->
+        <ul class="nav-links">
+          <li><a href="index.html">Hjem</a></li>
+          <li><a href="contact.html">Kontakt oss</a></li>
+          <li><a href="program.html">Program</a></li>
+          <li><a href="myprofile.html">Min side</a></li>
+          <li><a href="side5.html">Side 5</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="maincontent">
+      <div class="test-container">
+        <div class="information">
+          <h3>Program: Ekvipasje:</h3>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/qXQcxVEMtiw?si=yFQ4oHepAIyc1_A1&amp;start=22"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div id="success-message" style="display: none">
+          <h3>Program fullført. Din bedømmelse er nå lagret</h3>
+        </div>
+        <div id="give-characters" class="give-characters"></div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Learning2judge</p>
+    </footer>
+    <!--javascript for switching between hamburgermenu-->
+    <script src="js/script.js"></script>
+    <script src="js/testing.js"></script>
+  </body>
+</html>

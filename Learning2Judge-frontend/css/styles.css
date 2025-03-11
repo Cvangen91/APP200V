@@ -8,6 +8,7 @@
   --darkblue: #0040a0;
   --darkgreen: #146136;
   --black: #000000;
+  --white: #ffffff;
   --font: 'Inter', sans-serif;
 }
 
@@ -17,7 +18,8 @@ body {
   padding: 0;
   background-color: var(--darkwhite); /**/
 }
-.skiplink { /*Skip to main conent link*/
+.skiplink {
+  /*Skip to main conent link*/
   position: absolute;
   top: -40px; /*hides link so user cant see before pressing tab*/
   left: 10px;
@@ -108,4 +110,15 @@ footer {
   width: 100%;
   position: fixed;
   bottom: 0%;
+}
+
+main {
+  max-width: 1300px;
+  margin: auto;
+  margin-bottom: 100px;
+}
+.container {
+  display: flex; /* Aktiverer Flexbox */
+  gap: 30px; /* Avstand mellom div-ene */
+  margin: 20px;
 }
