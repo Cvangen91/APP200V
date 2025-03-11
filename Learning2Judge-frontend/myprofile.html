@@ -5,10 +5,18 @@
     <!--utf8 for specialcharacters-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--responsive design on phone-->
-    <title>kontakt oss</title>
+    <title>Min Side</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/myprofile.styles.css" />
     <!--link to css file-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script>
+      // Check authentication before page loads
+      if (localStorage.getItem('access_token') === null) {
+        // Not logged in, redirect to login page
+        window.location.href = 'login.html';
+      }
+    </script>
   </head>
   <body>
     <a href="#maincontent" class="skiplink">Skip to main content</a>
@@ -24,81 +32,103 @@
           <li><a href="program.html">Program</a></li>
           <li><a href="myprofile.html">Min side</a></li>
           <li><a href="side5.html">Side 5</a></li>
+          <li><a href="#" id="login-button"><i class="fas fa-sign-in-alt"></i> Login</a></li>
         </ul>
       </nav>
     </header>
 
     <main id="maincontent">
-      <div class="container">
-        <div id="profilPicture">
-            <img src="images/imagefill.jpg" alt="Profilbilde" width="150" height="150">
-    
+      <div class="login-container" id="login-container" style="display: none;">
+        <div class="login-form">
+          <h2>Login</h2>
+          <div id="login-error" class="error-message" style="display: none;"></div>
+          <form id="login-form">
+            <div class="form-group">
+              <label for="username">Brukernavn:</label>
+              <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Passord:</label>
+              <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+              <button type="submit">Logg inn</button>
+              <button type="button" id="cancel-login">Avbryt</button>
+            </div>
+          </form>
         </div>
-        <div id="personalInfo">
-            <p><label>Navn: </label><span id="name">Cecilie Dyrnes Vangen</span></p>
-            <p><label>Alder: </label><span id="age">33</span></p>
-            <p><label>Dommergrad: </label><span id="degree">DD1</span></p>
-            <p><label>Dommer siden: </label><span id ="time">2018</span></p>
+      </div>
+
+      <div id="profile-content" class="profile-content">
+        <div class="container">
+          <div id="profilPicture">
+              <img src="images/imagefill.jpg" alt="Profilbilde" width="150" height="150">
+          </div>
+          <div id="personalInfo">
+              <p><label>Navn: </label><span id="name">Cecilie Dyrnes Vangen</span></p>
+              <p><label>Alder: </label><span id="age">33</span></p>
+              <p><label>Dommergrad: </label><span id="degree">DD1</span></p>
+              <p><label>Dommer siden: </label><span id ="time">2018</span></p>
+          </div>
         </div>
-    </div>
-    <div class="line"></div>
+        <div class="line"></div>
 
-    <div id ="testcontainer">
-      <h3>Gjennomførte tester</h1>
-        <table id="completeTestsTable">
-          <tr>
-            <th>Dato</th>
-            <th>Program</th>
-            <th>Ekvipasje</th>
-            <th>Resultat</th>
-            <th>Fasit</th>
-            <th>Match</th>
-            <th></th>
-          </tr>
-          <tr>
-            <td>27.02.2025</td>
-            <td>LB3 2017</td>
-            <td>Ekvipasje 1</td>
-            <td>64,0 %</td>
-            <td>66,6 %</td>
-            <td>96,1 %</td>
-            <td><button class ="protokollBtn">Protokoll</button></td>
-          </tr>
-          <tr>
-            <td>04.03.2025</td>
-            <td>LB3 2017</td>
-            <td>Ekvipasje 1</td>
-            <td>72,0 %</td>
-            <td>66,6 %</td>
-            <td>89,2 %</td>
-            <td><button class ="protokollBtn">Protokoll</button></td>
-          </tr>
-        </table>
-    </div>
+        <div id ="testcontainer">
+          <h3>Gjennomførte tester</h1>
+            <table id="completeTestsTable">
+              <tr>
+                <th>Dato</th>
+                <th>Program</th>
+                <th>Ekvipasje</th>
+                <th>Resultat</th>
+                <th>Fasit</th>
+                <th>Match</th>
+                <th></th>
+              </tr>
+              <tr>
+                <td>27.02.2025</td>
+                <td>LB3 2017</td>
+                <td>Ekvipasje 1</td>
+                <td>64,0 %</td>
+                <td>66,6 %</td>
+                <td>96,1 %</td>
+                <td><button class ="protokollBtn">Protokoll</button></td>
+              </tr>
+              <tr>
+                <td>04.03.2025</td>
+                <td>LB3 2017</td>
+                <td>Ekvipasje 1</td>
+                <td>72,0 %</td>
+                <td>66,6 %</td>
+                <td>89,2 %</td>
+                <td><button class ="protokollBtn">Protokoll</button></td>
+              </tr>
+            </table>
+        </div>
 
-    <div id="statscontainer">
-      <h3>Statistikk</h3>
-    
-      <table id="statsTable">
-        <tr>
-          <th>Skritt</th>
-          <td>98 % match</td>
-        </tr>
-        <tr>
-          <th>Trav</th>
-          <td>99,5 % match</td>
-        </tr>
-        <tr>
-          <th>Galopp</th>
-          <td>85 % match</td>
-        </tr>
-        <tr>
-          <th>Allment inntrykk</th>
-          <td>87 % match</td>
-        </tr>
-      </table>
-    </div>
-      
+        <div id="statscontainer">
+          <h3>Statistikk</h3>
+        
+          <table id="statsTable">
+            <tr>
+              <th>Skritt</th>
+              <td>98 % match</td>
+            </tr>
+            <tr>
+              <th>Trav</th>
+              <td>99,5 % match</td>
+            </tr>
+            <tr>
+              <th>Galopp</th>
+              <td>85 % match</td>
+            </tr>
+            <tr>
+              <th>Allment inntrykk</th>
+              <td>87 % match</td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </main>
 
     <footer>
@@ -106,5 +136,7 @@
     </footer>
     <!--javascript for switching between hamburgermenu-->
     <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
   </body>
 </html>
