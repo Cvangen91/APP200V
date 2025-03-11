@@ -1,0 +1,26 @@
+/* Index page specific styles */
+.welcome-message {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+.welcome-message h1 {
+  color: var(--darkblue);
+  margin-bottom: 20px;
+}
+
+#logged-in-message {
+  display: none;
+  font-weight: bold;
+  color: var(--darkgreen);
+  margin-bottom: 15px;
+}
+
+#welcome-username {
+  color: var(--darkblue);
+}
