@@ -13,32 +13,26 @@ api.register_controllers(NinjaJWTDefaultController)
 @api.post("/register", auth=None)
 def register_user(request, payload: UserCreateSchema):
     if User.objects.filter(username=payload.username).exists():
-        return {"error": "Username already registered"}
+        return api.create_response(request, {"error": "Username already registered"}, status=400)
 
     if User.objects.filter(email=payload.email).exists():
-        return {"error": "Email already registered"}
+        return api.create_response(request, {"error": "Email already registered"}, status=400)
 
-    user = User.objects.create_user(
-        username=payload.username,
-        email=payload.email,
-        password=payload.password.get_secret_value(),
+    try:
+        user = User.objects.create_user(
+            username=payload.username,
+            email=payload.email,
+            password=payload.password.get_secret_value(),
+        )
+    except Exception as e:
+        return api.create_response(request, {"error": str(e)}, status=500)
+
+    return api.create_response(
+        request,
+        {
+            "id": user.id,
+            "username": user.username,
+            "message": "User created successfully",
+        },
+        status=201
     )
-
-    return {
-        "id": user.id,
-        "username": user.username,
-        "message": "User created successfully",
-    }
-
-
-@api.post("/login", auth=None)
-def login_user(request, payload: UserLoginSchema):
-    user = authenticate(
-        username=payload.username, password=payload.password.get_secret_value()
-    )
-
-    if user:
-        return {
-            "detail": "Authentication successful (use JWT endpoints for actual token)"
-        }
-    return {"error": "Invalid credentials"}
