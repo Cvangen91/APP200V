@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--responsive design on phone-->
     <title>kontakt oss</title>
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css" /> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="css/contact.css" />
     <!--link to css file-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <!-- Authentication check script -->
@@ -27,6 +28,10 @@
         }
       });
     </script>
+
+    <!-- Leaflet.js for map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   </head>
   <body>
     <a href="#maincontent" class="skiplink">Skip to main content</a>
@@ -81,16 +86,45 @@
       <!-- Page content, only visible when logged in -->
       <div id="page-content" style="display: none;">
         <h1>Kontakt oss</h1>
-        <p>Her kommer kontaktinformasjon for Learning2Judge.</p>
-        <!-- Contact form or information would go here -->
+        
+        <!-- USN Bakkenteigen Campus Info & Map -->
+        <div class="container">
+            <div class="info">
+              <h2>Kontaktinformasjon</h2>
+            
+                <p><b>Adresse:</b> Raveien 215, 3184 Borre</p>
+                <p><b>Tlf:</b> <a href="tel:xxx xx xxx">+47 xxx xx xxx</a></p>
+                <p><b>E-post:</b> <a href="mailto:post@gmail.no">post@gmail.no</a></p>
+            </div>
+            <div id="map"></div>
+        </div>
+
       </div>
     </main>
 
     <footer>
       <p>Learning2judge</p>
     </footer>
-    <!--javascript for switching between hamburgermenu-->
+    
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          // Sett opp kartet med riktig plassering for USN Bakkenteigen Campus
+          var map = L.map('map').setView([59.369511092170825, 10.441961241156518], 16);
+  
+          // Legg til OpenStreetMap-lag
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+  
+          // Legg til en markør for campus
+          L.marker([59.369511092170825, 10.441961241156518]).addTo(map)
+              .bindPopup('<b>Learning2judge</b><br>Raveien 215, 3184 Borre.')
+              .openPopup();
+      });
+  </script>
+  
   </body>
 </html>
