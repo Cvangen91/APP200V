@@ -39,6 +39,7 @@ body {
 header {
   background: var(--primaryblue);
   padding: 15px 20px; /**/
+  box-shadow: 0 -6px 7px 7px rgba(0,0,0,0.5); /*header shadow*/
 }
 
 nav {
