@@ -39,6 +39,7 @@ body {
 header {
   background: var(--primaryblue);
   padding: 15px 20px; /**/
+  box-shadow: 0 -6px 7px 7px rgba(0,0,0,0.5); /*header shadow*/
 }
 
 nav {
@@ -189,4 +190,48 @@ main {
   margin-bottom: 15px;
   text-align: center;
   font-size: 14px;
+}
+
+
+/*styling for infobox, bilder, nyheter*/
+.info-box {
+  background: var(--white);
+  padding: 20px;
+  margin: 20px;
+  font-family: var(--font);
+}
+
+.average {
+  display: flex;
+  padding: 20px;
+}
+
+.stars {
+  font-size: 3rem;
+  color: gold;
+}
+
+.news-reviews {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px;
+}
+
+.news-box, .reviews-box {
+  background: var(--white);
+  width: 45%;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.image-gallery {
+  display: flex;
+  padding: 20px;
+}
+
+.image-box {
+  background: var(--primaryblue);
+  width: 20%;
+  padding: 40px;
 }

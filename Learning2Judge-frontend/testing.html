@@ -10,12 +10,23 @@
     <link rel="stylesheet" href="css/testing.css" />
     <!--link to css file-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Authentication check script -->
     <script>
-      // Check authentication before page loads
-      if (localStorage.getItem('access_token') === null) {
-        // Not logged in, redirect to login page
-        window.location.href = 'login.html';
-      }
+      // Check authentication status and display content accordingly
+      document.addEventListener('DOMContentLoaded', function() {
+        const testContent = document.getElementById('test-container');
+        const authContent = document.getElementById('auth-required');
+        
+        if (localStorage.getItem('access_token') === null) {
+          // Not logged in, show auth required message
+          if (testContent) testContent.style.display = 'none';
+          if (authContent) authContent.style.display = 'block';
+        } else {
+          // Logged in, show content
+          if (testContent) testContent.style.display = 'block';
+          if (authContent) authContent.style.display = 'none';
+        }
+      });
     </script>
   </head>
   <body>
@@ -60,7 +71,16 @@
         </div>
       </div>
 
-      <div class="test-container">
+      <!-- Authentication required message -->
+      <div id="auth-required" style="display: none; text-align: center; padding: 40px;">
+        <h2>Du må være innlogget for å gjennomføre tester</h2>
+        <p>Vennligst klikk på "Login" knappen i menyen for å logge inn og få tilgang til testene.</p>
+        <button class="login-page-btn" onclick="document.getElementById('login-container').style.display='flex';">
+          Logg inn nå
+        </button>
+      </div>
+
+      <div id="test-container" class="test-container">
         <div class="information">
           <h3>Program: Ekvipasje:</h3>
         </div>

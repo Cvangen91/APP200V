@@ -10,3 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
     navLinks.classList.toggle('active'); //switch showcasing the menu
   });
 });
+
+/* henter brukernavn til velkommen message */
+document.addEventListener('DOMContentLoaded', function () {
+  const username = localStorage.getItem('username');
+  const welcomeUsername = document.getElementById('welcome-username');
+  if (username && welcomeUsername) {
+    welcomeUsername.textContent = username;
+  }
+});

@@ -2,24 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const profileContent = document.getElementById('profile-content');
     
-    // Check if user is authenticated
-    function checkAuth() {
-        if (!window.auth || !window.auth.isLoggedIn()) {
-            // Hide profile content if not logged in
-            profileContent.innerHTML = `
-                <div class="auth-required">
-                    <h2>Logg inn kreves</h2>
-                    <p>Du må være logget inn for å se din profilside.</p>
-                    <p>Klikk på "Login" i menyen for å logge inn.</p>
-                </div>
-            `;
-        } else {
-            // User is logged in, load profile data
-            loadProfileData();
-        }
-    }
-    
-    // Load profile data from backend
+    // Load profile data if user is authenticated
     function loadProfileData() {
         // Get username from localStorage to personalize greeting
         const username = localStorage.getItem('username');
@@ -117,8 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize the page
     function init() {
-        checkAuth();
-        addProtocolButtonListeners();
+        // If user is logged in, load profile data
+        if (localStorage.getItem('access_token') !== null) {
+            loadProfileData();
+            addProtocolButtonListeners();
+        }
     }
     
     init();

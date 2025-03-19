@@ -9,13 +9,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <!--link to css file-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <script>
-      // Check authentication before page loads
-      if (localStorage.getItem('access_token') === null) {
-        // Not logged in, redirect to login page
-        window.location.href = 'login.html';
-      }
-    </script>
+    <!-- Removed login check to allow home page access without authentication -->
   </head>
   <body>
     <a href="#maincontent" class="skiplink">Skip to main content</a>
@@ -32,8 +26,8 @@
           <li><a href="program.html">Program</a></li>
           <li><a href="myprofile.html">Min side</a></li>
           <li><a href="side5.html">Side 5</a></li>
-            <li><a href="#" id="login-button"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-          </ul>
+          <li><a href="#" id="login-button"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+        </ul>
       </nav>
     </header>
 
@@ -59,10 +53,37 @@
         </div>
       </div>
       
+      <section class="info-box">
+        
       <div class="welcome-message">
         <h1>Velkommen til Learning2Judge</h1>
-        <p>Du er nå logget inn som <span id="welcome-username"></span>.</p>
+        <p id="logged-in-message" style="display: none;">Du er logget inn som <span id="welcome-username"></span>.</p>
+        <p id="not-logged-in-message">
+          Learning2Judge er en digital læringsplattform for dressurdommere i Norge. 
+          <br><br>
+          Plattformen gir deg mulighet til å øve på bedømming av dressurutøvelse ved å se videoer og gi poeng. 
+          <br><br>
+          <strong>Logg inn for å få tilgang til alle funksjoner.</strong>
+        </p>
       </div>
+      </section>
+      
+      <div class="average">
+        <span class="stars">★★★★★</span>
+      </div>
+
+      <div class="news-reviews">
+        <div class="news-box">News</div>
+        <div class="reviews-box">Reviews</div>
+      </div>
+
+      <div class="image-gallery">
+        <div class="image-box"><a href=""></a></div>
+        <div class="image-box"></div>
+        <div class="image-box"></div>
+        <div class="image-box"></div>
+      </div>
+
     </main>
 
     <footer>
@@ -72,12 +93,17 @@
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
     <script>
-      // Display username in welcome message
+      // Display username in welcome message if logged in
       document.addEventListener('DOMContentLoaded', function() {
         const username = localStorage.getItem('username');
         const welcomeUsername = document.getElementById('welcome-username');
+        const loggedInMessage = document.getElementById('logged-in-message');
+        const notLoggedInMessage = document.getElementById('not-logged-in-message');
+        
         if (username && welcomeUsername) {
           welcomeUsername.textContent = username;
+          loggedInMessage.style.display = 'block';
+          notLoggedInMessage.style.display = 'none';
         }
       });
     </script>
