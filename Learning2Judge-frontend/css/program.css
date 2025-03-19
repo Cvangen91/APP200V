@@ -61,7 +61,7 @@ button {
     color: black; /* farge */
 }
 
-/* 🔥 */
+
 button:disabled {
     color: gray;
     cursor: not-allowed;
