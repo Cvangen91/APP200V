@@ -51,10 +51,16 @@ nav {
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
+  display: flex; /* Ensures proper alignment */
+  align-items: center;
 }
+
+.logo img {
+  width: 200px; /* Adjust size as needed */
+  height: auto; /* Maintains aspect ratio */
+}
+
+
 /*horisontal list menu*/
 .nav-links {
   list-style: none;
@@ -191,6 +197,23 @@ main {
   text-align: center;
   font-size: 14px;
 }
+.image-dressage { 
+  width: 100vw; /* Full width */
+  height: 400px; /* Adjust height as needed */
+  overflow: hidden; /* Crops the overflowing content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.image-dressage img {
+  width: 100%; /* Stretch across the full width */
+  height: 100%; /* Ensure it fills the container */
+  object-fit: cover; /* Cover the entire area */
+  object-position: top; /* Crop from the bottom */
+  filter: blur(5px); /* Adjust blur intensity */
+}
 
 
 /*styling for infobox, bilder, nyheter*/
@@ -199,16 +222,12 @@ main {
   padding: 20px;
   margin: 20px;
   font-family: var(--font);
+  box-shadow: 0 2px 20px 5px rgba(0,0,0,0.5);
 }
 
 .average {
   display: flex;
   padding: 20px;
-}
-
-.stars {
-  font-size: 3rem;
-  color: gold;
 }
 
 .news-reviews {
