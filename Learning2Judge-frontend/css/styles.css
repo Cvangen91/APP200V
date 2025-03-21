@@ -49,14 +49,13 @@ nav {
   max-width: 1200px; /*removes possibility that elements get spread on bigger screens*/
   margin: auto;
 }
-
 .logo {
   display: flex; /* Ensures proper alignment */
-  align-items: center;
+  align-items: left;
 }
 
 .logo img {
-  width: 200px; /* Adjust size as needed */
+  width: 300px; /* Adjust size as needed */
   height: auto; /* Maintains aspect ratio */
 }
 
