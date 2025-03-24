@@ -1,70 +1,68 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f5f5f5;
+  margin: 0;
 }
 
 h2 {
-    font-size: 28px;
-    font-weight: bold;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .program-container {
-    margin-bottom: 30px;
-    text-align: center;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .task-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .task-container {
-    overflow: hidden;
-    width: 660px; /*3 bokser */
-    display: flex;
-    border: 2px solid #aaa;
-    border-radius: 10px;
-    padding: 10px;
-    background-color: white;
+  overflow: hidden;
+  width: 660px; /*3 bokser */
+  display: flex;
+  border: 2px solid #aaa;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: white;
 }
 
 .task-slider {
-    display: flex;
-    transition: transform 0.3s ease-in-out;
+  display: flex;
+  transition: transform 0.3s ease-in-out;
 }
 
 .task-box {
-    width: 200px;
-    height: 120px;
-    margin-right: 20px;
-    background-color: #bbb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    flex-shrink: 0;
-    font-size: 20px;
-    font-weight: bold;
+  width: 200px;
+  height: 120px;
+  margin-right: 20px;
+  background-color: #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 button {
-    font-size: 28px;
-    padding: 15px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s;
-    color: black; /* farge */
+  font-size: 28px;
+  padding: 15px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  color: black; /* farge */
 }
 
-
 button:disabled {
-    color: gray;
-    cursor: not-allowed;
-    opacity: 0.5; 
-    font-size: 24px; 
+  color: gray;
+  cursor: not-allowed;
+  opacity: 0.5;
+  font-size: 24px;
 }

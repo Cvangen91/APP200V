@@ -6,7 +6,7 @@
 .video-container {
   position: relative;
   width: 100%;
-  max-width: 1200px; /* Begrens maksbredden */
+  max-width: 1000px; /* Begrens maksbredden */
   padding-bottom: 56.25%; /* 16:9-aspektforhold */
   height: 0;
 }
@@ -36,7 +36,6 @@
 }
 
 .inactive {
-  filter: blur(3px);
   opacity: 0.5;
 }
 
@@ -51,7 +50,7 @@
   opacity: 1 !important;
   min-height: 100px;
   background-color: var(--white);
-  max-width: 1200px;
+  max-width: 1000px;
 }
 
 #success-message {
