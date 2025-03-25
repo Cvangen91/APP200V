@@ -197,8 +197,6 @@ main {
 }
 .image-dressage {
   width: 100vw; /* Full width */
-  height: 400px; /* Adjust height as needed */
-  overflow: hidden; /* Crops the overflowing content */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -207,8 +205,7 @@ main {
 .image-dressage img {
   width: 100%; /* Stretch across the full width */
   height: 100%; /* Ensure it fills the container */
-  object-fit: cover; /* Cover the entire area */
-  object-position: center; /* Crop from the bottom */
+  
 }
 
 /*styling for infobox, bilder, nyheter*/
@@ -217,13 +214,9 @@ main {
   padding: 20px;
   margin: 20px;
   font-family: var(--font);
-  box-shadow: 0 2px 20px 5px rgba(0, 0, 0, 0.5);
 }
 
-.average {
-  display: flex;
-  padding: 20px;
-}
+
 
 .news-reviews {
   display: flex;
