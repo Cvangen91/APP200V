@@ -1,0 +1,77 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Sikrer at kartet ikke beveger seg med skjermen */
+#map {
+    height: 300px;
+    width: 300px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    position: relative; /* Sørger for at kartet ligger i normal flyt */
+    margin-bottom: 20px; /* Gir plass mellom kartet og footeren */
+}
+
+/* Container forhindrer at kartet presses inn i footeren */
+.container {
+    margin-bottom: 100px; /* Øker avstanden for å hindre overlapping */
+}
+
+/* Footer skal alltid være nederst, men uten å overlappe noe */
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+}
+
+
+
+.contact-form-container {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+.contact-form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-form-container label {
+    margin-bottom: 5px;
+}
+
+.contact-form-container input,
+.contact-form-container textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.contact-form-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.contact-form-container button:hover {
+    background-color: #0056b3;
+}

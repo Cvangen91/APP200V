@@ -2,40 +2,36 @@
 <html lang="no">
   <head>
     <meta charset="UTF-8" />
-    <!--utf8 for specialcharacters-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--responsive design on phone-->
-    <title>kontakt oss</title>
+    <title>Kontakt oss</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <!--link to css file-->
+    <link rel="stylesheet" href="css/contact.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <!-- Authentication check script -->
+    
     <script>
-      // Check authentication status and display content accordingly
       document.addEventListener('DOMContentLoaded', function() {
         const mainContent = document.getElementById('page-content');
         const authContent = document.getElementById('auth-required');
-        
+
         if (localStorage.getItem('access_token') === null) {
-          // Not logged in, show auth required message
           if (mainContent) mainContent.style.display = 'none';
           if (authContent) authContent.style.display = 'block';
         } else {
-          // Logged in, show content
           if (mainContent) mainContent.style.display = 'block';
           if (authContent) authContent.style.display = 'none';
         }
       });
     </script>
+
+    <!-- Leaflet.js for kart -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   </head>
+  
   <body>
-    <a href="#maincontent" class="skiplink">Skip to main content</a>
     <header>
       <nav>
         <div class="logo">Learning2judge</div>
-        <!--logo should be put here-->
-        <div class="menu-toggle">&#9776;</div>
-        <!--hamburgermenu for phone-->
         <ul class="nav-links">
           <li><a href="index.html">Hjem</a></li>
           <li><a href="contact.html">Kontakt oss</a></li>
@@ -51,7 +47,6 @@
       <div class="login-container" id="login-container" style="display: none;">
         <div class="login-form">
           <h2>Login</h2>
-          <div id="login-error" class="error-message" style="display: none;"></div>
           <form id="login-form">
             <div class="form-group">
               <label for="username">Brukernavn:</label>
@@ -69,7 +64,6 @@
         </div>
       </div>
 
-      <!-- Authentication required message -->
       <div id="auth-required" style="display: none; text-align: center; padding: 40px;">
         <h2>Du må være innlogget for å se denne siden</h2>
         <p>Vennligst klikk på "Login" knappen i menyen for å logge inn.</p>
@@ -78,19 +72,65 @@
         </button>
       </div>
 
-      <!-- Page content, only visible when logged in -->
       <div id="page-content" style="display: none;">
         <h1>Kontakt oss</h1>
-        <p>Her kommer kontaktinformasjon for Learning2Judge.</p>
-        <!-- Contact form or information would go here -->
+        
+        <div class="container">
+          <!-- Kontaktformular (nå først) -->
+          <div class="contact-form-container">
+            <h2>Kontakt oss ved å sende inn melding</h2>
+            <form id="contact-form">
+              <div>
+                <label for="name">Navn:</label>
+                <input type="text" id="name" name="name" required />
+              </div>
+              <div>
+                <label for="email">E-post:</label>
+                <input type="email" id="email" name="email" required />
+              </div>
+              <div>
+                <label for="message">Melding:</label>
+                <textarea id="message" name="message" required></textarea>
+              </div>
+              <button type="submit">Send inn melding til oss</button>
+            </form>
+            <div id="form-status"></div> <!-- Status etter innsending -->
+          </div>
+        
+          <!-- Kontaktinformasjon (nå etter skjemaet) -->
+          <div class="info">
+            <h2>Kontaktinformasjon</h2>
+          </div>
+        
+          <!-- Kartet -->
+          <div id="map"></div>
+        </div>
+        
+        </div>
       </div>
     </main>
 
     <footer>
       <p>Learning2judge</p>
     </footer>
-    <!--javascript for switching between hamburgermenu-->
-    <script src="js/script.js"></script>
+
+    <script src="js/contact.js"></script>
     <script src="js/auth.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function() {
+          var map = L.map('map').setView([59.369511092170825, 10.441961241156518], 16);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+
+          L.marker([59.369511092170825, 10.441961241156518]).addTo(map)
+            .bindPopup('<b>Learning2judge</b><br>Raveien 215, 3184 Borre.')
+            .openPopup();
+        }, 500); // Legger til en liten forsinkelse for å sikre at kartet lastes riktig
+      });
+    </script>
   </body>
 </html>
