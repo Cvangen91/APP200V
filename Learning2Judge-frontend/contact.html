@@ -6,17 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--responsive design on phone-->
     <title>kontakt oss</title>
-    <link rel="stylesheet" href="css/styles.css" /> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- Link to external CSS file -->
     <link rel="stylesheet" href="css/contact.css" />
     <!--link to css file-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <!-- Authentication check script -->
     <script>
       // Check authentication status and display content accordingly
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         const mainContent = document.getElementById('page-content');
         const authContent = document.getElementById('auth-required');
-        
+
         if (localStorage.getItem('access_token') === null) {
           // Not logged in, show auth required message
           if (mainContent) mainContent.style.display = 'none';
@@ -35,36 +39,25 @@
   </head>
   <body>
     <a href="#maincontent" class="skiplink">Skip to main content</a>
-    <header>
-      <nav>
-        <div class="logo">Learning2judge</div>
-        <!--logo should be put here-->
-        <div class="menu-toggle">&#9776;</div>
-        <!--hamburgermenu for phone-->
-        <ul class="nav-links">
-          <li><a href="index.html">Hjem</a></li>
-          <li><a href="contact.html">Kontakt oss</a></li>
-          <li><a href="program.html">Program</a></li>
-          <li><a href="myprofile.html">Min side</a></li>
-          <li><a href="side5.html">Side 5</a></li>
-          <li><a href="#" id="login-button"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-        </ul>
-      </nav>
-    </header>
+    <div id="header"></div>
 
     <main id="maincontent">
-      <div class="login-container" id="login-container" style="display: none;">
+      <div class="login-container" id="login-container" style="display: none">
         <div class="login-form">
           <h2>Login</h2>
-          <div id="login-error" class="error-message" style="display: none;"></div>
+          <div
+            id="login-error"
+            class="error-message"
+            style="display: none"
+          ></div>
           <form id="login-form">
             <div class="form-group">
               <label for="username">Brukernavn:</label>
-              <input type="text" id="username" name="username" required>
+              <input type="text" id="username" name="username" required />
             </div>
             <div class="form-group">
               <label for="password">Passord:</label>
-              <input type="password" id="password" name="password" required>
+              <input type="password" id="password" name="password" required />
             </div>
             <div class="form-group">
               <button type="submit">Logg inn</button>
@@ -75,56 +68,67 @@
       </div>
 
       <!-- Authentication required message -->
-      <div id="auth-required" style="display: none; text-align: center; padding: 40px;">
+      <div
+        id="auth-required"
+        style="display: none; text-align: center; padding: 40px"
+      >
         <h2>Du må være innlogget for å se denne siden</h2>
         <p>Vennligst klikk på "Login" knappen i menyen for å logge inn.</p>
-        <button class="login-page-btn" onclick="document.getElementById('login-container').style.display='flex';">
+        <button
+          class="login-page-btn"
+          onclick="document.getElementById('login-container').style.display='flex';"
+        >
           Logg inn nå
         </button>
       </div>
 
       <!-- Page content, only visible when logged in -->
-      <div id="page-content" style="display: none;">
+      <div id="page-content" style="display: none">
         <h1>Kontakt oss</h1>
-        
+
         <!-- USN Bakkenteigen Campus Info & Map -->
         <div class="container">
-            <div class="info">
-              <h2>Kontaktinformasjon</h2>
-            
-                <p><b>Adresse:</b> Raveien 215, 3184 Borre</p>
-                <p><b>Tlf:</b> <a href="tel:xxx xx xxx">+47 xxx xx xxx</a></p>
-                <p><b>E-post:</b> <a href="mailto:post@gmail.no">post@gmail.no</a></p>
-            </div>
-            <div id="map"></div>
-        </div>
+          <div class="info">
+            <h2>Kontaktinformasjon</h2>
 
+            <p><b>Adresse:</b> Raveien 215, 3184 Borre</p>
+            <p><b>Tlf:</b> <a href="tel:xxx xx xxx">+47 xxx xx xxx</a></p>
+            <p>
+              <b>E-post:</b> <a href="mailto:post@gmail.no">post@gmail.no</a>
+            </p>
+          </div>
+          <div id="map"></div>
+        </div>
       </div>
     </main>
 
     <footer>
       <p>Learning2judge</p>
     </footer>
-    
+
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/header.js"></script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-          // Sett opp kartet med riktig plassering for USN Bakkenteigen Campus
-          var map = L.map('map').setView([59.369511092170825, 10.441961241156518], 16);
-  
-          // Legg til OpenStreetMap-lag
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; OpenStreetMap contributors'
-          }).addTo(map);
-  
-          // Legg til en markør for campus
-          L.marker([59.369511092170825, 10.441961241156518]).addTo(map)
-              .bindPopup('<b>Learning2judge</b><br>Raveien 215, 3184 Borre.')
-              .openPopup();
+      document.addEventListener('DOMContentLoaded', function () {
+        // Sett opp kartet med riktig plassering for USN Bakkenteigen Campus
+        var map = L.map('map').setView(
+          [59.369511092170825, 10.441961241156518],
+          16
+        );
+
+        // Legg til OpenStreetMap-lag
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(map);
+
+        // Legg til en markør for campus
+        L.marker([59.369511092170825, 10.441961241156518])
+          .addTo(map)
+          .bindPopup('<b>Learning2judge</b><br>Raveien 215, 3184 Borre.')
+          .openPopup();
       });
-  </script>
-  
+    </script>
   </body>
 </html>
