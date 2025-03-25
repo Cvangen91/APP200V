@@ -19,7 +19,7 @@ body {
   background-color: var(--darkwhite); /**/
 }
 .skiplink {
-  /*Skip to main conent link*/
+  /*Skip to main content link*/
   position: absolute;
   top: -40px; /*hides link so user cant see before pressing tab*/
   left: 10px;
@@ -113,7 +113,6 @@ footer {
   text-align: center;
   padding: 15px 0;
   width: 100%;
-  position: fixed;
   bottom: 0%;
 }
 
@@ -121,6 +120,7 @@ main {
   max-width: 1300px;
   margin: auto;
   margin-bottom: 100px;
+  align-content: center;
 }
 .container {
   display: flex; /* Aktiverer Flexbox */
