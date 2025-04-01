@@ -117,7 +117,7 @@ footer {
 }
 
 main {
-  max-width: 1300px;
+ 
   margin: auto;
   margin-bottom: 100px;
   align-content: center;
@@ -196,7 +196,7 @@ main {
   font-size: 14px;
 }
 .image-dressage {
-  width: 100vw; /* Full width */
+ 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -212,8 +212,10 @@ main {
 .info-box {
   background: var(--white);
   padding: 20px;
-  margin: 20px;
+  margin: 0px;
   font-family: var(--font);
+  text-align: center; /* midtstill tekst */
+ 
 }
 
 
