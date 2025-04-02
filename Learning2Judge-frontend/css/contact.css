@@ -6,13 +6,16 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin: 20px;
+    margin: 20px auto; /* Sentraliserer containeren og gir margin på toppen og bunnen */
+    max-width: 900px; /* Reduserer bredden på containeren for å gjøre den mindre */
+    width: 100%; /* Sørger for at containeren tar opp full bredde opp til max-width */
 }
 
 @media screen and (max-width: 768px) {
     .container {
         padding: 15px;
         margin: 10px;
+        max-width: 100%; /* Fjerner maksimal bredde på små skjermer for å utnytte all plass */
     }
 
     #map {
@@ -28,7 +31,7 @@
 
 #map {
     height: 300px;
-    width: 50%;
+    width: 100%; /* Gjør kartet responsivt */
     border-radius: 10px;
     border: 1px solid #ddd;
     margin-bottom: 20px;
