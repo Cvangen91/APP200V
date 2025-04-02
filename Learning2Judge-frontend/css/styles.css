@@ -214,15 +214,18 @@ main {
 }
 
 /*styling for infobox, bilder, nyheter*/
-.info-box {
-  background: var(--white);
-  padding: 20px;
-  margin: 0px;
-  font-family: var(--font);
-  text-align: center; /* midtstill tekst */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
- 
-}
+  .info-box {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    background: var(--white);
+    padding: 20px 0px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
 
 
 
