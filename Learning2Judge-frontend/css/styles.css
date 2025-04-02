@@ -12,12 +12,17 @@
   --font: 'Inter', sans-serif;
 }
 
-body {
-  font-family: var(--font); /*uses varibel font, inter*/
-  margin: 0; /*removes standardmargin, and padding from body*/
+html, body {
+  height: 100%;
+  margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font); /*uses varibel font, inter*/ 
   background-color: var(--darkwhite); /**/
 }
+
+
 .skiplink {
   /*Skip to main content link*/
   position: absolute;
@@ -117,7 +122,7 @@ footer {
 }
 
 main {
- 
+ flex: 1;
   margin: auto;
   margin-bottom: 100px;
   align-content: center;
