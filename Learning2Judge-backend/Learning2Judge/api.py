@@ -3,20 +3,25 @@ from django.contrib.auth import authenticate
 from ninja_extra import NinjaExtraAPI
 from django.shortcuts import get_object_or_404
 from typing import List
-from .models import User, Category, Program, Exercise, UserSession, UserResult
+from .models import User, Category, Program, Exercise, UserSession, UserScore, CorrectScore
 from .schemas import (
-    UserCreateSchema, UserLoginSchema, CategorySchema, CategoryCreateSchema,
-    ProgramSchema, ProgramCreateSchema, ExerciseSchema, ExerciseCreateSchema,
-    UserSessionSchema, UserSessionCreateSchema, UserResultSchema, UserResultCreateSchema
+    UserCreateSchema, UserSchema, UserUpdateSchema, UserLoginSchema, 
+    CategorySchema, CategoryCreateSchema,
+    ProgramSchema, ProgramCreateSchema, ProgramDetailSchema,
+    ExerciseSchema, ExerciseCreateSchema,
+    CorrectScoreSchema, CorrectScoreCreateSchema,
+    UserSessionSchema, UserSessionCreateSchema, UserSessionDetailSchema,
+    UserScoreSchema, UserScoreCreateSchema
 )
 from ninja.security import HttpBearer
 from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_jwt.authentication import JWTAuth
+from django.db.models import Prefetch
 
 api = NinjaExtraAPI()
 api.register_controllers(NinjaJWTDefaultController)
 
-@api.post("/register", auth=None)
+@api.post("/register", auth=None, response=UserSchema)
 def register_user(request, payload: UserCreateSchema):
     if User.objects.filter(username=payload.username).exists():
         return api.create_response(request, {"error": "Username already registered"}, status=400)
@@ -29,19 +34,25 @@ def register_user(request, payload: UserCreateSchema):
             username=payload.username,
             email=payload.email,
             password=payload.password.get_secret_value(),
+            birthdate=payload.birthdate
         )
+        return user
     except Exception as e:
         return api.create_response(request, {"error": str(e)}, status=500)
 
-    return api.create_response(
-        request,
-        {
-            "id": user.id,
-            "username": user.username,
-            "message": "User created successfully",
-        },
-        status=201
-    )
+@api.get("/users/me", response=UserSchema, auth=JWTAuth())
+def get_current_user(request):
+    return request.user
+
+@api.put("/users/me", response=UserSchema, auth=JWTAuth())
+def update_user(request, payload: UserUpdateSchema):
+    user = request.user
+    if payload.email:
+        user.email = payload.email
+    if payload.birthdate:
+        user.birthdate = payload.birthdate
+    user.save()
+    return user
 
 # Category endpoints
 @api.get("/categories", response=List[CategorySchema], auth=JWTAuth())
@@ -76,9 +87,20 @@ def delete_category(request, category_id: int):
 def list_programs(request):
     return Program.objects.all()
 
-@api.get("/programs/{program_id}", response=ProgramSchema, auth=JWTAuth())
+@api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
 def get_program(request, program_id: int):
-    return get_object_or_404(Program, program_id=program_id)
+    program = get_object_or_404(Program, program_id=program_id)
+    
+    # Get all exercise IDs for this program via the correct_scores relationship
+    exercise_ids = CorrectScore.objects.filter(program=program).values_list('exercise_id', flat=True).distinct()
+    
+    return {
+        "program_id": program.program_id,
+        "name": program.name,
+        "description": program.description,
+        "equipage_id": program.equipage_id,
+        "exercises": list(exercise_ids)
+    }
 
 @api.post("/programs", response=ProgramSchema, auth=JWTAuth())
 def create_program(request, payload: ProgramCreateSchema):
@@ -131,14 +153,62 @@ def delete_exercise(request, exercise_id: int):
     exercise.delete()
     return {"success": True}
 
+# CorrectScore endpoints
+@api.get("/correct-scores", response=List[CorrectScoreSchema], auth=JWTAuth())
+def list_correct_scores(request):
+    return CorrectScore.objects.all()
+
+@api.get("/correct-scores/program/{program_id}", response=List[CorrectScoreSchema], auth=JWTAuth())
+def list_correct_scores_by_program(request, program_id: int):
+    return CorrectScore.objects.filter(program_id=program_id)
+
+@api.get("/correct-scores/exercise/{exercise_id}", response=List[CorrectScoreSchema], auth=JWTAuth())
+def list_correct_scores_by_exercise(request, exercise_id: int):
+    return CorrectScore.objects.filter(exercise_id=exercise_id)
+
+@api.get("/correct-scores/{correct_score_id}", response=CorrectScoreSchema, auth=JWTAuth())
+def get_correct_score(request, correct_score_id: int):
+    return get_object_or_404(CorrectScore, correct_score_id=correct_score_id)
+
+@api.post("/correct-scores", response=CorrectScoreSchema, auth=JWTAuth())
+def create_correct_score(request, payload: CorrectScoreCreateSchema):
+    correct_score = CorrectScore.objects.create(**payload.dict())
+    return correct_score
+
+@api.put("/correct-scores/{correct_score_id}", response=CorrectScoreSchema, auth=JWTAuth())
+def update_correct_score(request, correct_score_id: int, payload: CorrectScoreCreateSchema):
+    correct_score = get_object_or_404(CorrectScore, correct_score_id=correct_score_id)
+    for attr, value in payload.dict().items():
+        setattr(correct_score, attr, value)
+    correct_score.save()
+    return correct_score
+
+@api.delete("/correct-scores/{correct_score_id}", auth=JWTAuth())
+def delete_correct_score(request, correct_score_id: int):
+    correct_score = get_object_or_404(CorrectScore, correct_score_id=correct_score_id)
+    correct_score.delete()
+    return {"success": True}
+
 # UserSession endpoints
 @api.get("/user-sessions", response=List[UserSessionSchema], auth=JWTAuth())
 def list_user_sessions(request):
     return UserSession.objects.filter(user=request.user)
 
-@api.get("/user-sessions/{user_session_id}", response=UserSessionSchema, auth=JWTAuth())
+@api.get("/user-sessions/{user_session_id}", response=UserSessionDetailSchema, auth=JWTAuth())
 def get_user_session(request, user_session_id: int):
-    return get_object_or_404(UserSession, user_session_id=user_session_id, user=request.user)
+    user_session = get_object_or_404(UserSession, user_session_id=user_session_id, user=request.user)
+    
+    # Get related scores
+    scores = UserScore.objects.filter(user_session=user_session)
+    
+    return {
+        "user_session_id": user_session.user_session_id,
+        "user_id": user_session.user.id,
+        "program_id": user_session.program.program_id,
+        "timestamp": user_session.timestamp,
+        "program_name": user_session.program.name,
+        "scores": scores
+    }
 
 @api.post("/user-sessions", response=UserSessionSchema, auth=JWTAuth())
 def create_user_session(request, payload: UserSessionCreateSchema):
@@ -154,38 +224,99 @@ def delete_user_session(request, user_session_id: int):
     user_session.delete()
     return {"success": True}
 
-# UserResult endpoints
-@api.get("/user-results/session/{user_session_id}", response=List[UserResultSchema], auth=JWTAuth())
-def list_user_results_by_session(request, user_session_id: int):
+# UserScore endpoints
+@api.get("/user-scores/session/{user_session_id}", response=List[UserScoreSchema], auth=JWTAuth())
+def list_user_scores_by_session(request, user_session_id: int):
     user_session = get_object_or_404(UserSession, user_session_id=user_session_id, user=request.user)
-    return UserResult.objects.filter(user_session=user_session)
+    return UserScore.objects.filter(user_session=user_session)
 
-@api.get("/user-results/{user_result_id}", response=UserResultSchema, auth=JWTAuth())
-def get_user_result(request, user_result_id: int):
-    user_result = get_object_or_404(UserResult, user_result_id=user_result_id)
-    user_session = user_result.user_session
+@api.get("/user-scores/{user_score_id}", response=UserScoreSchema, auth=JWTAuth())
+def get_user_score(request, user_score_id: int):
+    user_score = get_object_or_404(UserScore, user_score_id=user_score_id)
+    user_session = user_score.user_session
     if user_session.user != request.user:
         return api.create_response(request, {"error": "Permission denied"}, status=403)
-    return user_result
+    return user_score
 
-@api.post("/user-results", response=UserResultSchema, auth=JWTAuth())
-def create_user_result(request, payload: UserResultCreateSchema):
+@api.post("/user-scores", response=UserScoreSchema, auth=JWTAuth())
+def create_user_score(request, payload: UserScoreCreateSchema):
     user_session = get_object_or_404(UserSession, user_session_id=payload.user_session_id)
     
     # Ensure the user owns this session
     if user_session.user != request.user:
         return api.create_response(request, {"error": "Permission denied"}, status=403)
     
-    # Create the user result
-    user_result = UserResult.objects.create(**payload.dict())
-    return user_result
+    # Create the user score
+    user_score = UserScore.objects.create(**payload.dict())
+    return user_score
 
-@api.delete("/user-results/{user_result_id}", auth=JWTAuth())
-def delete_user_result(request, user_result_id: int):
-    user_result = get_object_or_404(UserResult, user_result_id=user_result_id)
+@api.delete("/user-scores/{user_score_id}", auth=JWTAuth())
+def delete_user_score(request, user_score_id: int):
+    user_score = get_object_or_404(UserScore, user_score_id=user_score_id)
     # Check if user has permission (is the owner of the session)
-    user_session = user_result.user_session
+    user_session = user_score.user_session
     if user_session.user != request.user:
         return api.create_response(request, {"error": "Permission denied"}, status=403)
-    user_result.delete()
+    user_score.delete()
     return {"success": True}
+
+# Analytics endpoints
+@api.get("/analytics/user-performance", auth=JWTAuth())
+def user_performance(request):
+    """Get performance analytics for the current user"""
+    user_sessions = UserSession.objects.filter(user=request.user)
+    total_sessions = user_sessions.count()
+    
+    if total_sessions == 0:
+        return {
+            "total_sessions": 0,
+            "average_score": 0,
+            "total_exercises_judged": 0,
+            "performance": {}
+        }
+    
+    # Get all user scores
+    user_scores = UserScore.objects.filter(user_session__in=user_sessions).select_related('correct_score__exercise')
+    
+    # Calculate statistics
+    total_exercises = user_scores.count()
+    if total_exercises == 0:
+        average_score = 0
+    else:
+        # Calculate average difference between user_score and correct_score
+        score_accuracy = 0
+        for score in user_scores:
+            score_diff = abs(score.user_score - score.correct_score.correct_score)
+            max_possible_diff = 10  # Assuming scores are on a scale of 0-10
+            accuracy = (1 - (score_diff / max_possible_diff)) * 100
+            score_accuracy += accuracy
+        
+        average_score = score_accuracy / total_exercises
+    
+    # Group by category
+    category_performance = {}
+    for score in user_scores:
+        category_name = score.correct_score.exercise.category.name
+        if category_name not in category_performance:
+            category_performance[category_name] = {
+                "exercises_judged": 0,
+                "accuracy": 0
+            }
+        
+        score_diff = abs(score.user_score - score.correct_score.correct_score)
+        max_possible_diff = 10  # Assuming scores are on a scale of 0-10
+        accuracy = (1 - (score_diff / max_possible_diff)) * 100
+        
+        category_performance[category_name]["exercises_judged"] += 1
+        category_performance[category_name]["accuracy"] += accuracy
+    
+    # Calculate average for each category
+    for category, stats in category_performance.items():
+        stats["accuracy"] = stats["accuracy"] / stats["exercises_judged"]
+    
+    return {
+        "total_sessions": total_sessions,
+        "average_score": average_score,
+        "total_exercises_judged": total_exercises,
+        "performance_by_category": category_performance
+    }

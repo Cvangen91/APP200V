@@ -1,12 +1,24 @@
 from ninja import Schema
 from pydantic import Field, SecretStr, EmailStr
-from typing import Optional
-from datetime import datetime
+from typing import Optional, List
+from datetime import datetime, date
 
 class UserCreateSchema(Schema):
     username: str = Field(..., min_length=3, max_length=150)
     email: EmailStr = Field(...)
     password: SecretStr = Field(..., min_length=8)
+    birthdate: Optional[date] = None
+
+class UserSchema(Schema):
+    id: int
+    username: str
+    email: str
+    birthdate: Optional[date] = None
+    is_judge: bool
+
+class UserUpdateSchema(Schema):
+    email: Optional[EmailStr] = None
+    birthdate: Optional[date] = None
 
 class UserLoginSchema(Schema):
     username: str
@@ -25,10 +37,12 @@ class ProgramSchema(Schema):
     program_id: int
     name: str
     description: Optional[str] = None
+    equipage_id: Optional[int] = None
 
 class ProgramCreateSchema(Schema):
     name: str
     description: Optional[str] = None
+    equipage_id: Optional[int] = None
 
 # Exercise schemas
 class ExerciseSchema(Schema):
@@ -36,35 +50,60 @@ class ExerciseSchema(Schema):
     name: str
     category_id: int
     description: Optional[str] = None
-    correct_score: float
 
 class ExerciseCreateSchema(Schema):
     name: str
     category_id: int
     description: Optional[str] = None
+
+# CorrectScore schemas
+class CorrectScoreSchema(Schema):
+    correct_score_id: int
     correct_score: float
+    execution_number: int
+    exercise_id: int
+    program_id: int
+
+class CorrectScoreCreateSchema(Schema):
+    correct_score: float
+    execution_number: int
+    exercise_id: int
+    program_id: int
 
 # UserSession schemas
 class UserSessionSchema(Schema):
     user_session_id: int
     user_id: int
     program_id: int
-    start_time: datetime
+    timestamp: datetime
 
 class UserSessionCreateSchema(Schema):
-    user_id: int
     program_id: int
 
-# UserResult schemas
-class UserResultSchema(Schema):
-    user_result_id: int
+# UserScore schemas
+class UserScoreSchema(Schema):
+    user_score_id: int
     user_session_id: int
-    exercise_id: int
-    user_answer: float
-    percent_correct: float
+    correct_score_id: int
+    user_score: float
 
-class UserResultCreateSchema(Schema):
+class UserScoreCreateSchema(Schema):
     user_session_id: int
-    exercise_id: int
-    user_answer: float
-    percent_correct: float
+    correct_score_id: int
+    user_score: float
+
+# Summary schemas for better API responses
+class UserSessionDetailSchema(Schema):
+    user_session_id: int
+    user_id: int
+    program_id: int
+    timestamp: datetime
+    program_name: str
+    scores: List[UserScoreSchema]
+
+class ProgramDetailSchema(Schema):
+    program_id: int
+    name: str
+    description: Optional[str] = None
+    equipage_id: Optional[int] = None
+    exercises: List[int]  # List of exercise IDs included in the program
