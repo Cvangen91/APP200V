@@ -21,13 +21,13 @@ from django.db.models import Prefetch
 api = NinjaExtraAPI()
 api.register_controllers(NinjaJWTDefaultController)
 
-@api.post("/register", auth=None, response=UserSchema)
+@api.post("/register", auth=None, response={200: UserSchema, 400: dict, 500: dict})
 def register_user(request, payload: UserCreateSchema):
     if User.objects.filter(username=payload.username).exists():
-        return api.create_response(request, {"error": "Username already registered"}, status=400)
+        return 400, {"error": "Username already registered"}
 
     if User.objects.filter(email=payload.email).exists():
-        return api.create_response(request, {"error": "Email already registered"}, status=400)
+        return 400, {"error": "Email already registered"}
 
     try:
         user = User.objects.create_user(
@@ -36,9 +36,9 @@ def register_user(request, payload: UserCreateSchema):
             password=payload.password.get_secret_value(),
             birthdate=payload.birthdate
         )
-        return user
+        return 200, user
     except Exception as e:
-        return api.create_response(request, {"error": str(e)}, status=500)
+        return 500, {"error": str(e)}
 
 @api.get("/users/me", response=UserSchema, auth=JWTAuth())
 def get_current_user(request):

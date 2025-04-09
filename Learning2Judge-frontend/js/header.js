@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-  //the header string. all the links
+  // Verifica se o usuário está autenticado
+  const isLoggedIn = localStorage.getItem('access_token') !== null;
+
+  // Header HTML com conteúdo condicional baseado no status de autenticação
   const headerHTML = `
         <header>
             <nav>
@@ -12,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <li><a href="myprofile.html">Min side</a></li>
                     <li><a href="program.html">Program</a></li>
                     <li><a href="contact.html">Kontakt oss</a></li>
-                    <li><a href="#" id="login-button"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="#" id="login-button"><i class="fas fa-sign-in-alt"></i> ${isLoggedIn ? 'Logout' : 'Login'}</a></li>
+                    ${!isLoggedIn ? '<li><a href="register.html"><i class="fas fa-user-plus"></i> Registrer</a></li>' : ''}
                 </ul>
             </nav>
         </header>
