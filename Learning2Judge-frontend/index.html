@@ -55,7 +55,7 @@
           <br><br>
           <strong>Logg inn for å få tilgang til alle funksjoner.</strong>
         </p>
-        <div class="mt-3">
+        <div class="mt-3" id="login-register-buttons">
           <button onclick="document.getElementById('login-container').style.display='flex';" class="btn btn-lg">
             <i class="fas fa-sign-in-alt"></i> Logg inn nå
           </button>
@@ -151,11 +151,15 @@
         const welcomeUsername = document.getElementById('welcome-username');
         const loggedInMessage = document.getElementById('logged-in-message');
         const notLoggedInMessage = document.getElementById('not-logged-in-message');
+        const loginRegisterButtons = document.getElementById('login-register-buttons');
         
         if (username && welcomeUsername) {
           welcomeUsername.textContent = username;
           loggedInMessage.style.display = 'block';
           notLoggedInMessage.style.display = 'none';
+          if (loginRegisterButtons) {
+            loginRegisterButtons.style.display = 'none';
+          }
         }
       });
     </script>
