@@ -111,16 +111,6 @@
     100% { transform: rotate(360deg); }
 }
 
-footer {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    margin-top: 20px;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
 /* Estilos melhorados para a página de contato */
 .contact-header {
   max-width: 1200px;
