@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Learning2Judge - Registrer deg</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/register.css" />
+    <link rel="stylesheet" href="css/improved-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   
@@ -14,41 +14,43 @@
     
     <header>
       <nav>
-        <div class="logo">Learning2judge</div>
+        <div class="logo">
+          <img src="images/logotextny.png" alt="Learning2Judge" />
+        </div>
       </nav>
     </header>
 
-    <main id="maincontent">
-      <div class="register-form">
+    <main id="maincontent" class="animate-fadeIn">
+      <div class="register-form card animate-slideInUp">
         <div class="logo-container">
           <div class="logo-large">Learning2Judge</div>
         </div>
         <h2>Registrer deg</h2>
         <div id="register-error" class="error-message" style="display: none;"></div>
-        <div id="register-success" style="display: none;"></div>
+        <div id="register-success" class="success-message" style="display: none;"></div>
         <form id="register-form">
           <div class="form-group">
-            <label for="username">Brukernavn:</label>
-            <input type="text" id="username" name="username" required>
+            <label for="username"><i class="fas fa-user"></i> Brukernavn:</label>
+            <input type="text" id="username" name="username" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="email">E-post:</label>
-            <input type="email" id="email" name="email" required>
+            <label for="email"><i class="fas fa-envelope"></i> E-post:</label>
+            <input type="email" id="email" name="email" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="password">Passord:</label>
-            <input type="password" id="password" name="password" required>
+            <label for="password"><i class="fas fa-lock"></i> Passord:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="password-confirm">Bekreft passord:</label>
-            <input type="password" id="password-confirm" name="password-confirm" required>
+            <label for="password-confirm"><i class="fas fa-check-circle"></i> Bekreft passord:</label>
+            <input type="password" id="password-confirm" name="password-confirm" class="form-control" required>
           </div>
           <div class="form-group">
-            <label class="birthday-label">Fødselsdato:</label>
-            <input type="date" id="birthdate" name="birthdate">
+            <label class="birthday-label"><i class="fas fa-calendar-alt"></i> Fødselsdato:</label>
+            <input type="date" id="birthdate" name="birthdate" class="form-control">
           </div>
           <div class="form-group">
-            <button type="submit">Registrer</button>
+            <button type="submit" class="btn btn-lg" style="width: 100%;">Registrer</button>
           </div>
         </form>
         <div class="link-section">
@@ -58,7 +60,9 @@
     </main>
 
     <footer>
-      <p>Learning2judge</p>
+      <div class="container py-2 text-center">
+        <p>&copy; 2025 Learning2Judge - En digital læringsplattform for dressurdommere</p>
+      </div>
     </footer>
 
     <script src="js/register.js"></script>

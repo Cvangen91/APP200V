@@ -7,6 +7,7 @@
     <!--responsive design on phone-->
     <title>Min Side</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/improved-styles.css" />
     <link rel="stylesheet" href="css/myprofile.styles.css" />
     <!--link to css file-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -32,116 +33,234 @@
   <body>
     <a href="#maincontent" class="skiplink">Skip to main content</a>
     <div id="header"></div>
-    <main id="maincontent">
+    <main id="maincontent" class="animate-fadeIn">
       <div class="login-container" id="login-container" style="display: none;">
-        <div class="login-form">
+        <div class="login-form card">
           <h2>Login</h2>
           <div id="login-error" class="error-message" style="display: none;"></div>
           <form id="login-form">
             <div class="form-group">
               <label for="username">Brukernavn:</label>
-              <input type="text" id="username" name="username" required>
+              <input type="text" id="username" name="username" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="password">Passord:</label>
-              <input type="password" id="password" name="password" required>
+              <input type="password" id="password" name="password" class="form-control" required>
             </div>
             <div class="form-group">
-              <button type="submit">Logg inn</button>
-              <button type="button" id="cancel-login">Avbryt</button>
+              <button type="submit" class="btn">Logg inn</button>
+              <button type="button" id="cancel-login" class="btn btn-outline">Avbryt</button>
             </div>
           </form>
         </div>
       </div>
 
       <!-- Authentication required message -->
-      <div id="auth-required" style="display: none; text-align: center; padding: 40px;">
+      <div id="auth-required" class="card text-center animate-slideInUp" style="display: none; padding: 40px; max-width: 600px; margin: 40px auto;">
+        <i class="fas fa-lock fa-4x mb-3" style="color: var(--primary);"></i>
         <h2>Du må være innlogget for å se din profilside</h2>
-        <p>Vennligst klikk på "Login" knappen i menyen for å logge inn.</p>
-        <button class="login-page-btn" onclick="document.getElementById('login-container').style.display='flex';">
-          Logg inn nå
+        <p class="mb-4">Vennligst klikk på "Login" knappen i menyen for å logge inn.</p>
+        <button class="btn btn-lg" onclick="document.getElementById('login-container').style.display='flex';">
+          <i class="fas fa-sign-in-alt"></i> Logg inn nå
         </button>
       </div>
 
-      <div id="profile-content" class="profile-content">
-        <div class="container">
-          <div id="profilPicture">
-              <img src="images/imagefill.jpg" alt="Profilbilde" width="150" height="150">
-          </div>
-          <div id="personalInfo">
-              <p><label>Navn: </label><span id="name">Cecilie Dyrnes Vangen</span></p>
-              <p><label>Alder: </label><span id="age">33</span></p>
-              <p><label>Dommergrad: </label><span id="degree">DD1</span></p>
-              <p><label>Dommer siden: </label><span id ="time">2018</span></p>
+      <div id="profile-content" class="profile-content animate-slideInUp">
+        <div class="profile-header">
+          <div class="container">
+            <div id="profilPicture" class="profile-avatar">
+              <img src="images/imagefill.jpg" alt="Profilbilde" class="avatar-image">
+            </div>
+            <div id="personalInfo" class="profile-details">
+              <h1><span id="name">Cecilie Dyrnes Vangen</span></h1>
+              <div class="profile-meta">
+                <p><i class="fas fa-birthday-cake"></i> <strong>Alder: </strong><span id="age">33</span></p>
+                <p><i class="fas fa-award"></i> <strong>Dommergrad: </strong><span id="degree">DD1</span></p>
+                <p><i class="fas fa-calendar-check"></i> <strong>Dommer siden: </strong><span id="time">2018</span></p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="line"></div>
 
-        <div id ="testcontainer">
-          <h3>Gjennomførte tester</h1>
-            <table id="completeTestsTable">
-              <tr>
-                <th>Dato</th>
-                <th>Program</th>
-                <th>Ekvipasje</th>
-                <th>Resultat</th>
-                <th>Fasit</th>
-                <th>Match</th>
-                <th></th>
-              </tr>
-              <tr>
-                <td>27.02.2025</td>
-                <td>LB3 2017</td>
-                <td>Ekvipasje 1</td>
-                <td>64,0 %</td>
-                <td>66,6 %</td>
-                <td>96,1 %</td>
-                <td><button class ="protokollBtn">Protokoll</button></td>
-              </tr>
-              <tr>
-                <td>04.03.2025</td>
-                <td>LB3 2017</td>
-                <td>Ekvipasje 1</td>
-                <td>72,0 %</td>
-                <td>66,6 %</td>
-                <td>89,2 %</td>
-                <td><button class ="protokollBtn">Protokoll</button></td>
-              </tr>
-            </table>
+        <div class="profile-tabs">
+          <ul class="tab-nav">
+            <li class="active" data-tab="tests">Mine tester</li>
+            <li data-tab="stats">Statistikk</li>
+            <li data-tab="settings">Innstillinger</li>
+          </ul>
         </div>
 
-        <div id="statscontainer">
-          <h3>Statistikk</h3>
-        
-          <table id="statsTable">
-            <tr>
-              <th>Skritt</th>
-              <td>98 % match</td>
-            </tr>
-            <tr>
-              <th>Trav</th>
-              <td>99,5 % match</td>
-            </tr>
-            <tr>
-              <th>Galopp</th>
-              <td>85 % match</td>
-            </tr>
-            <tr>
-              <th>Allment inntrykk</th>
-              <td>87 % match</td>
-            </tr>
-          </table>
+        <div class="tab-content">
+          <div id="tests" class="tab-pane active">
+            <div class="card">
+              <h3><i class="fas fa-tasks"></i> Gjennomførte tester</h3>
+              <div class="table-responsive">
+                <table id="completeTestsTable" class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Dato</th>
+                      <th>Program</th>
+                      <th>Ekvipasje</th>
+                      <th>Resultat</th>
+                      <th>Fasit</th>
+                      <th>Match</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>27.02.2025</td>
+                      <td>LB3 2017</td>
+                      <td>Ekvipasje 1</td>
+                      <td><span class="badge">64,0 %</span></td>
+                      <td>66,6 %</td>
+                      <td><span class="badge success">96,1 %</span></td>
+                      <td><button class="btn btn-sm protokollBtn">Vis protokoll</button></td>
+                    </tr>
+                    <tr>
+                      <td>04.03.2025</td>
+                      <td>LB3 2017</td>
+                      <td>Ekvipasje 1</td>
+                      <td><span class="badge">72,0 %</span></td>
+                      <td>66,6 %</td>
+                      <td><span class="badge success">89,2 %</span></td>
+                      <td><button class="btn btn-sm protokollBtn">Vis protokoll</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <div id="stats" class="tab-pane">
+            <div class="card">
+              <h3><i class="fas fa-chart-pie"></i> Min statistikk</h3>
+              <div class="stats-overview">
+                <div class="stat-card">
+                  <div class="stat-value">94.2%</div>
+                  <div class="stat-label">Gjennomsnittlig treff</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">28</div>
+                  <div class="stat-label">Gjennomførte tester</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">322</div>
+                  <div class="stat-label">Bedømte øvelser</div>
+                </div>
+              </div>
+              
+              <h4 class="mt-4">Nøyaktighet per kategori</h4>
+              <table id="statsTable" class="table">
+                <thead>
+                  <tr>
+                    <th>Kategori</th>
+                    <th>Nøyaktighet</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Skritt</td>
+                    <td>
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 98%"></div>
+                        <span>98%</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Trav</td>
+                    <td>
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 99.5%"></div>
+                        <span>99.5%</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Galopp</td>
+                    <td>
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 85%"></div>
+                        <span>85%</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Allment inntrykk</td>
+                    <td>
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 87%"></div>
+                        <span>87%</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div id="settings" class="tab-pane">
+            <div class="card">
+              <h3><i class="fas fa-cog"></i> Kontoinnstillinger</h3>
+              <form id="profile-settings-form" class="mt-3">
+                <div class="form-group">
+                  <label for="profile-email">E-postadresse</label>
+                  <input type="email" id="profile-email" class="form-control" value="cecilie.vangen@example.com">
+                </div>
+                <div class="form-group">
+                  <label for="profile-name">Fullt navn</label>
+                  <input type="text" id="profile-name" class="form-control" value="Cecilie Dyrnes Vangen">
+                </div>
+                <div class="form-group">
+                  <label for="profile-password">Nytt passord</label>
+                  <input type="password" id="profile-password" class="form-control" placeholder="Skriv nytt passord">
+                </div>
+                <div class="form-group">
+                  <label for="profile-password-confirm">Bekreft nytt passord</label>
+                  <input type="password" id="profile-password-confirm" class="form-control" placeholder="Bekreft nytt passord">
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn">Lagre endringer</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </main>
 
     <footer>
-      <p>Learning2judge</p>
+      <div class="container py-2 text-center">
+        <p>&copy; 2025 Learning2Judge - En digital læringsplattform for dressurdommere</p>
+      </div>
     </footer>
     <!--javascript for switching between hamburgermenu-->
     <script src="js/script.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/profile.js"></script>
     <script src="js/header.js"></script>
+    <script>
+      // Adicionar funcionalidade de tab
+      document.addEventListener('DOMContentLoaded', function() {
+        const tabLinks = document.querySelectorAll('.tab-nav li');
+        const tabContents = document.querySelectorAll('.tab-pane');
+        
+        tabLinks.forEach(tab => {
+          tab.addEventListener('click', function() {
+            // Remover classe active de todas as tabs
+            tabLinks.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Adicionar classe active na tab clicada
+            this.classList.add('active');
+            
+            // Mostrar o conteúdo correspondente
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+          });
+        });
+      });
+    </script>
   </body>
 </html>

@@ -5,47 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Learning2Judge - Login</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/improved-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-      
-      main {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 0;
-      }
-      
-      .login-form {
-        background-color: var(--white);
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 400px;
-      }
-      
-      .logo-container {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      
-      .logo-large {
-        font-size: 32px;
-        font-weight: bold;
-        color: var(--darkblue);
-      }
-      
-      .link-section {
-        margin-top: 20px;
-        text-align: center;
-      }
-    </style>
   </head>
   
   <body>
@@ -53,12 +14,14 @@
     
     <header>
       <nav>
-        <div class="logo">Learning2judge</div>
+        <div class="logo">
+          <img src="images/logotextny.png" alt="Learning2Judge" />
+        </div>
       </nav>
     </header>
 
-    <main id="maincontent">
-      <div class="login-form">
+    <main id="maincontent" class="animate-fadeIn">
+      <div class="login-form card animate-slideInUp">
         <div class="logo-container">
           <div class="logo-large">Learning2Judge</div>
         </div>
@@ -67,14 +30,14 @@
         <form id="login-form">
           <div class="form-group">
             <label for="username">Brukernavn:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="username" name="username" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="password">Passord:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" class="form-control" required>
           </div>
           <div class="form-group">
-            <button type="submit">Logg inn</button>
+            <button type="submit" class="btn btn-lg" style="width: 100%;">Logg inn</button>
           </div>
         </form>
         <div class="link-section">
@@ -84,7 +47,9 @@
     </main>
 
     <footer>
-      <p>Learning2judge</p>
+      <div class="container py-2 text-center">
+        <p>&copy; 2025 Learning2Judge - En digital læringsplattform for dressurdommere</p>
+      </div>
     </footer>
 
     <script src="js/login.js"></script>

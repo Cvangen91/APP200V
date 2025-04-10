@@ -1,18 +1,40 @@
+/* Estilos melhorados para a página de testes */
 .test-container {
-  display: flex;
-  align-items: center;
-}
-.information {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
+  gap: 30px;
+}
+
+.test-header {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-light) 100%);
+  padding: 25px;
+  border-radius: var(--radius-md);
+}
+
+.test-info h2 {
+  color: var(--primary-dark);
+}
+
+.info-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .video-container {
   position: relative;
   width: 100%;
-  max-width: 1300px; /* Begrens maksbredden */
-  padding-bottom: 56.25%; /* 16:9-aspektforhold */
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
   height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .video-container iframe {
@@ -21,42 +43,147 @@
   left: 0;
   width: 100%;
   height: 100%;
+  border: none;
 }
 
+.scoring-container {
+  padding: 30px;
+  background-color: var(--bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Estilos para tabela de pontuação */
 .character-table {
   width: 100%;
   border-collapse: collapse;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 
-.character-table th,
+.character-table th {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+}
+
 .character-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .character-table tbody tr {
   transition: all 0.3s ease-in-out;
 }
 
+.character-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .inactive {
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .active {
-  filter: none;
+  background-color: var(--primary-light);
   opacity: 1;
 }
 
-#give-characters {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  min-height: 100px;
-  background-color: var(--white);
-  max-width: 1300px;
+/* Inputs de pontuação */
+.score-input {
+  width: 80px;
+  height: 40px;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  transition: all 0.2s ease;
 }
 
+.score-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(44, 110, 209, 0.25);
+}
+
+/* Mensagem de sucesso */
 #success-message {
   text-align: center;
+  padding: 40px;
+}
+
+#success-message h3 {
+  color: var(--secondary-dark);
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+/* Estilo para pontuação de 0 a 10 */
+.score-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  max-width: 400px;
+}
+
+.score-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.score-btn:hover {
+  background-color: var(--primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.score-btn.half {
+  position: relative;
+  font-size: 0.8rem;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .test-container {
+    padding: 0 10px;
+    gap: 20px;
+  }
+  
+  .info-badges {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .character-table th,
+  .character-table td {
+    padding: 10px;
+  }
+  
+  .score-input {
+    width: 70px;
+    height: 36px;
+    font-size: 1rem;
+  }
+  
+  .score-scale {
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .score-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
 }
