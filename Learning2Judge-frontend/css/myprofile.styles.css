@@ -1,6 +1,6 @@
 /* Estilos melhorados para a página de perfil */
 main {
-  max-width: 1200px;
+  min-width: 70%;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -11,61 +11,68 @@ main {
   margin: 20px 0;
 }
 
-.line{
-    height: 10px;
-    width: 100;
-    background-color: var(--primaryblue);
-    margin: 10px;
+.line {
+  height: 10px;
+  width: 100;
+  background-color: var(--primaryblue);
+  margin: 10px;
 }
 
-#testcontainer, #statscontainer {
-    margin: 20px;
+#testcontainer,
+#statscontainer {
+  margin: 20px;
 }
 
 #completeTestsTable {
-    width: 80%;
-    font-size: 14px;
-    text-align: left;
+  width: 80%;
+  font-size: 14px;
+  text-align: left;
 }
 
-#completeTestsTable td, #completeTestsTable th  {
-    padding-bottom: 10px;
+#completeTestsTable td,
+#completeTestsTable th {
+  padding-bottom: 10px;
 }
 
-#completeTestsTable tr:hover {background-color: var(--lightgreen)}
+#completeTestsTable tr:hover {
+  background-color: var(--lightgreen);
+}
 
-#completeTestsTable th{
-    background-color: var(--darkwhite);
+#completeTestsTable th {
+  background-color: var(--darkwhite);
 }
 
 #statsTable {
-    width: 100%;
-    font-size: 14px;
-    text-align: left;
-     
+  width: 100%;
+  font-size: 14px;
+  text-align: left;
 }
 
 #statsTable th:first-child {
-    width: 170px; /* width for colums */
-  }
-
-#statscontainer{
-    margin-top: 50px;
-    bottom: 80px;
-} 
-
-h3{
-    font-size: 16px;
+  width: 170px; /* width for colums */
 }
 
-#personalInfo label{
-    font-weight: bold;
-    font-size: 14px;
+#statscontainer {
+  margin-top: 50px;
+  bottom: 80px;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+#personalInfo label {
+  font-weight: bold;
+  font-size: 14px;
 }
 
 /* Header do perfil */
 .profile-header {
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-light) 0%,
+    var(--bg-light) 100%
+  );
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   padding: 30px;
@@ -187,7 +194,8 @@ h3{
   box-shadow: var(--shadow-sm);
   text-align: center;
   min-width: 150px;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .stat-card:hover {
@@ -235,7 +243,7 @@ h3{
 }
 
 /* Tabelas */
-#completeTestsTable, 
+#completeTestsTable,
 #statsTable {
   width: 100%;
   margin-top: 20px;
@@ -297,30 +305,28 @@ h3{
   .container {
     flex-direction: column;
   }
-  
+
   .profile-meta {
     grid-template-columns: 1fr;
   }
-  
+
   .tab-nav {
     flex-direction: column;
     border-radius: var(--radius-md);
   }
-  
+
   .tab-nav li.active::after {
     width: 3px;
     height: 100%;
     top: 0;
     left: 0;
   }
-  
+
   .stats-overview {
     flex-direction: column;
   }
-  
+
   .stat-card {
     min-width: auto;
   }
 }
-
-

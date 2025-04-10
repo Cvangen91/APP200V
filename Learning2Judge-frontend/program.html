@@ -7,14 +7,17 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/improved-styles.css" />
     <link rel="stylesheet" href="css/program.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <!-- Authentication check script -->
     <script>
       // Check authentication status and display content accordingly
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         const mainContent = document.getElementById('page-content');
         const authContent = document.getElementById('auth-required');
-        
+
         if (localStorage.getItem('access_token') === null) {
           // Not logged in, show auth required message
           if (mainContent) mainContent.style.display = 'none';
@@ -32,46 +35,86 @@
     <div id="header"></div>
 
     <main id="maincontent" class="animate-fadeIn">
-      <div class="login-container" id="login-container" style="display: none;">
+      <div class="login-container" id="login-container" style="display: none">
         <div class="login-form card">
           <h2>Login</h2>
-          <div id="login-error" class="error-message" style="display: none;"></div>
+          <div
+            id="login-error"
+            class="error-message"
+            style="display: none"
+          ></div>
           <form id="login-form">
             <div class="form-group">
               <label for="username">Brukernavn:</label>
-              <input type="text" id="username" name="username" class="form-control" required>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                class="form-control"
+                required
+              />
             </div>
             <div class="form-group">
               <label for="password">Passord:</label>
-              <input type="password" id="password" name="password" class="form-control" required>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                required
+              />
             </div>
             <div class="form-group">
               <button type="submit" class="btn">Logg inn</button>
-              <button type="button" id="cancel-login" class="btn btn-outline">Avbryt</button>
+              <button type="button" id="cancel-login" class="btn btn-outline">
+                Avbryt
+              </button>
             </div>
           </form>
         </div>
       </div>
 
       <!-- Authentication required message -->
-      <div id="auth-required" class="card text-center animate-slideInUp" style="display: none; padding: 40px; max-width: 600px; margin: 40px auto;">
-        <i class="fas fa-lock fa-4x mb-3" style="color: var(--primary);"></i>
+      <div
+        id="auth-required"
+        class="card text-center animate-slideInUp"
+        style="
+          display: none;
+          padding: 40px;
+          max-width: 600px;
+          margin: 40px auto;
+        "
+      >
+        <i class="fas fa-lock fa-4x mb-3" style="color: var(--primary)"></i>
         <h2>Du må være innlogget for å se programmene</h2>
-        <p class="mb-4">Vennligst klikk på "Login" knappen i menyen for å logge inn og få tilgang til programmene.</p>
-        <button class="btn btn-lg" onclick="document.getElementById('login-container').style.display='flex';">
+        <p class="mb-4">
+          Vennligst klikk på "Login" knappen i menyen for å logge inn og få
+          tilgang til programmene.
+        </p>
+        <button
+          class="btn btn-lg"
+          onclick="document.getElementById('login-container').style.display='flex';"
+        >
           <i class="fas fa-sign-in-alt"></i> Logg inn nå
         </button>
       </div>
 
       <!-- Page content, only visible when logged in -->
-      <div id="page-content" class="animate-slideInUp" style="display: none;">
+      <div id="page-content" class="animate-slideInUp" style="display: none">
         <div class="program-header">
           <h1>Dressurprogrammer</h1>
-          <p class="text-medium mb-4">Her finner du oversikt over tilgjengelige dressurprogrammer. Velg et program for å starte treningen.</p>
-          
+          <p class="text-medium mb-4">
+            Her finner du oversikt over tilgjengelige dressurprogrammer. Velg et
+            program for å starte treningen.
+          </p>
+
           <div class="program-search mb-4">
             <div class="search-box">
-              <input type="text" placeholder="Søk etter program..." class="form-control">
+              <input
+                type="text"
+                placeholder="Søk etter program..."
+                class="form-control"
+              />
               <button class="btn btn-sm"><i class="fas fa-search"></i></button>
             </div>
             <div class="filter-options">
@@ -85,55 +128,78 @@
             </div>
           </div>
         </div>
-        
+
         <div class="program-container animate-fadeIn">
           <h3>LC3 - 2017/23</h3>
           <div class="program-badges mb-2">
             <span class="badge"><i class="fas fa-horse"></i> 4 ekvipasjer</span>
-            <span class="badge success"><i class="fas fa-check-circle"></i> Introduksjonsnivå</span>
+            <span class="badge success"
+              ><i class="fas fa-check-circle"></i> Introduksjonsnivå</span
+            >
           </div>
           <div class="task-wrapper">
-            <button class="prev-btn" data-row="row1"><i class="fas fa-chevron-left"></i></button>
+            <button class="prev-btn" data-row="row1">
+              <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="task-container">
               <div class="task-slider" id="row1">
                 <!-- JS fyller inn boksene her -->
               </div>
             </div>
-            <button class="next-btn" data-row="row1"><i class="fas fa-chevron-right"></i></button>
+            <button class="next-btn" data-row="row1">
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
         </div>
-        
-        <div class="program-container animate-fadeIn" style="animation-delay: 0.2s">
+
+        <div
+          class="program-container animate-fadeIn"
+          style="animation-delay: 0.2s"
+        >
           <h3>LB3 - 2017/22</h3>
           <div class="program-badges mb-2">
             <span class="badge"><i class="fas fa-horse"></i> 5 ekvipasjer</span>
             <span class="badge"><i class="fas fa-star"></i> Middels nivå</span>
           </div>
           <div class="task-wrapper">
-            <button class="prev-btn" data-row="row2"><i class="fas fa-chevron-left"></i></button>
+            <button class="prev-btn" data-row="row2">
+              <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="task-container">
               <div class="task-slider" id="row2">
                 <!-- JS fyller inn boksene her -->
               </div>
             </div>
-            <button class="next-btn" data-row="row2"><i class="fas fa-chevron-right"></i></button>
+            <button class="next-btn" data-row="row2">
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
         </div>
-        
-        <div class="program-container animate-fadeIn" style="animation-delay: 0.4s">
+
+        <div
+          class="program-container animate-fadeIn"
+          style="animation-delay: 0.4s"
+        >
           <h3>LA3 - 2017/20</h3>
           <div class="program-badges mb-2">
             <span class="badge"><i class="fas fa-horse"></i> 3 ekvipasjer</span>
-            <span class="badge"><i class="fas fa-star"></i><i class="fas fa-star"></i> Avansert nivå</span>
+            <span class="badge"
+              ><i class="fas fa-star"></i><i class="fas fa-star"></i> Avansert
+              nivå</span
+            >
           </div>
           <div class="task-wrapper">
-            <button class="prev-btn" data-row="row3"><i class="fas fa-chevron-left"></i></button>
+            <button class="prev-btn" data-row="row3">
+              <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="task-container">
               <div class="task-slider" id="row3">
                 <!-- JS fyller inn boksene her -->
               </div>
             </div>
-            <button class="next-btn" data-row="row3"><i class="fas fa-chevron-right"></i></button>
+            <button class="next-btn" data-row="row3">
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -141,13 +207,22 @@
 
     <footer>
       <div class="container py-2 text-center">
+<<<<<<< HEAD
         <div class="footer-logo">
           <img src="images/logotextny.png" alt="Learning2Judge" style="max-width: 180px;">
         </div>
         <p>&copy; 2025 Learning2Judge - En digital læringsplattform for dressurdommere</p>
+=======
+        <p>
+          &copy; 2025 Learning2Judge - En digital læringsplattform for
+          dressurdommere
+        </p>
+>>>>>>> c7a050bb772671321f7f030fa211b974c02fff24
         <div class="social-links mt-2">
           <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Instagram"
+            ><i class="fab fa-instagram"></i
+          ></a>
           <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
         </div>
       </div>
