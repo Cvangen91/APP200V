@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
   function updateHeader() {
-    // Verifica se o usuário está autenticado
+    // Check if user is authenticated
     const isLoggedIn = localStorage.getItem('access_token') !== null;
     const username = localStorage.getItem('username');
 
-    // Obtém o caminho atual para destacar o link ativo
+    // Get current path to highlight active link
     const currentPath = window.location.pathname;
     const currentPage = currentPath.split('/').pop() || 'index.html';
 
-    // Header HTML com conteúdo condicional baseado no status de autenticação
+    // Header HTML with conditional content based on authentication status
     const headerHTML = `
       <header>
         <nav>
@@ -47,12 +47,12 @@ document.addEventListener('DOMContentLoaded', function () {
       </header>
     `;
     
-    // Insere o header no elemento com ID 'header'
+    // Insert header into element with ID 'header'
     const headerElement = document.getElementById('header');
     if (headerElement) {
       headerElement.innerHTML = headerHTML;
       
-      // Adiciona evento ao botão de menu hamburguer após inserção do header
+      // Add event to hamburger menu button after header insertion
       const menuToggle = document.querySelector('.menu-toggle');
       const navLinks = document.querySelector('.nav-links');
       
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
         menuToggle.addEventListener('click', function() {
           navLinks.classList.toggle('active');
           
-          // Adiciona efeito de animação ao abrir/fechar o menu
+          // Add animation effect when opening/closing menu
           if (navLinks.classList.contains('active')) {
             const links = navLinks.querySelectorAll('li');
             links.forEach((link, index) => {
@@ -75,24 +75,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
       
-      // Adicionar evento de logout ao botão após inserção no DOM
+      // Add logout event to button after DOM insertion
       const loginButton = document.getElementById('login-button');
       if (loginButton) {
         loginButton.addEventListener('click', function(e) {
           e.preventDefault();
           
-          // Se estiver logado, faça logout
+          // If logged in, do logout
           if (isLoggedIn) {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('username');
             alert('Du har blitt logget ut.');
-            // Atualiza o header após logout
+            // Update header after logout
             updateHeader();
-            // Redireciona para a página inicial
+            // Redirect to home page
             window.location.href = 'index.html';
           } else {
-            // Se não estiver logado, mostra o formulário de login
+            // If not logged in, show login form
             const loginContainer = document.getElementById('login-container');
             if (loginContainer) {
               loginContainer.style.display = 'flex';
@@ -103,10 +103,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
   
-  // Atualiza o header imediatamente quando a página carrega
+  // Update header immediately when page loads
   updateHeader();
 
-  // Observa mudanças no localStorage para atualizar o header quando o status de login mudar
+  // Watch for changes in localStorage to update header when login status changes
   window.addEventListener('storage', function(e) {
     if (e.key === 'access_token' || e.key === 'username') {
       updateHeader();

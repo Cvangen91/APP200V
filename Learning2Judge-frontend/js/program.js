@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function () { // program.js - Hån
     const visibleBoxes = 3;    // Antall synlige bokser
     const scrollStep = 3;      // Hvor mange bokser som flyttes per klikk
 
-    // Verifica se o usuário está autenticado e exibe o conteúdo correto
+    // Check if user is authenticated and display appropriate content
     const showContent = function() {
         const mainContent = document.getElementById('page-content');
         const authContent = document.getElementById('auth-required');
         
-        // Para testes locais, sempre mostrar o conteúdo
-        const forceShow = true; // Defina como false para produção
+        // For local testing, always show content
+        const forceShow = true; // Set to false for production
         
         if (localStorage.getItem('access_token') === null && !forceShow) {
             // Not logged in, show auth required message
@@ -22,29 +22,29 @@ document.addEventListener("DOMContentLoaded", function () { // program.js - Hån
         }
     };
 
-    showContent(); // Exibe o conteúdo da página
+    showContent();
 
     function createBoxes(rowId) {
         const row = document.getElementById(rowId);
         
         if (!row) {
-            console.warn(`Elemento com ID '${rowId}' não encontrado`);
+            console.warn(`Element with ID '${rowId}' not found`);
             return;
         }
 
         for (let i = 0; i < numBoxes; i++) {
             const box = document.createElement("a"); 
             box.classList.add("task-box");
-            box.href = `testing.html?program=${i + 1}`;  // Link para a página de teste
+            box.href = `testing.html?program=${i + 1}`;  // Link to test page
             
-            // Placeholder para imagens em caso de falta
+            // Placeholder for images in case of missing
             const imgSrc = `images/program${i + 1}.jpg`;
             const fallbackSrc = i % 2 === 0 ? "images/bilde1.jpg" : "images/bilde2.jpg";
             
             const img = document.createElement("img");
             img.alt = `Program ${i + 1}`;
             
-            // Tenta carregar a imagem, se falhar, usa fallback
+            // Try to load image, use fallback if failed
             img.onerror = function() {
                 this.src = fallbackSrc;
             };
@@ -55,17 +55,17 @@ document.addEventListener("DOMContentLoaded", function () { // program.js - Hån
         }
     }
 
-    // Lager boksene for hver rad
+    // Create boxes for each row
     createBoxes("row1");
     createBoxes("row2");
-    createBoxes("row3"); // Adicionado para a tredje linje
+    createBoxes("row3");
 
     function updateButtonState(rowId, currentScroll) {
         const prevButton = document.querySelector(`.prev-btn[data-row="${rowId}"]`);
         const nextButton = document.querySelector(`.next-btn[data-row="${rowId}"]`);
 
         if (!prevButton || !nextButton) {
-            console.warn(`Botões para a linha '${rowId}' não encontrados`);
+            console.warn(`Buttons for row '${rowId}' not found`);
             return;
         }
 
@@ -73,14 +73,14 @@ document.addEventListener("DOMContentLoaded", function () { // program.js - Hån
         nextButton.disabled = currentScroll >= numBoxes - visibleBoxes;
     }
 
-    // Event listeners para os botões
+    // Event listeners for buttons
     document.querySelectorAll(".prev-btn, .next-btn").forEach((button) => {
         button.addEventListener("click", function () {
             const rowId = this.dataset.row;
             const slider = document.getElementById(rowId);
             
             if (!slider) {
-                console.warn(`Slider para '${rowId}' não encontrado`);
+                console.warn(`Slider for '${rowId}' not found`);
                 return;
             }
             
@@ -95,13 +95,13 @@ document.addEventListener("DOMContentLoaded", function () { // program.js - Hån
             slider.style.transform = `translateX(-${currentScroll * 155}px)`;
             slider.dataset.scroll = currentScroll;
 
-            // Oppdater pilenes utseende
+            // Update button appearance
             updateButtonState(rowId, currentScroll);
         });
     });
 
-    // Starttilstand for pilene
+    // Initial state for buttons
     updateButtonState("row1", 0);
     updateButtonState("row2", 0);
-    updateButtonState("row3", 0); // Adicionado para a tredje linje
+    updateButtonState("row3", 0);
 });
