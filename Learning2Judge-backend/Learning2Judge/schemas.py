@@ -26,53 +26,53 @@ class UserLoginSchema(BaseModel):
     password: str
 
 class CategorySchema(BaseModel):
-    category_id: str
+    category_id: int
     name: str
-    description: str
+    description: Optional[str] = None
 
     class Config:
         from_attributes = True
 
 class CategoryCreateSchema(BaseModel):
     name: str
-    description: str
+    description: Optional[str] = None
 
 class ProgramSchema(BaseModel):
     program_id: int
     name: str
-    description: str
-    equipage_id: int
+    description: Optional[str] = None
+    equipage_id: Optional[int] = None
 
     class Config:
         from_attributes = True
 
 class ProgramCreateSchema(BaseModel):
     name: str
-    description: str
-    equipage_id: int
+    description: Optional[str] = None
+    equipage_id: Optional[int] = None
 
 class ProgramDetailSchema(BaseModel):
     program_id: int
     name: str
-    description: str
-    equipage_id: int
+    description: Optional[str] = None
+    equipage_id: Optional[int] = None
     exercises: List[int]
 
 class ExerciseSchema(BaseModel):
     exercise_id: int
-    category_id: str
+    category_id: int
     name: str
-    description: str
-    video_url: str
+    description: Optional[str] = None
+    video_url: Optional[str] = None
 
     class Config:
         from_attributes = True
 
 class ExerciseCreateSchema(BaseModel):
-    category_id: str
+    category_id: int
     name: str
-    description: str
-    video_url: str
+    description: Optional[str] = None
+    video_url: Optional[str] = None
 
 class CorrectScoreSchema(BaseModel):
     correct_score_id: int
