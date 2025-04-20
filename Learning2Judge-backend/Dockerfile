@@ -1,32 +1,32 @@
 FROM python:3.10-slim
 
-# Configurações de ambiente
+# Environment settings
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Instala dependências do sistema como root
+# Install system dependencies as root
 RUN apt-get update && apt-get install -y \
   gcc \
   libpq-dev \
   && rm -rf /var/lib/apt/lists/*
 
-# Cria usuário para evitar rodar como root
+# Create non-root user
 RUN useradd -m usuario
 WORKDIR /app
 RUN chown usuario:usuario /app
 
-# Muda para o usuário não-root
+# Switch to non-root user
 USER usuario
 
-# Instala dependências do Python
+# Install Python dependencies
 COPY --chown=usuario:usuario requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Copia o projeto
+# Copy project
 COPY --chown=usuario:usuario . .
 
-# Porta exposta
+# Expose port
 EXPOSE 8000
 
-# Comando de execução
+# Execution command
 CMD ["sh", "-c", "python manage.py makemigrations Learning2Judge && python manage.py migrate && python manage.py load_mock_data && python manage.py runserver 0.0.0.0:8000"]

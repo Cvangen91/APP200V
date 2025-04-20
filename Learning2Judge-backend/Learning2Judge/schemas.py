@@ -1,100 +1,124 @@
-from typing import List, Optional
 from ninja import Schema
-from pydantic import SecretStr
+from typing import List, Optional
+from pydantic import BaseModel, EmailStr, SecretStr
 from datetime import datetime
 
-class UserCreateSchema(Schema):
+class UserCreateSchema(BaseModel):
     username: str
-    email: str
+    email: EmailStr
     password: SecretStr
 
-class UserSchema(Schema):
+class UserSchema(BaseModel):
     id: int
     username: str
     email: str
     is_judge: bool
     created_at: datetime
 
-class UserUpdateSchema(Schema):
-    email: Optional[str]
-    is_judge: Optional[bool]
+    class Config:
+        from_attributes = True
 
-class UserLoginSchema(Schema):
+class UserUpdateSchema(BaseModel):
+    email: Optional[EmailStr] = None
+
+class UserLoginSchema(BaseModel):
     username: str
     password: str
 
-class CategorySchema(Schema):
-    category_id: int  # Changed to integer
+class CategorySchema(BaseModel):
+    category_id: str
     name: str
+    description: str
 
-class CategoryCreateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class CategoryCreateSchema(BaseModel):
     name: str
+    description: str
 
-class ProgramSchema(Schema):
-    program_id: int  # Changed to integer
-    name: str
-    description: Optional[str] = None
-    equipage_id: Optional[int] = None  # Changed to integer
-
-class ProgramCreateSchema(Schema):
-    name: str
-    description: Optional[str] = None
-    equipage_id: Optional[int] = None  # Changed to integer
-
-class ProgramDetailSchema(Schema):
+class ProgramSchema(BaseModel):
     program_id: int
     name: str
-    description: Optional[str]
-    equipage_id: Optional[int]
-    exercises: List[int]  # List of exercise IDs
+    description: str
+    equipage_id: int
 
-class ExerciseSchema(Schema):
-    exercise_id: int  # Changed to integer
+    class Config:
+        from_attributes = True
+
+class ProgramCreateSchema(BaseModel):
     name: str
-    category_id: int
+    description: str
+    equipage_id: int
 
-class ExerciseCreateSchema(Schema):
+class ProgramDetailSchema(BaseModel):
+    program_id: int
     name: str
-    category_id: int
-    description: Optional[str]
+    description: str
+    equipage_id: int
+    exercises: List[int]
 
-class CorrectScoreSchema(Schema):
-    correct_score_id: int  # Changed to integer
-    correct_score: float
-    execution_number: int
+class ExerciseSchema(BaseModel):
     exercise_id: int
-    program_id: int  # Changed to integer
+    category_id: str
+    name: str
+    description: str
+    video_url: str
 
-class CorrectScoreCreateSchema(Schema):
-    correct_score: float
-    execution_number: int
+    class Config:
+        from_attributes = True
+
+class ExerciseCreateSchema(BaseModel):
+    category_id: str
+    name: str
+    description: str
+    video_url: str
+
+class CorrectScoreSchema(BaseModel):
+    correct_score_id: int
+    program_id: int
     exercise_id: int
-    program_id: int  # Changed to integer
+    correct_score: float
 
-class UserSessionSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class CorrectScoreCreateSchema(BaseModel):
+    program_id: int
+    exercise_id: int
+    correct_score: float
+
+class UserSessionSchema(BaseModel):
     user_session_id: int
     user_id: int
     program_id: int
-    timestamp: str
+    timestamp: datetime
 
-class UserSessionCreateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class UserSessionCreateSchema(BaseModel):
     program_id: int
 
-class UserSessionDetailSchema(Schema):
+class UserSessionDetailSchema(BaseModel):
     user_session_id: int
     user_id: int
     program_id: int
-    timestamp: str
+    timestamp: datetime
     program_name: str
-    scores: List['UserScoreSchema']  # List of user scores
+    scores: List['UserScoreSchema']
 
-class UserScoreSchema(Schema):
+class UserScoreSchema(BaseModel):
     user_score_id: int
     user_session_id: int
     correct_score_id: int
     user_score: float
+    timestamp: datetime
 
-class UserScoreCreateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class UserScoreCreateSchema(BaseModel):
     user_session_id: int
     correct_score_id: int
     user_score: float

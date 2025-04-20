@@ -63,7 +63,7 @@ def list_categories(request):
     return Category.objects.all()
 
 @api.get("/categories/{category_id}", response={200: CategorySchema, 404: dict}, auth=JWTAuth())
-def get_category(request, category_id: str):  # Changed back to str because the DB field is character varying
+def get_category(request, category_id: str):
     try:
         return 200, get_object_or_404(Category, category_id=category_id)
     except Category.DoesNotExist:
@@ -78,7 +78,7 @@ def create_category(request, payload: CategoryCreateSchema):
         return 400, {"error": str(e)}
 
 @api.put("/categories/{category_id}", response={200: CategorySchema, 404: dict, 400: dict}, auth=JWTAuth())
-def update_category(request, category_id: str, payload: CategoryCreateSchema):  # Changed back to str
+def update_category(request, category_id: str, payload: CategoryCreateSchema):
     try:
         category = get_object_or_404(Category, category_id=category_id)
         for attr, value in payload.dict().items():
@@ -91,7 +91,7 @@ def update_category(request, category_id: str, payload: CategoryCreateSchema):  
         return 400, {"error": str(e)}
 
 @api.delete("/categories/{category_id}", response={200: dict, 404: dict}, auth=JWTAuth())
-def delete_category(request, category_id: str):  # Changed back to str
+def delete_category(request, category_id: str):
     try:
         category = get_object_or_404(Category, category_id=category_id)
         category.delete()
@@ -102,10 +102,10 @@ def delete_category(request, category_id: str):  # Changed back to str
 # Program endpoints
 @api.get("/programs", response=List[ProgramSchema], auth=JWTAuth())
 def list_programs(request):
-    return Program.objects.all()  # Let the schema handle serialization
+    return Program.objects.all()
 
 @api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
-def get_program(request, program_id: int):  # Changed to integer
+def get_program(request, program_id: int):
     program = get_object_or_404(Program, program_id=program_id)
     exercise_ids = CorrectScore.objects.filter(program=program).values_list('exercise_id', flat=True).distinct()
     return {
@@ -141,7 +141,7 @@ def list_exercises(request):
     return Exercise.objects.all()
 
 @api.get("/exercises/category/{category_id}", response=List[ExerciseSchema], auth=JWTAuth())
-def list_exercises_by_category(request, category_id: str):  # Changed to str to match DB field type
+def list_exercises_by_category(request, category_id: str):
     return Exercise.objects.filter(category_id=category_id)
 
 @api.get("/exercises/{exercise_id}", response=ExerciseSchema, auth=JWTAuth())
@@ -241,8 +241,7 @@ def delete_user_session(request, user_session_id: int):
 # UserScore endpoints
 @api.get("/user-scores/session/{user_session_id}", response=List[UserScoreSchema], auth=JWTAuth())
 def list_user_scores_by_session(request, user_session_id: int):
-    user_session = get_object_or_404(UserSession, user_session_id=user_session_id, user=request.user)
-    return UserScore.objects.filter(user_session=user_session)
+    return UserScore.objects.filter(user_session_id=user_session_id)
 
 @api.get("/user-scores/{user_score_id}", response=UserScoreSchema, auth=JWTAuth())
 def get_user_score(request, user_score_id: int):
@@ -267,7 +266,6 @@ def create_user_score(request, payload: UserScoreCreateSchema):
 @api.delete("/user-scores/{user_score_id}", auth=JWTAuth())
 def delete_user_score(request, user_score_id: int):
     user_score = get_object_or_404(UserScore, user_score_id=user_score_id)
-    # Check if user has permission (is the owner of the session)
     user_session = user_score.user_session
     if user_session.user != request.user:
         return api.create_response(request, {"error": "Permission denied"}, status=403)
@@ -277,60 +275,53 @@ def delete_user_score(request, user_score_id: int):
 # Analytics endpoints
 @api.get("/analytics/user-performance", auth=JWTAuth())
 def user_performance(request):
-    """Get performance analytics for the current user"""
+    # Get all user sessions
     user_sessions = UserSession.objects.filter(user=request.user)
-    total_sessions = user_sessions.count()
     
-    if total_sessions == 0:
+    # Calculate performance metrics
+    total_sessions = user_sessions.count()
+    total_exercises = UserScore.objects.filter(user_session__in=user_sessions).count()
+    
+    if total_exercises == 0:
         return {
-            "total_sessions": 0,
+            "total_sessions": total_sessions,
+            "total_exercises": 0,
             "average_score": 0,
-            "total_exercises_judged": 0,
-            "performance": {}
+            "best_category": None,
+            "worst_category": None
         }
     
-    # Get all user scores
-    user_scores = UserScore.objects.filter(user_session__in=user_sessions).select_related('correct_score__exercise')
+    # Calculate average score
+    average_score = UserScore.objects.filter(
+        user_session__in=user_sessions
+    ).aggregate(avg_score=models.Avg('user_score'))['avg_score']
     
-    # Calculate statistics
-    total_exercises = user_scores.count()
-    if total_exercises == 0:
-        average_score = 0
-    else:
-        # Calculate average difference between user_score and correct_score
-        score_accuracy = 0
-        for score in user_scores:
-            score_diff = abs(score.user_score - score.correct_score.correct_score)
-            max_possible_diff = 10  # Assuming scores are on a scale of 0-10
-            accuracy = (1 - (score_diff / max_possible_diff)) * 100
-            score_accuracy += accuracy
-        
-        average_score = score_accuracy / total_exercises
+    # Get best and worst categories
+    category_scores = {}
+    for score in UserScore.objects.filter(user_session__in=user_sessions):
+        exercise = score.correct_score.exercise
+        if exercise.category_id not in category_scores:
+            category_scores[exercise.category_id] = []
+        category_scores[exercise.category_id].append(score.user_score)
     
-    # Group by category
-    category_performance = {}
-    for score in user_scores:
-        category_name = score.correct_score.exercise.category.name
-        if category_name not in category_performance:
-            category_performance[category_name] = {
-                "exercises_judged": 0,
-                "accuracy": 0
-            }
-        
-        score_diff = abs(score.user_score - score.correct_score.correct_score)
-        max_possible_diff = 10  # Assuming scores are on a scale of 0-10
-        accuracy = (1 - (score_diff / max_possible_diff)) * 100
-        
-        category_performance[category_name]["exercises_judged"] += 1
-        category_performance[category_name]["accuracy"] += accuracy
+    best_category = None
+    worst_category = None
+    best_avg = 0
+    worst_avg = float('inf')
     
-    # Calculate average for each category
-    for category, stats in category_performance.items():
-        stats["accuracy"] = stats["accuracy"] / stats["exercises_judged"]
+    for category_id, scores in category_scores.items():
+        avg = sum(scores) / len(scores)
+        if avg > best_avg:
+            best_avg = avg
+            best_category = category_id
+        if avg < worst_avg:
+            worst_avg = avg
+            worst_category = category_id
     
     return {
         "total_sessions": total_sessions,
+        "total_exercises": total_exercises,
         "average_score": average_score,
-        "total_exercises_judged": total_exercises,
-        "performance_by_category": category_performance
+        "best_category": best_category,
+        "worst_category": worst_category
     }
