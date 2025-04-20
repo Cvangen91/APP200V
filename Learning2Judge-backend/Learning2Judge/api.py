@@ -33,10 +33,15 @@ def register_user(request, payload: UserCreateSchema):
         user = User.objects.create_user(
             username=payload.username,
             email=payload.email,
-            password=payload.password.get_secret_value(),
-            birthdate=payload.birthdate
+            password=payload.password.get_secret_value()
         )
-        return 200, user
+        return 200, {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "is_judge": user.is_judge,
+            "created_at": user.created_at
+        }
     except Exception as e:
         return 500, {"error": str(e)}
 
@@ -49,8 +54,6 @@ def update_user(request, payload: UserUpdateSchema):
     user = request.user
     if payload.email:
         user.email = payload.email
-    if payload.birthdate:
-        user.birthdate = payload.birthdate
     user.save()
     return user
 
@@ -59,41 +62,52 @@ def update_user(request, payload: UserUpdateSchema):
 def list_categories(request):
     return Category.objects.all()
 
-@api.get("/categories/{category_id}", response=CategorySchema, auth=JWTAuth())
-def get_category(request, category_id: int):
-    return get_object_or_404(Category, category_id=category_id)
+@api.get("/categories/{category_id}", response={200: CategorySchema, 404: dict}, auth=JWTAuth())
+def get_category(request, category_id: str):  # Changed back to str because the DB field is character varying
+    try:
+        return 200, get_object_or_404(Category, category_id=category_id)
+    except Category.DoesNotExist:
+        return 404, {"error": f"Category with ID '{category_id}' not found"}
 
-@api.post("/categories", response=CategorySchema, auth=JWTAuth())
+@api.post("/categories", response={200: CategorySchema, 400: dict}, auth=JWTAuth())
 def create_category(request, payload: CategoryCreateSchema):
-    category = Category.objects.create(**payload.dict())
-    return category
+    try:
+        category = Category.objects.create(**payload.dict())
+        return 200, category
+    except Exception as e:
+        return 400, {"error": str(e)}
 
-@api.put("/categories/{category_id}", response=CategorySchema, auth=JWTAuth())
-def update_category(request, category_id: int, payload: CategoryCreateSchema):
-    category = get_object_or_404(Category, category_id=category_id)
-    for attr, value in payload.dict().items():
-        setattr(category, attr, value)
-    category.save()
-    return category
+@api.put("/categories/{category_id}", response={200: CategorySchema, 404: dict, 400: dict}, auth=JWTAuth())
+def update_category(request, category_id: str, payload: CategoryCreateSchema):  # Changed back to str
+    try:
+        category = get_object_or_404(Category, category_id=category_id)
+        for attr, value in payload.dict().items():
+            setattr(category, attr, value)
+        category.save()
+        return 200, category
+    except Category.DoesNotExist:
+        return 404, {"error": f"Category with ID '{category_id}' not found"}
+    except Exception as e:
+        return 400, {"error": str(e)}
 
-@api.delete("/categories/{category_id}", auth=JWTAuth())
-def delete_category(request, category_id: int):
-    category = get_object_or_404(Category, category_id=category_id)
-    category.delete()
-    return {"success": True}
+@api.delete("/categories/{category_id}", response={200: dict, 404: dict}, auth=JWTAuth())
+def delete_category(request, category_id: str):  # Changed back to str
+    try:
+        category = get_object_or_404(Category, category_id=category_id)
+        category.delete()
+        return 200, {"success": True}
+    except Category.DoesNotExist:
+        return 404, {"error": f"Category with ID '{category_id}' not found"}
 
 # Program endpoints
 @api.get("/programs", response=List[ProgramSchema], auth=JWTAuth())
 def list_programs(request):
-    return Program.objects.all()
+    return Program.objects.all()  # Let the schema handle serialization
 
 @api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
-def get_program(request, program_id: int):
+def get_program(request, program_id: int):  # Changed to integer
     program = get_object_or_404(Program, program_id=program_id)
-    
-    # Get all exercise IDs for this program via the correct_scores relationship
     exercise_ids = CorrectScore.objects.filter(program=program).values_list('exercise_id', flat=True).distinct()
-    
     return {
         "program_id": program.program_id,
         "name": program.name,
@@ -127,7 +141,7 @@ def list_exercises(request):
     return Exercise.objects.all()
 
 @api.get("/exercises/category/{category_id}", response=List[ExerciseSchema], auth=JWTAuth())
-def list_exercises_by_category(request, category_id: int):
+def list_exercises_by_category(request, category_id: str):  # Changed to str to match DB field type
     return Exercise.objects.filter(category_id=category_id)
 
 @api.get("/exercises/{exercise_id}", response=ExerciseSchema, auth=JWTAuth())

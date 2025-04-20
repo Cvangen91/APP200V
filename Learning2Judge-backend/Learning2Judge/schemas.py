@@ -1,86 +1,93 @@
+from typing import List, Optional
 from ninja import Schema
-from pydantic import Field, SecretStr, EmailStr
-from typing import Optional, List
-from datetime import datetime, date
+from pydantic import SecretStr
+from datetime import datetime
 
 class UserCreateSchema(Schema):
-    username: str = Field(..., min_length=3, max_length=150)
-    email: EmailStr = Field(...)
-    password: SecretStr = Field(..., min_length=8)
-    birthdate: Optional[date] = None
+    username: str
+    email: str
+    password: SecretStr
 
 class UserSchema(Schema):
     id: int
     username: str
     email: str
-    birthdate: Optional[date] = None
     is_judge: bool
+    created_at: datetime
 
 class UserUpdateSchema(Schema):
-    email: Optional[EmailStr] = None
-    birthdate: Optional[date] = None
+    email: Optional[str]
+    is_judge: Optional[bool]
 
 class UserLoginSchema(Schema):
     username: str
-    password: SecretStr
+    password: str
 
-# Category schemas
 class CategorySchema(Schema):
-    category_id: int
+    category_id: int  # Changed to integer
     name: str
 
 class CategoryCreateSchema(Schema):
     name: str
 
-# Program schemas
 class ProgramSchema(Schema):
-    program_id: int
+    program_id: int  # Changed to integer
     name: str
     description: Optional[str] = None
-    equipage_id: Optional[int] = None
+    equipage_id: Optional[int] = None  # Changed to integer
 
 class ProgramCreateSchema(Schema):
     name: str
     description: Optional[str] = None
-    equipage_id: Optional[int] = None
+    equipage_id: Optional[int] = None  # Changed to integer
 
-# Exercise schemas
+class ProgramDetailSchema(Schema):
+    program_id: int
+    name: str
+    description: Optional[str]
+    equipage_id: Optional[int]
+    exercises: List[int]  # List of exercise IDs
+
 class ExerciseSchema(Schema):
-    exercise_id: int
+    exercise_id: int  # Changed to integer
     name: str
     category_id: int
-    description: Optional[str] = None
 
 class ExerciseCreateSchema(Schema):
     name: str
     category_id: int
-    description: Optional[str] = None
+    description: Optional[str]
 
-# CorrectScore schemas
 class CorrectScoreSchema(Schema):
-    correct_score_id: int
+    correct_score_id: int  # Changed to integer
     correct_score: float
     execution_number: int
     exercise_id: int
-    program_id: int
+    program_id: int  # Changed to integer
 
 class CorrectScoreCreateSchema(Schema):
     correct_score: float
     execution_number: int
     exercise_id: int
-    program_id: int
+    program_id: int  # Changed to integer
 
-# UserSession schemas
 class UserSessionSchema(Schema):
     user_session_id: int
     user_id: int
     program_id: int
-    timestamp: datetime
+    timestamp: str
 
 class UserSessionCreateSchema(Schema):
     program_id: int
 
-# UserScore schemas
+class UserSessionDetailSchema(Schema):
+    user_session_id: int
+    user_id: int
+    program_id: int
+    timestamp: str
+    program_name: str
+    scores: List['UserScoreSchema']  # List of user scores
+
 class UserScoreSchema(Schema):
     user_score_id: int
     user_session_id: int
@@ -91,19 +98,3 @@ class UserScoreCreateSchema(Schema):
     user_session_id: int
     correct_score_id: int
     user_score: float
-
-# Summary schemas for better API responses
-class UserSessionDetailSchema(Schema):
-    user_session_id: int
-    user_id: int
-    program_id: int
-    timestamp: datetime
-    program_name: str
-    scores: List[UserScoreSchema]
-
-class ProgramDetailSchema(Schema):
-    program_id: int
-    name: str
-    description: Optional[str] = None
-    equipage_id: Optional[int] = None
-    exercises: List[int]  # List of exercise IDs included in the program
