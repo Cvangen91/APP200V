@@ -1,49 +1,49 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_judge = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    birthdate = models.DateField(null=True, blank=True)
-    
+
     def __str__(self):
         return self.username
 
-class Category(models.Model):
-    category_id = models.AutoField(primary_key=True)
+class Program(models.Model):
+    program_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    equipage_id = models.IntegerField(null=True, blank=True)  # Changed to IntegerField
+    video_path = models.TextField(blank=True, null=True)  # Added to match the data being loaded
 
     def __str__(self):
         return self.name
 
-class Program(models.Model):
-    program_id = models.AutoField(primary_key=True)
+class Category(models.Model):
+    category_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    equipage_id = models.IntegerField(null=True, blank=True)  # Added equipage_id field
 
     def __str__(self):
         return self.name
 
 class Exercise(models.Model):
-    exercise_id = models.AutoField(primary_key=True)
+    exercise_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='exercises')
     description = models.TextField(blank=True, null=True)
+    video_url = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
 
 class CorrectScore(models.Model):
-    correct_score_id = models.AutoField(primary_key=True)
+    correct_score_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
     correct_score = models.DecimalField(max_digits=5, decimal_places=2)
     execution_number = models.IntegerField()
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name='correct_scores')
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='correct_scores')
-    
+
     def __str__(self):
         return f"Score {self.correct_score} for {self.exercise.name} in {self.program.name}"
 

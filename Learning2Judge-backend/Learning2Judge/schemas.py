@@ -1,109 +1,124 @@
 from ninja import Schema
-from pydantic import Field, SecretStr, EmailStr
-from typing import Optional, List
-from datetime import datetime, date
+from typing import List, Optional
+from pydantic import BaseModel, EmailStr, SecretStr
+from datetime import datetime
 
-class UserCreateSchema(Schema):
-    username: str = Field(..., min_length=3, max_length=150)
-    email: EmailStr = Field(...)
-    password: SecretStr = Field(..., min_length=8)
-    birthdate: Optional[date] = None
+class UserCreateSchema(BaseModel):
+    username: str
+    email: EmailStr
+    password: SecretStr
 
-class UserSchema(Schema):
+class UserSchema(BaseModel):
     id: int
     username: str
     email: str
-    birthdate: Optional[date] = None
     is_judge: bool
+    created_at: datetime
 
-class UserUpdateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class UserUpdateSchema(BaseModel):
     email: Optional[EmailStr] = None
-    birthdate: Optional[date] = None
 
-class UserLoginSchema(Schema):
+class UserLoginSchema(BaseModel):
     username: str
-    password: SecretStr
+    password: str
 
-# Category schemas
-class CategorySchema(Schema):
+class CategorySchema(BaseModel):
     category_id: int
     name: str
+    description: Optional[str] = None
 
-class CategoryCreateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class CategoryCreateSchema(BaseModel):
     name: str
+    description: Optional[str] = None
 
-# Program schemas
-class ProgramSchema(Schema):
+class ProgramSchema(BaseModel):
     program_id: int
     name: str
     description: Optional[str] = None
     equipage_id: Optional[int] = None
 
-class ProgramCreateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class ProgramCreateSchema(BaseModel):
     name: str
     description: Optional[str] = None
     equipage_id: Optional[int] = None
 
-# Exercise schemas
-class ExerciseSchema(Schema):
+class ProgramDetailSchema(BaseModel):
+    program_id: int
+    name: str
+    description: Optional[str] = None
+    equipage_id: Optional[int] = None
+    exercises: List[int]
+
+class ExerciseSchema(BaseModel):
     exercise_id: int
-    name: str
     category_id: int
-    description: Optional[str] = None
-
-class ExerciseCreateSchema(Schema):
     name: str
-    category_id: int
     description: Optional[str] = None
+    video_url: Optional[str] = None
 
-# CorrectScore schemas
-class CorrectScoreSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class ExerciseCreateSchema(BaseModel):
+    category_id: int
+    name: str
+    description: Optional[str] = None
+    video_url: Optional[str] = None
+
+class CorrectScoreSchema(BaseModel):
     correct_score_id: int
-    correct_score: float
-    execution_number: int
-    exercise_id: int
     program_id: int
-
-class CorrectScoreCreateSchema(Schema):
-    correct_score: float
-    execution_number: int
     exercise_id: int
-    program_id: int
+    correct_score: float
 
-# UserSession schemas
-class UserSessionSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class CorrectScoreCreateSchema(BaseModel):
+    program_id: int
+    exercise_id: int
+    correct_score: float
+
+class UserSessionSchema(BaseModel):
     user_session_id: int
     user_id: int
     program_id: int
     timestamp: datetime
 
-class UserSessionCreateSchema(Schema):
+    class Config:
+        from_attributes = True
+
+class UserSessionCreateSchema(BaseModel):
     program_id: int
 
-# UserScore schemas
-class UserScoreSchema(Schema):
-    user_score_id: int
-    user_session_id: int
-    correct_score_id: int
-    user_score: float
-
-class UserScoreCreateSchema(Schema):
-    user_session_id: int
-    correct_score_id: int
-    user_score: float
-
-# Summary schemas for better API responses
-class UserSessionDetailSchema(Schema):
+class UserSessionDetailSchema(BaseModel):
     user_session_id: int
     user_id: int
     program_id: int
     timestamp: datetime
     program_name: str
-    scores: List[UserScoreSchema]
+    scores: List['UserScoreSchema']
 
-class ProgramDetailSchema(Schema):
-    program_id: int
-    name: str
-    description: Optional[str] = None
-    equipage_id: Optional[int] = None
-    exercises: List[int]  # List of exercise IDs included in the program
+class UserScoreSchema(BaseModel):
+    user_score_id: int
+    user_session_id: int
+    correct_score_id: int
+    user_score: float
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+class UserScoreCreateSchema(BaseModel):
+    user_session_id: int
+    correct_score_id: int
+    user_score: float

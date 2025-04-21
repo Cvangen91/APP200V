@@ -1,0 +1,41 @@
+ExerciseId,ExerciseName,CategoryId
+1,Volte i trav,1
+2,Versade,1
+3,Traver,1
+4,Sjenkelvikning i trav,1
+5,Serpentine i trav,1
+6,Øket trav,1
+7,Midtlinje - holdt - hilsning,1
+8,Mellomtrav,1
+9,Innridning i trav - holdt - hilsning,1
+10,Halvvolte - halvvolte,1
+11,Diagonal m/skrittovergang,1
+12,Arbeidstrav,1
+13,Volte i galopp,2
+14,Øket galopp,2
+15,Mellomgalopp,2
+16,Kontragalopp,2
+17,Innridning i galopp - holdt - hilsning,2
+18,Enkelt galoppombytte,2
+19,Arbeidsgalopp,2
+20,Sjenkelvikning i skritt,3
+21,Samlet skritt,3
+22,Øket skritt,3
+23,Mellomskritt,3
+24,Innridning i skritt - holdt - hilsning,3
+25,Holdt - rygging,3
+26,Fritt skritt,3
+27,Bakdelsvending,3
+28,Takt,4
+29,Rytterens sits og hjelpere,4
+30,Rytteren,4
+31,Nøyaktighet,4
+32,Løsgjorthet og kontakt,4
+33,Harmoni og evne til samling,4
+34,Gangarter,4
+35,Fremadbydning og løsgjorthet,4
+36,Overgang(er),5
+37,Changement,2
+38,Galopptraver,2
+39,Changement serie,2
+40,Galopp piruett,2
