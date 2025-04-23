@@ -1,6 +1,8 @@
 let exercises = [];
 let scores = [];
 let correctScores = [];
+let program;
+let videoPath;
 
 function getProgramIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -17,17 +19,20 @@ document.addEventListener('DOMContentLoaded', async function () {
   const token = localStorage.getItem('access_token');
   if (!token) return;
 
+  console.log('TOKEN:', token);
+
   try {
     const programRes = await fetch(
-      `https://localhost:8000/api/programs/${programId}`,
+      `http://localhost:8000/api/programs/${programId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    const program = await programRes.json();
+    program = await programRes.json();
+    console.log(program);
 
     const correctRes = await fetch(
-      `https://localhost:8000/api/correct-scores/program/${programId}`,
+      `http://localhost:8000/api/programs/${programId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -50,10 +55,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   const videoContainer = document.getElementById('video-container');
-  if (videoContainer && program.video_path) {
+  if (videoContainer && videoPath) {
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
-      src="${program.video_path}"
+      src="${videoPath}"
       title="Programvideo"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
