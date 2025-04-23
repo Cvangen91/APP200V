@@ -42,6 +42,7 @@ class ProgramSchema(BaseModel):
     name: str
     description: Optional[str] = None
     equipage_id: Optional[int] = None
+    video_path: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -50,12 +51,14 @@ class ProgramCreateSchema(BaseModel):
     name: str
     description: Optional[str] = None
     equipage_id: Optional[int] = None
+    video_path: Optional[str] = None
 
 class ProgramDetailSchema(BaseModel):
     program_id: int
     name: str
     description: Optional[str] = None
     equipage_id: Optional[int] = None
+    video_path: Optional[str] = None
     exercises: List[int]
 
 class ExerciseSchema(BaseModel):
