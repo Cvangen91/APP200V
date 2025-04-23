@@ -113,6 +113,7 @@ def get_program(request, program_id: int):
         "name": program.name,
         "description": program.description,
         "equipage_id": program.equipage_id,
+        "video_path": program.video_path,
         "exercises": list(exercise_ids)
     }
 

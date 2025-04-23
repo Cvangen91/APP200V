@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   try {
     const programRes = await fetch(
-      `https://your-api.com/api/programs/${programId}`,
+      `https://localhost:8000/api/programs/${programId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const program = await programRes.json();
 
     const correctRes = await fetch(
-      `https://your-api.com/api/correct-scores/program/${programId}`,
+      `https://localhost:8000/api/correct-scores/program/${programId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   const videoContainer = document.getElementById('video-container');
-  if (videoContainer && program.video_url) {
+  if (videoContainer && program.video_path) {
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
-      src="${program.video_url}"
+      src="${program.video_path}"
       title="Programvideo"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -160,7 +160,7 @@ async function showSuccess() {
   const token = localStorage.getItem('access_token');
 
   // Opprett userSession
-  const sessionRes = await fetch(`https://your-api.com/api/user-sessions`, {
+  const sessionRes = await fetch(`https://localhost:8000/api/user-sessions`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -174,7 +174,7 @@ async function showSuccess() {
 
   // Lagre scores
   for (let i = 0; i < scores.length; i++) {
-    await fetch(`https://your-api.com/api/user-scores`, {
+    await fetch(`https://localhost:8000/api/user-scores`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
