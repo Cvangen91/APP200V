@@ -39,9 +39,9 @@ class Command(BaseCommand):
 
         # Mock programs data
         programs_data = [
-            {'ProgramId': 1, 'ProgramName': 'Basic Training', 'Description': 'Fundamental training program', 'EquipageId': 1, 'VideoPath': '/videos/basic.mp4'},
-            {'ProgramId': 2, 'ProgramName': 'Advanced Training', 'Description': 'Advanced training program', 'EquipageId': 2, 'VideoPath': '/videos/advanced.mp4'},
-            {'ProgramId': 3, 'ProgramName': 'Special Training', 'Description': 'Special training program', 'EquipageId': 3, 'VideoPath': '/videos/special.mp4'}
+            {'ProgramId': 1, 'ProgramName': 'LB3', 'Description': 'Fundamental training program', 'EquipageId': 1, 'VideoPath': 'https://www.youtube.com/watch?v=qXQcxVEMtiw&t=1s'},
+            {'ProgramId': 2, 'ProgramName': 'LA3', 'Description': 'Advanced training program', 'EquipageId': 2, 'VideoPath': 'https://www.youtube.com/watch?v=Oc_FQV7Wc_E&t=59s'},
+            {'ProgramId': 3, 'ProgramName': 'MB1', 'Description': 'Special training program', 'EquipageId': 3, 'VideoPath': 'https://www.youtube.com/watch?v=9liTn3hAjrA'}
         ]
 
         for row in programs_data:
