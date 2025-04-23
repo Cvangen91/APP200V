@@ -37,15 +37,14 @@ class Exercise(models.Model):
     def __str__(self):
         return self.name
 
-class CorrectScore(models.Model):
-    correct_score_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
-    correct_score = models.DecimalField(max_digits=5, decimal_places=2)
-    execution_number = models.IntegerField()
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name='correct_scores')
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='correct_scores')
+class ProgramScore(models.Model):
+    program_score_id = models.AutoField(primary_key=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    score = models.FloatField()
 
     def __str__(self):
-        return f"Score {self.correct_score} for {self.exercise.name} in {self.program.name}"
+        return f"ProgramScore {self.program_score_id} - Program: {self.program.name}, Exercise: {self.exercise.name}"
 
 class UserSession(models.Model):
     user_session_id = models.AutoField(primary_key=True)
@@ -59,7 +58,7 @@ class UserSession(models.Model):
 class UserScore(models.Model):
     user_score_id = models.AutoField(primary_key=True)
     user_session = models.ForeignKey(UserSession, on_delete=models.CASCADE, related_name='user_scores')
-    correct_score = models.ForeignKey(CorrectScore, on_delete=models.CASCADE, related_name='user_scores')
+    correct_score = models.ForeignKey(ProgramScore, on_delete=models.CASCADE, related_name='user_scores')
     user_score = models.DecimalField(max_digits=5, decimal_places=2)
     
     def __str__(self):

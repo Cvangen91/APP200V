@@ -77,19 +77,19 @@ class ExerciseCreateSchema(BaseModel):
     description: Optional[str] = None
     video_url: Optional[str] = None
 
-class CorrectScoreSchema(BaseModel):
-    correct_score_id: int
+class ProgramScoreSchema(BaseModel):
+    program_score_id: int
     program_id: int
     exercise_id: int
-    correct_score: float
+    score: float
 
     class Config:
         from_attributes = True
 
-class CorrectScoreCreateSchema(BaseModel):
+class ProgramScoreCreateSchema(BaseModel):
     program_id: int
     exercise_id: int
-    correct_score: float
+    score: float
 
 class UserSessionSchema(BaseModel):
     user_session_id: int

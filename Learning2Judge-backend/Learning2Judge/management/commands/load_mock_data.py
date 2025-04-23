@@ -1,6 +1,6 @@
 import os
 from django.core.management.base import BaseCommand
-from Learning2Judge.models import Category, Program, Exercise, CorrectScore
+from Learning2Judge.models import Category, Program, Exercise, ProgramScore
 from decimal import Decimal
 
 class Command(BaseCommand):
@@ -89,19 +89,19 @@ class Command(BaseCommand):
             except (ValueError, KeyError) as e:
                 self.stdout.write(self.style.ERROR(f"Error creating exercise: {str(e)}"))
 
-        # Mock correct scores data
+        # Mock program scores data
         scores_data = [
-            {'Id': 1, 'ProgramId': 1, 'ExerciseId': 1, 'ExecutionNumber': 1, 'CorrectScore': '10.0'},
-            {'Id': 2, 'ProgramId': 1, 'ExerciseId': 2, 'ExecutionNumber': 1, 'CorrectScore': '15.0'},
-            {'Id': 3, 'ProgramId': 2, 'ExerciseId': 3, 'ExecutionNumber': 1, 'CorrectScore': '20.0'},
-            {'Id': 4, 'ProgramId': 2, 'ExerciseId': 4, 'ExecutionNumber': 1, 'CorrectScore': '25.0'},
-            {'Id': 5, 'ProgramId': 3, 'ExerciseId': 5, 'ExecutionNumber': 1, 'CorrectScore': '30.0'},
-            {'Id': 6, 'ProgramId': 3, 'ExerciseId': 6, 'ExecutionNumber': 1, 'CorrectScore': '35.0'}
+            {'Id': 1, 'ProgramId': 1, 'ExerciseId': 1, 'Score': '10.0'},
+            {'Id': 2, 'ProgramId': 1, 'ExerciseId': 2, 'Score': '15.0'},
+            {'Id': 3, 'ProgramId': 2, 'ExerciseId': 3, 'Score': '20.0'},
+            {'Id': 4, 'ProgramId': 2, 'ExerciseId': 4, 'Score': '25.0'},
+            {'Id': 5, 'ProgramId': 3, 'ExerciseId': 5, 'Score': '30.0'},
+            {'Id': 6, 'ProgramId': 3, 'ExerciseId': 6, 'Score': '35.0'}
         ]
 
         for row in scores_data:
             try:
-                correct_score_id = row['Id']
+                program_score_id = row['Id']
                 program_id = row['ProgramId']
                 exercise_id = row['ExerciseId']
                 
@@ -111,16 +111,15 @@ class Command(BaseCommand):
                 if not Program.objects.filter(program_id=program_id).exists():
                     continue
                 
-                CorrectScore.objects.get_or_create(
-                    correct_score_id=correct_score_id,
+                ProgramScore.objects.get_or_create(
+                    program_score_id=program_score_id,
                     defaults={
                         'program_id': program_id,
-                        'execution_number': row['ExecutionNumber'],
                         'exercise_id': exercise_id,
-                        'correct_score': Decimal(row['CorrectScore'])
+                        'score': float(row['Score'])
                     }
                 )
             except (ValueError, KeyError) as e:
-                self.stdout.write(self.style.ERROR(f"Error creating correct score: {str(e)}"))
+                self.stdout.write(self.style.ERROR(f"Error creating program score: {str(e)}"))
 
         self.stdout.write(self.style.SUCCESS('Mock data loaded successfully.'))

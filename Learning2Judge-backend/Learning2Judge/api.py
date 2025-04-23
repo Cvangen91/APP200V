@@ -3,13 +3,13 @@ from django.contrib.auth import authenticate
 from ninja_extra import NinjaExtraAPI
 from django.shortcuts import get_object_or_404
 from typing import List
-from .models import User, Category, Program, Exercise, UserSession, UserScore, CorrectScore
+from .models import User, Category, Program, Exercise, UserSession, UserScore, ProgramScore
 from .schemas import (
     UserCreateSchema, UserSchema, UserUpdateSchema, UserLoginSchema, 
     CategorySchema, CategoryCreateSchema,
     ProgramSchema, ProgramCreateSchema, ProgramDetailSchema,
     ExerciseSchema, ExerciseCreateSchema,
-    CorrectScoreSchema, CorrectScoreCreateSchema,
+    ProgramScoreSchema, ProgramScoreCreateSchema,
     UserSessionSchema, UserSessionCreateSchema, UserSessionDetailSchema,
     UserScoreSchema, UserScoreCreateSchema
 )
@@ -107,7 +107,7 @@ def list_programs(request):
 @api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
 def get_program(request, program_id: int):
     program = get_object_or_404(Program, program_id=program_id)
-    exercise_ids = CorrectScore.objects.filter(program=program).values_list('exercise_id', flat=True).distinct()
+    exercise_ids = ProgramScore.objects.filter(program=program).values_list('exercise_id', flat=True).distinct()
     return {
         "program_id": program.program_id,
         "name": program.name,
@@ -168,40 +168,40 @@ def delete_exercise(request, exercise_id: int):
     exercise.delete()
     return {"success": True}
 
-# CorrectScore endpoints
-@api.get("/correct-scores", response=List[CorrectScoreSchema], auth=JWTAuth())
-def list_correct_scores(request):
-    return CorrectScore.objects.all()
+# ProgramScore endpoints
+@api.get("/program-scores", response=List[ProgramScoreSchema], auth=JWTAuth())
+def list_program_scores(request):
+    return ProgramScore.objects.all()
 
-@api.get("/correct-scores/program/{program_id}", response=List[CorrectScoreSchema], auth=JWTAuth())
-def list_correct_scores_by_program(request, program_id: int):
-    return CorrectScore.objects.filter(program_id=program_id)
+@api.get("/program-scores/program/{program_id}", response=List[ProgramScoreSchema], auth=JWTAuth())
+def list_program_scores_by_program(request, program_id: int):
+    return ProgramScore.objects.filter(program_id=program_id)
 
-@api.get("/correct-scores/exercise/{exercise_id}", response=List[CorrectScoreSchema], auth=JWTAuth())
-def list_correct_scores_by_exercise(request, exercise_id: int):
-    return CorrectScore.objects.filter(exercise_id=exercise_id)
+@api.get("/program-scores/exercise/{exercise_id}", response=List[ProgramScoreSchema], auth=JWTAuth())
+def list_program_scores_by_exercise(request, exercise_id: int):
+    return ProgramScore.objects.filter(exercise_id=exercise_id)
 
-@api.get("/correct-scores/{correct_score_id}", response=CorrectScoreSchema, auth=JWTAuth())
-def get_correct_score(request, correct_score_id: int):
-    return get_object_or_404(CorrectScore, correct_score_id=correct_score_id)
+@api.get("/program-scores/{program_score_id}", response=ProgramScoreSchema, auth=JWTAuth())
+def get_program_score(request, program_score_id: int):
+    return get_object_or_404(ProgramScore, program_score_id=program_score_id)
 
-@api.post("/correct-scores", response=CorrectScoreSchema, auth=JWTAuth())
-def create_correct_score(request, payload: CorrectScoreCreateSchema):
-    correct_score = CorrectScore.objects.create(**payload.dict())
-    return correct_score
+@api.post("/program-scores", response=ProgramScoreSchema, auth=JWTAuth())
+def create_program_score(request, payload: ProgramScoreCreateSchema):
+    program_score = ProgramScore.objects.create(**payload.dict())
+    return program_score
 
-@api.put("/correct-scores/{correct_score_id}", response=CorrectScoreSchema, auth=JWTAuth())
-def update_correct_score(request, correct_score_id: int, payload: CorrectScoreCreateSchema):
-    correct_score = get_object_or_404(CorrectScore, correct_score_id=correct_score_id)
+@api.put("/program-scores/{program_score_id}", response=ProgramScoreSchema, auth=JWTAuth())
+def update_program_score(request, program_score_id: int, payload: ProgramScoreCreateSchema):
+    program_score = get_object_or_404(ProgramScore, program_score_id=program_score_id)
     for attr, value in payload.dict().items():
-        setattr(correct_score, attr, value)
-    correct_score.save()
-    return correct_score
+        setattr(program_score, attr, value)
+    program_score.save()
+    return program_score
 
-@api.delete("/correct-scores/{correct_score_id}", auth=JWTAuth())
-def delete_correct_score(request, correct_score_id: int):
-    correct_score = get_object_or_404(CorrectScore, correct_score_id=correct_score_id)
-    correct_score.delete()
+@api.delete("/program-scores/{program_score_id}", auth=JWTAuth())
+def delete_program_score(request, program_score_id: int):
+    program_score = get_object_or_404(ProgramScore, program_score_id=program_score_id)
+    program_score.delete()
     return {"success": True}
 
 # UserSession endpoints
@@ -300,7 +300,7 @@ def user_performance(request):
     # Get best and worst categories
     category_scores = {}
     for score in UserScore.objects.filter(user_session__in=user_sessions):
-        exercise = score.correct_score.exercise
+        exercise = score.program_score.exercise
         if exercise.category_id not in category_scores:
             category_scores[exercise.category_id] = []
         category_scores[exercise.category_id].append(score.user_score)
