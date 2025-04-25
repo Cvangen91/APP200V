@@ -102,33 +102,65 @@ def delete_category(request, category_id: str):
 # Program endpoints
 @api.get("/programs", response=List[ProgramSchema], auth=JWTAuth())
 def list_programs(request):
-    return Program.objects.all()
+    programs = Program.objects.all()
+    return [{
+        "program_id": p.program_id,
+        "name": p.name,
+        "description": p.description,
+        "equipage_id": p.equipage_id,
+        "video_path": p.video_path,
+        "exercises": list(p.exercises.values_list('exercise_id', flat=True))
+    } for p in programs]
 
 @api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
 def get_program(request, program_id: int):
     program = get_object_or_404(Program, program_id=program_id)
-    exercise_ids = ProgramScore.objects.filter(program=program).values_list('exercise_id', flat=True).distinct()
     return {
         "program_id": program.program_id,
         "name": program.name,
         "description": program.description,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
-        "exercises": list(exercise_ids)
+        "exercises": list(program.exercises.values_list('exercise_id', flat=True))
     }
 
 @api.post("/programs", response=ProgramSchema, auth=JWTAuth())
 def create_program(request, payload: ProgramCreateSchema):
-    program = Program.objects.create(**payload.dict())
-    return program
+    program_data = payload.dict()
+    exercises = program_data.pop('exercises', [])
+    program = Program.objects.create(**program_data)
+    if exercises:
+        program.exercises.set(exercises)
+    return {
+        "program_id": program.program_id,
+        "name": program.name,
+        "description": program.description,
+        "equipage_id": program.equipage_id,
+        "video_path": program.video_path,
+        "exercises": list(program.exercises.values_list('exercise_id', flat=True))
+    }
 
 @api.put("/programs/{program_id}", response=ProgramSchema, auth=JWTAuth())
 def update_program(request, program_id: int, payload: ProgramCreateSchema):
     program = get_object_or_404(Program, program_id=program_id)
-    for attr, value in payload.dict().items():
+    program_data = payload.dict()
+    exercises = program_data.pop('exercises', [])
+    
+    for attr, value in program_data.items():
         setattr(program, attr, value)
     program.save()
-    return program
+    
+    if exercises:
+        program.exercises.set(exercises)
+    
+    return {
+        "program_id": program.program_id,
+        "name": program.name,
+        "description": program.description,
+        "equipage_id": program.equipage_id,
+        "video_path": program.video_path,
+        "exercises": list(program.exercises.values_list('exercise_id', flat=True))
+    }
 
 @api.delete("/programs/{program_id}", auth=JWTAuth())
 def delete_program(request, program_id: int):

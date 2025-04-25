@@ -1,0 +1,119 @@
+# Backend Documentation - Learning2Judge
+
+## Overview
+The Learning2Judge backend is built using Django Ninja, a modern framework that combines Django's power with the simplicity and efficiency of REST APIs. The architecture follows modern API development patterns, focusing on security, performance, and maintainability.
+
+## Main Technologies
+- Django Ninja: Framework for building REST APIs
+- Django Ninja JWT: JWT authentication implementation
+- PostgreSQL: Relational database
+- Pydantic: Data validation and serialization
+- Docker: Application containerization
+
+## Project Structure
+The project follows an organized and modular structure:
+
+```
+Learning2Judge-backend/
+├── Learning2Judge/          # Main application
+│   ├── api.py              # Route and endpoint definitions
+│   ├── models.py           # Data models
+│   ├── schemas.py          # Pydantic validation schemas
+│   ├── serializers.py      # Data serialization
+│   └── migrations/         # Database migrations
+├── core/                   # Project core configurations
+├── data/                   # Initial data and fixtures
+└── docker-compose.yml      # Docker configuration
+```
+
+## JWT Authentication
+The system uses JWT (JSON Web Tokens) for authentication, providing:
+- Access and refresh tokens
+- Automatic token validation
+- Protected routes
+- Automatic token refresh
+
+## Architecture Advantages
+
+1. **Performance**
+   - Optimized Django Ninja routing
+   - Efficient Pydantic serialization
+   - JWT token caching
+
+2. **Security**
+   - Robust JWT authentication
+   - Multi-layer data validation
+   - Protection against CSRF and common attacks
+
+3. **Maintainability**
+   - Organized and modular code
+   - Clear separation of concerns
+   - Automatic API documentation
+
+4. **Scalability**
+   - Stateless architecture
+   - Easy external service integration
+   - Docker containerization
+
+## Development Patterns
+
+1. **API-First**
+   - API design before implementation
+   - Automatic documentation
+   - Endpoint versioning
+
+2. **Clean Architecture**
+   - Layer separation
+   - Dependency injection
+   - Testability
+
+3. **RESTful**
+   - REST-compliant endpoints
+   - Appropriate HTTP verbs
+   - Semantic status codes
+
+## Data Flow
+
+1. **Request**
+   - Client sends request with JWT token
+   - Middleware validates token
+   - Router directs to correct endpoint
+
+2. **Processing**
+   - Input data validation
+   - Business logic processing
+   - Database interaction
+
+3. **Response**
+   - Data serialization
+   - Response formatting
+   - Client delivery
+
+## Security Considerations
+
+1. **JWT**
+   - Expiring tokens
+   - Refresh tokens
+   - Invalid token blacklist
+
+2. **Validation**
+   - Multi-layer data validation
+   - Input sanitization
+   - SQL injection protection
+
+3. **CORS**
+   - Allowed origins configuration
+   - Security headers
+   - Cross-origin attack protection
+
+## Next Steps
+
+1. **Planned Improvements**
+   - Response caching
+   - Rate limiting
+   - Performance monitoring
+
+2. **Expansion**
+   - New endpoints
+   - External service integration
+   - Real-time WebSockets 

@@ -15,6 +15,7 @@ class Program(models.Model):
     description = models.TextField(blank=True, null=True)
     equipage_id = models.IntegerField(null=True, blank=True)  # Changed to IntegerField
     video_path = models.TextField(blank=True, null=True)  # Added to match the data being loaded
+    exercises = models.ManyToManyField('Exercise', related_name='programs')
 
     def __str__(self):
         return self.name
