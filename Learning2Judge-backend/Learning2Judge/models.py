@@ -12,7 +12,6 @@ class User(AbstractUser):
 class Program(models.Model):
     program_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
     equipage_id = models.IntegerField(null=True, blank=True)  # Changed to IntegerField
     video_path = models.TextField(blank=True, null=True)  # Added to match the data being loaded
 
