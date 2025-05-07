@@ -3,6 +3,7 @@ let scores = [];
 let correctScores = [];
 let program;
 let videoPath;
+let allExercises = [];
 
 function getProgramIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -29,24 +30,43 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
     );
     program = await programRes.json();
-    console.log(program);
+    console.log('Programa:', program);
+
+    const exercisesRes = await fetch(
+      `http://localhost:8000/api/exercises`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    allExercises = await exercisesRes.json();
+    console.log('Todos os exercícios:', allExercises);
 
     const correctRes = await fetch(
-      `http://localhost:8000/api/programs/${programId}`,
+      `http://localhost:8000/api/program-scores/program/${programId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
     correctScores = await correctRes.json();
+    console.log('Scores corretos:', correctScores);
 
-    exercises = correctScores.map((cs) => ({
-      correct_score_id: cs.correct_score_id,
-      description: cs.exercise_name || `Øvelse ID ${cs.exercise_id}`,
-    }));
+    exercises = program.exercises.map(exerciseId => {
+      const exerciseDetails = allExercises.find(ex => ex.exercise_id === exerciseId);
+      const correctScore = correctScores.find(cs => cs.exercise_id === exerciseId);
+      
+      return {
+        exercise_id: exerciseId,
+        correct_score_id: correctScore ? correctScore.program_score_id : null,
+        name: exerciseDetails ? exerciseDetails.name : `Exercício ID ${exerciseId}`,
+        description: exerciseDetails ? exerciseDetails.description : '',
+        video_url: exerciseDetails ? exerciseDetails.video_url : ''
+      };
+    });
 
+    console.log('Exercícios correlacionados:', exercises);
     createTable();
   } catch (error) {
-    console.error('🚨 Feil under lasting av data:', error);
+    console.error('🚨 Erro ao carregar dados:', error);
   }
 
   const titleEl = document.getElementById('program-title');
@@ -81,7 +101,8 @@ function createTable() {
   thead.innerHTML = `
     <tr>
       <th>#</th>
-      <th>Beskrivelse</th>
+      <th>Exercício</th>
+      <th>Descrição</th>
       <th>Karakter (0-10)</th>
     </tr>
   `;
@@ -94,6 +115,7 @@ function createTable() {
 
     row.innerHTML = `
       <td>${index + 1}</td>
+      <td>${exercise.name}</td>
       <td>${exercise.description}</td>
       <td>
         <input type="number" class="score-input" 
