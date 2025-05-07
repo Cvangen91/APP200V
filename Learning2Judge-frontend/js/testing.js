@@ -57,9 +57,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       return {
         exercise_id: exerciseId,
         correct_score_id: correctScore ? correctScore.program_score_id : null,
-        name: exerciseDetails ? exerciseDetails.name : `Exercício ID ${exerciseId}`,
-        description: exerciseDetails ? exerciseDetails.description : '',
-        video_url: exerciseDetails ? exerciseDetails.video_url : ''
+        name: exerciseDetails ? exerciseDetails.name : `Exercício ID ${exerciseId}`
       };
     });
 
@@ -76,9 +74,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   const videoContainer = document.getElementById('video-container');
   if (videoContainer && program && program.video_path) {
+    // Converte o URL do YouTube para o formato de embed
+    const videoUrl = program.video_path.replace('watch?v=', 'embed/');
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
-      src="${program.video_path}"
+      src="${videoUrl}"
       title="Programvideo"
       frameborder="0" style="border:0;"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
@@ -102,7 +102,6 @@ function createTable() {
     <tr>
       <th>#</th>
       <th>Exercício</th>
-      <th>Descrição</th>
       <th>Karakter (0-10)</th>
     </tr>
   `;
@@ -110,17 +109,14 @@ function createTable() {
   let tbody = document.createElement('tbody');
 
   exercises.forEach((exercise, index) => {
-    let row = document.createElement('tr');
-    row.classList.add(index === 0 ? 'active' : 'inactive');
-
+    const row = document.createElement('tr');
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${exercise.name}</td>
-      <td>${exercise.description}</td>
       <td>
-        <input type="number" class="score-input" 
-          step="0.5" min="0" max="10"
-          data-index="${index}">
+        <input type="number" class="score-input" min="0" max="10" step="0.5" 
+               data-exercise-id="${exercise.exercise_id}"
+               data-correct-score-id="${exercise.correct_score_id}">
       </td>
     `;
 

@@ -1,4 +1,5 @@
 import os
+import csv
 from django.core.management.base import BaseCommand
 from Learning2Judge.models import Category, Program, Exercise, ProgramScore
 from decimal import Decimal
@@ -21,62 +22,33 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.SUCCESS('Using existing default category'))
 
-        # Mock categories data
-        categories_data = [
-            {'CategoryId': 1, 'CategoryName': 'Basic Movements', 'Description': 'Fundamental movements and techniques'},
-            {'CategoryId': 2, 'CategoryName': 'Advanced Techniques', 'Description': 'Complex movements for experienced practitioners'},
-            {'CategoryId': 3, 'CategoryName': 'Special Skills', 'Description': 'Specialized techniques and unique movements'}
-        ]
-
-        for row in categories_data:
-            Category.objects.get_or_create(
-                category_id=row['CategoryId'],
-                defaults={
-                    'name': row['CategoryName'],
-                    'description': row['Description']
-                }
-            )
-
-        # Mock exercises data
-        exercises_data = [
-            {'ExerciseId': 1, 'ExerciseName': 'Basic Movement 1', 'CategoryId': 1, 'Description': 'First basic movement', 'VideoUrl': '/videos/basic1.mp4'},
-            {'ExerciseId': 2, 'ExerciseName': 'Basic Movement 2', 'CategoryId': 1, 'Description': 'Second basic movement', 'VideoUrl': '/videos/basic2.mp4'},
-            {'ExerciseId': 3, 'ExerciseName': 'Advanced Technique 1', 'CategoryId': 2, 'Description': 'First advanced technique', 'VideoUrl': '/videos/advanced1.mp4'},
-            {'ExerciseId': 4, 'ExerciseName': 'Advanced Technique 2', 'CategoryId': 2, 'Description': 'Second advanced technique', 'VideoUrl': '/videos/advanced2.mp4'},
-            {'ExerciseId': 5, 'ExerciseName': 'Special Skill 1', 'CategoryId': 3, 'Description': 'First special skill', 'VideoUrl': '/videos/special1.mp4'},
-            {'ExerciseId': 6, 'ExerciseName': 'Special Skill 2', 'CategoryId': 3, 'Description': 'Second special skill', 'VideoUrl': '/videos/special2.mp4'},
-            {'ExerciseId': 7, 'ExerciseName': 'Special Skill 3', 'CategoryId': 3, 'Description': 'Third special skill', 'VideoUrl': '/videos/special3.mp4'},
-            {'ExerciseId': 8, 'ExerciseName': 'Special Skill 4', 'CategoryId': 3, 'Description': 'Fourth special skill', 'VideoUrl': '/videos/special4.mp4'},
-            {'ExerciseId': 9, 'ExerciseName': 'Special Skill 5', 'CategoryId': 3, 'Description': 'Fifth special skill', 'VideoUrl': '/videos/special5.mp4'},
-            {'ExerciseId': 10, 'ExerciseName': 'Special Skill 6', 'CategoryId': 3, 'Description': 'Sixth special skill', 'VideoUrl': '/videos/special6.mp4'},
-            {'ExerciseId': 12, 'ExerciseName': 'Special Skill 7', 'CategoryId': 3, 'Description': 'Seventh special skill', 'VideoUrl': '/videos/special7.mp4'},
-            {'ExerciseId': 13, 'ExerciseName': 'Special Skill 8', 'CategoryId': 3, 'Description': 'Eighth special skill', 'VideoUrl': '/videos/special8.mp4'},
-            {'ExerciseId': 23, 'ExerciseName': 'Special Skill 9', 'CategoryId': 3, 'Description': 'Ninth special skill', 'VideoUrl': '/videos/special9.mp4'},
-            {'ExerciseId': 25, 'ExerciseName': 'Special Skill 10', 'CategoryId': 3, 'Description': 'Tenth special skill', 'VideoUrl': '/videos/special10.mp4'},
-            {'ExerciseId': 36, 'ExerciseName': 'Special Skill 11', 'CategoryId': 3, 'Description': 'Eleventh special skill', 'VideoUrl': '/videos/special11.mp4'}
-        ]
-
-        for row in exercises_data:
-            try:
-                exercise_id = row['ExerciseId']
-                category_id = row['CategoryId']
-                
-                if not Category.objects.filter(category_id=category_id).exists():
-                    category_id = default_category.category_id
-                
-                exercise, created = Exercise.objects.get_or_create(
-                    exercise_id=exercise_id,
-                    defaults={
-                        'name': row['ExerciseName'],
-                        'category_id': category_id,
-                        'description': row['Description'],
-                        'video_url': row['VideoUrl']
-                    }
-                )
-                if created:
-                    self.stdout.write(self.style.SUCCESS(f'Created exercise: {exercise.name}'))
-            except (ValueError, KeyError) as e:
-                self.stdout.write(self.style.ERROR(f"Error creating exercise: {str(e)}"))
+        # Load exercises from CSV
+        csv_path = os.path.join('data', 'Database-Schemas(Exercise).csv')
+        try:
+            with open(csv_path, 'r', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    try:
+                        exercise_id = int(row['ExerciseId'])
+                        category_id = int(row['CategoryId'])
+                        
+                        if not Category.objects.filter(category_id=category_id).exists():
+                            category_id = default_category.category_id
+                        
+                        exercise, created = Exercise.objects.get_or_create(
+                            exercise_id=exercise_id,
+                            defaults={
+                                'name': row['ExerciseName'],
+                                'category_id': category_id
+                            }
+                        )
+                        if created:
+                            self.stdout.write(self.style.SUCCESS(f'Created exercise: {exercise.name}'))
+                    except (ValueError, KeyError) as e:
+                        self.stdout.write(self.style.ERROR(f"Error creating exercise: {str(e)}"))
+        except FileNotFoundError:
+            self.stdout.write(self.style.ERROR(f"CSV file not found at {csv_path}"))
+            return
 
         # Mock programs data
         programs_data = [
@@ -92,7 +64,6 @@ class Command(BaseCommand):
                     program_id=row['ProgramId'],
                     defaults={
                         'name': row['ProgramName'],
-                        'description': row['Description'],
                         'equipage_id': equipage_id,
                         'video_path': row['VideoPath']
                     }

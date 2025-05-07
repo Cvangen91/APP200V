@@ -40,7 +40,6 @@ class CategoryCreateSchema(BaseModel):
 class ProgramSchema(BaseModel):
     program_id: int
     name: str
-    description: Optional[str] = None
     equipage_id: Optional[int] = None
     video_path: Optional[str] = None
     exercises: List[int] = []
@@ -50,7 +49,6 @@ class ProgramSchema(BaseModel):
 
 class ProgramCreateSchema(BaseModel):
     name: str
-    description: Optional[str] = None
     equipage_id: Optional[int] = None
     video_path: Optional[str] = None
     exercises: List[int] = []
@@ -58,7 +56,6 @@ class ProgramCreateSchema(BaseModel):
 class ProgramDetailSchema(BaseModel):
     program_id: int
     name: str
-    description: Optional[str] = None
     equipage_id: Optional[int] = None
     video_path: Optional[str] = None
     exercises: List[int]
@@ -67,8 +64,6 @@ class ExerciseSchema(BaseModel):
     exercise_id: int
     category_id: int
     name: str
-    description: Optional[str] = None
-    video_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -76,8 +71,6 @@ class ExerciseSchema(BaseModel):
 class ExerciseCreateSchema(BaseModel):
     category_id: int
     name: str
-    description: Optional[str] = None
-    video_url: Optional[str] = None
 
 class ProgramScoreSchema(BaseModel):
     program_score_id: int

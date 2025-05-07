@@ -106,7 +106,6 @@ def list_programs(request):
     return [{
         "program_id": p.program_id,
         "name": p.name,
-        "description": p.description,
         "equipage_id": p.equipage_id,
         "video_path": p.video_path,
         "exercises": list(p.exercises.values_list('exercise_id', flat=True))
@@ -118,7 +117,6 @@ def get_program(request, program_id: int):
     return {
         "program_id": program.program_id,
         "name": program.name,
-        "description": program.description,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
         "exercises": list(program.exercises.values_list('exercise_id', flat=True))
@@ -134,7 +132,6 @@ def create_program(request, payload: ProgramCreateSchema):
     return {
         "program_id": program.program_id,
         "name": program.name,
-        "description": program.description,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
         "exercises": list(program.exercises.values_list('exercise_id', flat=True))
@@ -156,7 +153,6 @@ def update_program(request, program_id: int, payload: ProgramCreateSchema):
     return {
         "program_id": program.program_id,
         "name": program.name,
-        "description": program.description,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
         "exercises": list(program.exercises.values_list('exercise_id', flat=True))

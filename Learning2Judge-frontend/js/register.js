@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const passwordConfirm = document.getElementById('password-confirm').value;
-        const birthdate = document.getElementById('birthdate').value;
         
         // Basic validation
         if (!username || !email || !password || !passwordConfirm) {
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Send registration request
-        register(username, email, password, birthdate);
+        register(username, email, password);
     });
 
     // Function to display error messages
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to handle registration request
-    function register(username, email, password, birthdate) {
+    function register(username, email, password) {
         fetch(`${API_URL}${REGISTER_ENDPOINT}`, {
             method: 'POST',
             headers: {
@@ -70,8 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({
                 username: username,
                 email: email,
-                password: password,
-                birthdate: birthdate || null
+                password: password
             }),
             mode: 'cors'
         })
