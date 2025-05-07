@@ -50,18 +50,18 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   const titleEl = document.getElementById('program-title');
-  if (titleEl) {
+  if (titleEl) {  
     titleEl.innerHTML = `<i class="fas fa-tasks"></i> Dressurtest: ${program.name}`;
   }
 
   const videoContainer = document.getElementById('video-container');
-  if (videoContainer && videoPath) {
+  if (videoContainer && program && program.video_path) {
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
-      src="${videoPath}"
+      src="${program.video_path}"
       title="Programvideo"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      frameborder="0" style="border:0;"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
       allowfullscreen>
     </iframe>
   `;
