@@ -51,12 +51,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log('Scores corretos:', correctScores);
 
     exercises = program.exercises.map(exerciseId => {
-      const exerciseDetails = allExercises.find(ex => ex.exercise_id === exerciseId);
-      const correctScore = correctScores.find(cs => cs.exercise_id === exerciseId);
+      const exerciseDetails = allExercises.find(ex => ex.exerciseId === exerciseId);
+      const correctScore = correctScores.find(cs => cs.exerciseId === exerciseId);
       
       return {
-        exercise_id: exerciseId,
-        correct_score_id: correctScore ? correctScore.program_score_id : null,
+        exerciseId: exerciseId,
+        correctScoreId: correctScore ? correctScore.programScoreId : null,
         name: exerciseDetails ? exerciseDetails.name : `Exercício ID ${exerciseId}`
       };
     });
@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   const videoContainer = document.getElementById('video-container');
-  if (videoContainer && program && program.video_path) {
+  if (videoContainer && program && program.videoPath) {
     // Converte o URL do YouTube para o formato de embed
-    const videoUrl = program.video_path.replace('watch?v=', 'embed/');
+    const videoUrl = program.videoPath.replace('watch?v=', 'embed/');
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
       src="${videoUrl}"
@@ -115,8 +115,8 @@ function createTable() {
       <td>${exercise.name}</td>
       <td>
         <input type="number" class="score-input" min="0" max="10" step="0.5" 
-               data-exercise-id="${exercise.exercise_id}"
-               data-correct-score-id="${exercise.correct_score_id}">
+               data-exercise-id="${exercise.exerciseId}"
+               data-correct-score-id="${exercise.correctScoreId}">
       </td>
     `;
 
@@ -189,11 +189,11 @@ async function showSuccess() {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ program_id: programId }),
+    body: JSON.stringify({ programId: programId }),
   });
 
   const session = await sessionRes.json();
-  const userSessionId = session.user_session_id;
+  const userSessionId = session.userSessionId;
 
   // Lagre scores
   for (let i = 0; i < scores.length; i++) {
@@ -204,9 +204,9 @@ async function showSuccess() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        user_session_id: userSessionId,
-        correct_score_id: exercises[i].correct_score_id,
-        user_score: scores[i],
+        userSessionId: userSessionId,
+        correctScoreId: exercises[i].correctScoreId,
+        userScore: scores[i],
       }),
     });
   }

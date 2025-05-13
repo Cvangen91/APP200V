@@ -1,6 +1,6 @@
 from ninja import Schema
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr, SecretStr
+from pydantic import BaseModel, EmailStr, SecretStr, Field
 from datetime import datetime
 
 class UserCreateSchema(BaseModel):
@@ -12,11 +12,12 @@ class UserSchema(BaseModel):
     id: int
     username: str
     email: str
-    is_judge: bool
-    created_at: datetime
+    isJudge: bool = Field(alias='is_judge')
+    createdAt: datetime = Field(alias='created_at')
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class UserUpdateSchema(BaseModel):
     email: Optional[EmailStr] = None
@@ -26,97 +27,111 @@ class UserLoginSchema(BaseModel):
     password: str
 
 class CategorySchema(BaseModel):
-    category_id: int
+    categoryId: int = Field(alias='category_id')
     name: str
     description: Optional[str] = None
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class CategoryCreateSchema(BaseModel):
     name: str
     description: Optional[str] = None
 
 class ProgramSchema(BaseModel):
-    program_id: int
+    programId: int = Field(alias='program_id')
     name: str
-    equipage_id: Optional[int] = None
-    video_path: Optional[str] = None
+    equipageId: Optional[int] = Field(alias='equipage_id', default=None)
+    videoPath: Optional[str] = Field(alias='video_path', default=None)
     exercises: List[int] = []
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ProgramCreateSchema(BaseModel):
     name: str
-    equipage_id: Optional[int] = None
-    video_path: Optional[str] = None
+    equipageId: Optional[int] = Field(alias='equipage_id', default=None)
+    videoPath: Optional[str] = Field(alias='video_path', default=None)
     exercises: List[int] = []
 
 class ProgramDetailSchema(BaseModel):
-    program_id: int
+    programId: int = Field(alias='program_id')
     name: str
-    equipage_id: Optional[int] = None
-    video_path: Optional[str] = None
+    equipageId: Optional[int] = Field(alias='equipage_id', default=None)
+    videoPath: Optional[str] = Field(alias='video_path', default=None)
     exercises: List[int]
 
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+
 class ExerciseSchema(BaseModel):
-    exercise_id: int
-    category_id: int
+    exerciseId: int = Field(alias='exercise_id')
+    categoryId: int = Field(alias='category_id')
     name: str
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ExerciseCreateSchema(BaseModel):
-    category_id: int
+    categoryId: int = Field(alias='category_id')
     name: str
 
 class ProgramScoreSchema(BaseModel):
-    program_score_id: int
-    program_id: int
-    exercise_id: int
+    programScoreId: int = Field(alias='program_score_id')
+    programId: int = Field(alias='program_id')
+    exerciseId: int = Field(alias='exercise_id')
     score: float
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ProgramScoreCreateSchema(BaseModel):
-    program_id: int
-    exercise_id: int
+    programId: int = Field(alias='program_id')
+    exerciseId: int = Field(alias='exercise_id')
     score: float
 
 class UserSessionSchema(BaseModel):
-    user_session_id: int
-    user_id: int
-    program_id: int
+    userSessionId: int = Field(alias='user_session_id')
+    userId: int = Field(alias='user_id')
+    programId: int = Field(alias='program_id')
     timestamp: datetime
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class UserSessionCreateSchema(BaseModel):
-    program_id: int
+    programId: int = Field(alias='program_id')
 
 class UserSessionDetailSchema(BaseModel):
-    user_session_id: int
-    user_id: int
-    program_id: int
+    userSessionId: int = Field(alias='user_session_id')
+    userId: int = Field(alias='user_id')
+    programId: int = Field(alias='program_id')
     timestamp: datetime
-    program_name: str
+    programName: str = Field(alias='program_name')
     scores: List['UserScoreSchema']
 
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+
 class UserScoreSchema(BaseModel):
-    user_score_id: int
-    user_session_id: int
-    correct_score_id: int
-    user_score: float
+    userScoreId: int = Field(alias='user_score_id')
+    userSessionId: int = Field(alias='user_session_id')
+    correctScoreId: int = Field(alias='correct_score_id')
+    userScore: float = Field(alias='user_score')
     timestamp: datetime
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class UserScoreCreateSchema(BaseModel):
-    user_session_id: int
-    correct_score_id: int
-    user_score: float
+    userSessionId: int = Field(alias='user_session_id')
+    correctScoreId: int = Field(alias='correct_score_id')
+    userScore: float = Field(alias='user_score')

@@ -104,10 +104,10 @@ def delete_category(request, category_id: str):
 def list_programs(request):
     programs = Program.objects.all()
     return [{
-        "program_id": p.program_id,
+        "programId": p.program_id,
         "name": p.name,
-        "equipage_id": p.equipage_id,
-        "video_path": p.video_path,
+        "equipageId": p.equipage_id,
+        "videoPath": p.video_path,
         "exercises": [int(x) for x in p.exercise_order.split(',')] if p.exercise_order else []
     } for p in programs]
 
@@ -115,33 +115,33 @@ def list_programs(request):
 def get_program(request, program_id: int):
     program = get_object_or_404(Program, program_id=program_id)
     return {
-        "program_id": program.program_id,
+        "programId": program.program_id,
         "name": program.name,
-        "equipage_id": program.equipage_id,
-        "video_path": program.video_path,
+        "equipageId": program.equipage_id,
+        "videoPath": program.video_path,
         "exercises": [int(x) for x in program.exercise_order.split(',')] if program.exercise_order else []
     }
 
 @api.post("/programs", response=ProgramSchema, auth=JWTAuth())
 def create_program(request, payload: ProgramCreateSchema):
-    program_data = payload.dict()
+    program_data = payload.dict(by_alias=True)
     exercises = program_data.pop('exercises', [])
-    exercise_order = ','.join(map(str, exercises))  # Salva a ordem como string
+    exercise_order = ','.join(map(str, exercises))
     program = Program.objects.create(**program_data, exercise_order=exercise_order)
     if exercises:
         program.exercises.set(exercises)
     return {
-        "program_id": program.program_id,
+        "programId": program.program_id,
         "name": program.name,
-        "equipage_id": program.equipage_id,
-        "video_path": program.video_path,
-        "exercises": exercises  # Retorna na ordem original
+        "equipageId": program.equipage_id,
+        "videoPath": program.video_path,
+        "exercises": exercises
     }
 
 @api.put("/programs/{program_id}", response=ProgramSchema, auth=JWTAuth())
 def update_program(request, program_id: int, payload: ProgramCreateSchema):
     program = get_object_or_404(Program, program_id=program_id)
-    program_data = payload.dict()
+    program_data = payload.dict(by_alias=True)
     exercises = program_data.pop('exercises', [])
     exercise_order = ','.join(map(str, exercises))
     
@@ -154,10 +154,10 @@ def update_program(request, program_id: int, payload: ProgramCreateSchema):
         program.exercises.set(exercises)
     
     return {
-        "program_id": program.program_id,
+        "programId": program.program_id,
         "name": program.name,
-        "equipage_id": program.equipage_id,
-        "video_path": program.video_path,
+        "equipageId": program.equipage_id,
+        "videoPath": program.video_path,
         "exercises": exercises
     }
 
