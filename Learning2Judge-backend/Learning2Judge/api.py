@@ -108,7 +108,7 @@ def list_programs(request):
         "name": p.name,
         "equipage_id": p.equipage_id,
         "video_path": p.video_path,
-        "exercises": list(p.exercises.values_list('exercise_id', flat=True))
+        "exercises": [int(x) for x in p.exercise_order.split(',')] if p.exercise_order else []
     } for p in programs]
 
 @api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
@@ -119,14 +119,15 @@ def get_program(request, program_id: int):
         "name": program.name,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
-        "exercises": list(program.exercises.values_list('exercise_id', flat=True))
+        "exercises": [int(x) for x in program.exercise_order.split(',')] if program.exercise_order else []
     }
 
 @api.post("/programs", response=ProgramSchema, auth=JWTAuth())
 def create_program(request, payload: ProgramCreateSchema):
     program_data = payload.dict()
     exercises = program_data.pop('exercises', [])
-    program = Program.objects.create(**program_data)
+    exercise_order = ','.join(map(str, exercises))  # Salva a ordem como string
+    program = Program.objects.create(**program_data, exercise_order=exercise_order)
     if exercises:
         program.exercises.set(exercises)
     return {
@@ -134,7 +135,7 @@ def create_program(request, payload: ProgramCreateSchema):
         "name": program.name,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
-        "exercises": list(program.exercises.values_list('exercise_id', flat=True))
+        "exercises": exercises  # Retorna na ordem original
     }
 
 @api.put("/programs/{program_id}", response=ProgramSchema, auth=JWTAuth())
@@ -142,9 +143,11 @@ def update_program(request, program_id: int, payload: ProgramCreateSchema):
     program = get_object_or_404(Program, program_id=program_id)
     program_data = payload.dict()
     exercises = program_data.pop('exercises', [])
+    exercise_order = ','.join(map(str, exercises))
     
     for attr, value in program_data.items():
         setattr(program, attr, value)
+    program.exercise_order = exercise_order
     program.save()
     
     if exercises:
@@ -155,7 +158,7 @@ def update_program(request, program_id: int, payload: ProgramCreateSchema):
         "name": program.name,
         "equipage_id": program.equipage_id,
         "video_path": program.video_path,
-        "exercises": list(program.exercises.values_list('exercise_id', flat=True))
+        "exercises": exercises
     }
 
 @api.delete("/programs/{program_id}", auth=JWTAuth())

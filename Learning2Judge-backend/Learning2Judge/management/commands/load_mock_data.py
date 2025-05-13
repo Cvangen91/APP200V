@@ -77,6 +77,10 @@ class Command(BaseCommand):
                     else:
                         exercise_ids = row['Exercises']
                     
+                    # Salva a ordem dos exercícios
+                    program.exercise_order = ','.join(map(str, exercise_ids))
+                    program.save()
+                    
                     exercises = Exercise.objects.filter(exercise_id__in=exercise_ids)
                     program.exercises.set(exercises)
                 

@@ -12,9 +12,10 @@ class User(AbstractUser):
 class Program(models.Model):
     program_id = models.AutoField(primary_key=True)  # Changed to AutoField for integer IDs
     name = models.CharField(max_length=100)
-    equipage_id = models.IntegerField(null=True, blank=True)  # Changed to IntegerField
+    equipage_id = models.CharField(max_length=100)
     video_path = models.TextField(blank=True, null=True)  # Added to match the data being loaded
     exercises = models.ManyToManyField('Exercise', related_name='programs')
+    exercise_order = models.TextField(blank=True, null=True)  # Armazena a ordem dos exercícios como string
 
     def __str__(self):
         return self.name
