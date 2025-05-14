@@ -50,6 +50,7 @@ class UserSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='sessions')
     timestamp = models.DateTimeField(auto_now_add=True)
+    details = models.TextField(blank=True, null=True)  # Campo para armazenar detalhes adicionais em JSON
     
     def __str__(self):
         return f"Session {self.user_session_id} - {self.user.username} - {self.program.name}"
@@ -59,6 +60,9 @@ class UserScore(models.Model):
     user_session = models.ForeignKey(UserSession, on_delete=models.CASCADE, related_name='user_scores')
     correct_score = models.ForeignKey(ProgramScore, on_delete=models.CASCADE, related_name='user_scores')
     user_score = models.DecimalField(max_digits=5, decimal_places=2)
+    exercise_name = models.CharField(max_length=255, blank=True, null=True)  # Nome do exercício
+    expert_score = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Pontuação do especialista
+    timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"User score {self.user_score} for {self.correct_score.exercise.name}"

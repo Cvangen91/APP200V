@@ -245,42 +245,73 @@ async function showSuccess() {
     console.log('Expert Score %:', expertPercentage);
     console.log('Match %:', matchPercentage);
     
-    // Salvar as porcentagens no localStorage para uso posterior
+    // Criar um objeto com os resultados detalhados
+    const testDetails = {
+      programId: programId,
+      programName: program.name,
+      equipageId: program.equipageId || null,
+      userPercentage: userPercentage,
+      expertPercentage: expertPercentage,
+      matchPercentage: matchPercentage,
+      exercises: exercises.map(e => e.name),
+      timestamp: new Date().toISOString()
+    };
+    
+    // Salvar no localStorage como backup
     saveTestResults(programId, userPercentage, expertPercentage, matchPercentage);
     
-    // Opprett userSession
+    // Criar userSession no backend
     const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ programId: programId }),
+      body: JSON.stringify({ 
+        programId: programId,
+        details: JSON.stringify(testDetails) // Salvamos os detalhes completos como JSON
+      }),
     });
+
+    if (!sessionRes.ok) {
+      throw new Error(`Erro ao criar sessão: ${sessionRes.status} ${sessionRes.statusText}`);
+    }
 
     const session = await sessionRes.json();
     const userSessionId = session.userSessionId;
 
-    // Lagre scores
+    // Salvar cada score individualmente
+    const scorePromises = [];
     for (let i = 0; i < scores.length; i++) {
       if (scores[i] === undefined) continue; // Pula scores não preenchidos
       
       const exercise = exercises[i];
       if (!exercise.correctScoreId) continue; // Pula exercícios sem score correto
       
-      await fetch(`http://localhost:8000/api/user-scores`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userSessionId: userSessionId,
-          correctScoreId: exercise.correctScoreId,
-          userScore: scores[i],
-        }),
-      });
+      // Encontrar o score correto para este exercício
+      const correctScore = correctScores.find(cs => cs.exerciseId === exercise.exerciseId);
+      
+      // Adicionar a requisição à lista de promessas
+      scorePromises.push(
+        fetch(`http://localhost:8000/api/user-scores`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userSessionId: userSessionId,
+            correctScoreId: exercise.correctScoreId,
+            userScore: scores[i],
+            exerciseName: exercise.name,
+            expertScore: correctScore ? correctScore.score : null
+          }),
+        })
+      );
     }
+    
+    // Esperar todas as requisições de scores terminarem
+    await Promise.all(scorePromises);
 
     console.log('✅ Karakterer lagret:', scores);
     

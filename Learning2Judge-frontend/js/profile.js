@@ -45,22 +45,186 @@ document.addEventListener('DOMContentLoaded', function() {
         loadTestResults();
     }
     
-    // Load and display test results from localStorage
-    function loadTestResults() {
-        const testResults = JSON.parse(localStorage.getItem('testResults') || '[]');
+    // Load and display test results from backend
+    async function loadTestResults() {
+        const token = localStorage.getItem('access_token');
+        const testsTable = document.getElementById('completeTestsTable');
+        if (!testsTable) return;
         
-        // Update the completed tests table
+        const tableBody = testsTable.querySelector('tbody');
+        tableBody.innerHTML = '';
+        
+        try {
+            // Mostrar indicador de carregamento
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <p style="padding: 20px;">
+                            <i class="fas fa-spinner fa-spin"></i> Laster testresultater...
+                        </p>
+                    </td>
+                </tr>
+            `;
+            
+            // Carregar as sessões do usuário do backend
+            const sessionsRes = await fetch(`http://localhost:8000/api/user-sessions`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            if (!sessionsRes.ok) {
+                throw new Error(`Erro ao buscar sessões: ${sessionsRes.status} ${sessionsRes.statusText}`);
+            }
+            
+            let sessions = await sessionsRes.json();
+            
+            // Verificar se retornou um array vazio
+            if (!sessions || sessions.length === 0) {
+                // Se não há dados no backend, vamos tentar o localStorage como backup
+                const localResults = JSON.parse(localStorage.getItem('testResults') || '[]');
+                
+                if (localResults.length === 0) {
+                    // Não há resultados em nenhum lugar
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <p style="padding: 20px;">
+                                    <i class="fas fa-info-circle"></i> Ingen testresultater er registrert ennå. 
+                                    <a href="program.html">Gå til programmer</a> for å starte din første test.
+                                </p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Usamos os resultados do localStorage
+                console.log('Nenhum resultado no backend, usando localStorage:', localResults);
+                processTestResults(localResults);
+                return;
+            }
+            
+            console.log('Sessões do backend:', sessions);
+            
+            // Processar os resultados das sessões
+            const results = [];
+            
+            // Processar cada sessão para extrair os detalhes
+            for (const session of sessions) {
+                try {
+                    // Verificar se temos detalhes na sessão
+                    if (session.details) {
+                        const details = JSON.parse(session.details);
+                        
+                        // Adicionar informações da sessão que não estão nos detalhes
+                        results.push({
+                            ...details,
+                            sessionId: session.userSessionId,
+                            date: new Date(session.timestamp || details.timestamp).toLocaleDateString('no-NO'),
+                            timestamp: session.timestamp || details.timestamp
+                        });
+                    } else {
+                        // Se não temos detalhes completos, vamos buscar os scores individuais
+                        const scoresRes = await fetch(
+                            `http://localhost:8000/api/user-scores/session/${session.userSessionId}`,
+                            { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        
+                        if (!scoresRes.ok) continue;
+                        
+                        const scores = await scoresRes.json();
+                        if (!scores || scores.length === 0) continue;
+                        
+                        // Buscar informações do programa
+                        const programRes = await fetch(
+                            `http://localhost:8000/api/programs/${session.programId}`,
+                            { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        
+                        if (!programRes.ok) continue;
+                        
+                        const program = await programRes.json();
+                        
+                        // Calcular as porcentagens
+                        let totalUserScore = 0;
+                        let totalExpertScore = 0;
+                        let totalMatch = 0;
+                        
+                        scores.forEach(score => {
+                            const userScore = parseFloat(score.userScore);
+                            const expertScore = parseFloat(score.expertScore);
+                            
+                            totalUserScore += userScore;
+                            totalExpertScore += expertScore;
+                            
+                            // Calcular o match
+                            const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
+                            totalMatch += match;
+                        });
+                        
+                        const userPercentage = (totalUserScore / (scores.length * 10) * 100).toFixed(1);
+                        const expertPercentage = (totalExpertScore / (scores.length * 10) * 100).toFixed(1);
+                        const matchPercentage = (totalMatch / scores.length).toFixed(1);
+                        
+                        results.push({
+                            sessionId: session.userSessionId,
+                            programId: session.programId,
+                            programName: program.name,
+                            equipageId: program.equipageId,
+                            date: new Date(session.timestamp).toLocaleDateString('no-NO'),
+                            timestamp: session.timestamp,
+                            userPercentage,
+                            expertPercentage,
+                            matchPercentage,
+                            scores: scores.map(s => parseFloat(s.userScore)),
+                            exercises: scores.map(s => s.exerciseName),
+                            correctScores: scores.map(s => parseFloat(s.expertScore))
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Erro ao processar sessão ${session.userSessionId}:`, error);
+                }
+            }
+            
+            if (results.length === 0) {
+                // Se não conseguimos processar nenhuma sessão
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <p style="padding: 20px;">
+                                <i class="fas fa-exclamation-circle"></i> Kunne ikke behandle testresultatene.
+                            </p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Processar os resultados obtidos
+            processTestResults(results);
+            
+        } catch (error) {
+            console.error('Erro ao carregar resultados:', error);
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <p style="padding: 20px;">
+                            <i class="fas fa-exclamation-triangle"></i> Feil ved lasting av testresultater: ${error.message}
+                        </p>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+    
+    // Função para processar os resultados dos testes (tanto do backend quanto do localStorage)
+    function processTestResults(testResults) {
         const testsTable = document.getElementById('completeTestsTable');
         if (!testsTable) return;
         
         const tableBody = testsTable.querySelector('tbody');
         
-        // Clear existing dummy rows
-        tableBody.innerHTML = '';
-        
-        if (testResults.length === 0) {
-            console.log('No test results found in localStorage');
-            // Exibir mensagem indicando que não há resultados
+        // Verificar se há resultados
+        if (!testResults || testResults.length === 0) {
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center">
@@ -74,12 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        console.log('Found test results:', testResults);
+        // Limpar a tabela
+        tableBody.innerHTML = '';
         
-        // Sort results by date, newest first
+        // Ordenar resultados por data, mais recentes primeiro
         testResults.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
-        // Add test result rows
+        // Adicionar linhas para cada resultado
         testResults.forEach((result, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -89,13 +254,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td><span class="badge">${result.userPercentage} %</span></td>
                 <td>${result.expertPercentage} %</td>
                 <td><span class="badge ${getMatchClass(result.matchPercentage)}">${result.matchPercentage} %</span></td>
-                <td><button class="btn btn-sm protokollBtn" data-index="${index}">Vis protokoll</button></td>
+                <td><button class="btn btn-sm protokollBtn" data-index="${index}" data-session-id="${result.sessionId || ''}">Vis protokoll</button></td>
             `;
             tableBody.appendChild(row);
         });
         
-        // Update statistics if available
+        // Salvar os resultados processados no localStorage para usar na página de resultados
+        localStorage.setItem('processedResults', JSON.stringify(testResults));
+        
+        // Atualizar estatísticas
         updateStatistics(testResults);
+        
+        // Adicionar listeners para os botões de protocolo
+        addProtocolButtonListeners(testResults);
     }
     
     // Helper function to determine badge class based on match percentage
@@ -249,20 +420,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add event listeners to protocol buttons
-    function addProtocolButtonListeners() {
+    function addProtocolButtonListeners(testResults) {
         const protocolButtons = document.querySelectorAll('.protokollBtn');
         
         protocolButtons.forEach(button => {
             button.addEventListener('click', function() {
                 // Get test index from data attribute
                 const testIndex = this.getAttribute('data-index');
+                const sessionId = this.getAttribute('data-session-id');
+                
                 if (!testIndex) {
                     console.error('No test index found on button');
                     return;
                 }
                 
-                // Save the selected test index to localStorage
+                // Salvar o índice selecionado e o sessionId no localStorage
                 localStorage.setItem('selectedTestIndex', testIndex);
+                
+                if (sessionId) {
+                    localStorage.setItem('selectedSessionId', sessionId);
+                }
                 
                 // Redirect to result page
                 window.location.href = 'resultat.html';
