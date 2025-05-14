@@ -132,7 +132,8 @@ function createTable() {
 
 function attachInputListeners() {
   let inputs = document.querySelectorAll('.score-input');
-  inputs.forEach((input) => {
+  inputs.forEach((input, index) => {
+    input.dataset.index = index;
     input.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') {
         event.preventDefault();
@@ -147,33 +148,21 @@ function handleInput(input) {
   let value = parseFloat(input.value);
 
   if (isNaN(value) || value < 0 || value > 10) {
-    alert('Skriv inn en gyldig karakter mellom 0 og 10.');
+    alert('Por favor, insira uma nota válida entre 0 e 10.');
+    input.value = '';
+    input.focus();
     return;
   }
 
   scores[index] = value;
-  if (index < exercises.length - 1) {
-    updateRows(index + 1);
+  
+  let nextInput = document.querySelector(`.score-input[data-index="${index + 1}"]`);
+  
+  if (nextInput) {
+    nextInput.focus();
   } else {
     showSuccess();
   }
-}
-
-function updateRows(nextIndex) {
-  let rows = document.querySelectorAll('.character-table tbody tr');
-
-  rows.forEach((row, i) => {
-    if (i < nextIndex - 1) {
-      row.style.display = 'none';
-    } else if (i === nextIndex) {
-      row.classList.add('active');
-      row.classList.remove('inactive');
-      row.querySelector('.score-input').focus();
-    } else {
-      row.classList.add('inactive');
-      row.classList.remove('active');
-    }
-  });
 }
 
 async function showSuccess() {
