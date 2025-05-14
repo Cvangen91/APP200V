@@ -5,6 +5,9 @@ let program;
 let videoPath;
 let allExercises = [];
 
+let nextToShow = 4;
+let visibleCount = 4;
+
 function getProgramIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get('programId');
@@ -100,28 +103,30 @@ function createTable() {
   let thead = document.createElement('thead');
   thead.innerHTML = `
     <tr>
-      <th>#</th>
-      <th>Exercício</th>
+      <th>Nr</th>
+      <th>Beskrivelse</th>
       <th>Karakter (0-10)</th>
     </tr>
   `;
 
   let tbody = document.createElement('tbody');
+  tbody.id = 'exercise-body';
 
-  exercises.forEach((exercise, index) => {
+  for (let i = 0; i < Math.min(visibleCount, exercises.length); i++) {
+    const exercise = exercises[i];
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${index + 1}</td>
+      <td>${i + 1}</td>
       <td>${exercise.name}</td>
       <td>
         <input type="number" class="score-input" min="0" max="10" step="0.5" 
                data-exercise-id="${exercise.exerciseId}"
-               data-correct-score-id="${exercise.correctScoreId}">
+               data-correct-score-id="${exercise.correctScoreId}"
+               data-index="${i}">
       </td>
     `;
-
     tbody.appendChild(row);
-  });
+  }
 
   table.appendChild(thead);
   table.appendChild(tbody);
@@ -148,16 +153,44 @@ function handleInput(input) {
   let value = parseFloat(input.value);
 
   if (isNaN(value) || value < 0 || value > 10) {
-    alert('Por favor, insira uma nota válida entre 0 e 10.');
+    alert('Vennligst angi en gyldig karakter mellom 0 og 10.');
     input.value = '';
     input.focus();
     return;
   }
 
   scores[index] = value;
+
+  const row = input.closest('tr');
+  row.remove();
   
-  let nextInput = document.querySelector(`.score-input[data-index="${index + 1}"]`);
-  
+  if (nextToShow < exercises.length) {
+    const ex = exercises[nextToShow];
+    const tbody = document.getElementById('exercise-body');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td>${nextToShow + 1}</td>
+      <td>${ex.name}</td>
+      <td>
+        <input type="number" class="score-input" min="0" max="10" step="0.5"
+               data-exercise-id="${ex.exerciseId}"
+               data-correct-score-id="${ex.correctScoreId}"
+               data-index="${nextToShow}">
+      </td>
+    `;
+    tbody.appendChild(newRow);
+    // gi listener til den nye raden
+    newRow.querySelector('input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleInput(this);
+      }
+    });
+    nextToShow++;
+  }
+
+  // Flytt fokus til neste input (øverste i tabellen), eller avslutt
+  const nextInput = document.querySelector('.score-input');
   if (nextInput) {
     nextInput.focus();
   } else {
