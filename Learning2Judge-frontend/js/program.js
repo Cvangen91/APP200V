@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   // program.js - Håndterer oppgavevisning, scrolling og klikk til video.html
-  const numBoxes = 10; //  antall bokser
+  const numBoxes = 4; //  antall bokser
   const visibleBoxes = 3; // Antall synlige bokser
   const scrollStep = 3; // Hvor mange bokser som flyttes per klikk
 
