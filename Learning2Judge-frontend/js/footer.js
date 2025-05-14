@@ -11,5 +11,5 @@
       </div>
     </footer>
         `;
-        document.getElementById('header').innerHTML = headerHTML; //finds element with id 'header' in html and adds html code
+        document.getElementById('footer').innerHTML = headerHTML; //finds element with id 'header' in html and adds html code
     });
