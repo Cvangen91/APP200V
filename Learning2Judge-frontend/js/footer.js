@@ -9,7 +9,6 @@
         <p>&copy; 2025 Learning2Judge - En digital læringsplattform for dressurdommere</p>
         </div>
       </div>
-      <p>TEST</p>
     </footer>
         `;
         document.getElementById('footer').innerHTML = footerHTML; //finds element with id 'footer' in html and adds html code
