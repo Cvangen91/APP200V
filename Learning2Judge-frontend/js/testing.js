@@ -91,6 +91,14 @@ document.addEventListener('DOMContentLoaded', async function () {
   } else {
     videoContainer.innerHTML = `<p style="color: red">❌ Video ikke tilgjengelig</p>`;
   }
+
+  // Adiciona o elemento para a tabela de resultados se não existir
+  if (!document.getElementById('result-table')) {
+    const resultTable = document.createElement('div');
+    resultTable.id = 'result-table';
+    resultTable.style.display = 'none';
+    document.body.appendChild(resultTable);
+  }
 });
 
 function createTable() {
@@ -197,44 +205,118 @@ function handleInput(input) {
   if (nextInput) {
     nextInput.focus();
   } else {
-    showSuccess();
+    // Verifica se preenchemos todas as notas
+    if (scores.length === exercises.length) {
+      // Mostra a tela de comparação imediatamente
+      showComparison();
+      // Também chama showSuccess para salvar os dados
+      showSuccess();
+    }
   }
 }
 
 async function showSuccess() {
   document.getElementById('give-characters').style.display = 'none';
-  document.getElementById('success-message').style.display = 'block';
-
+  
+  // Primeiro mostramos a comparação
+  showComparison();
+  
   const token = localStorage.getItem('access_token');
+  const programId = getProgramIdFromURL();
 
-  // Opprett userSession
-  const sessionRes = await fetch(`https://localhost:8000/api/user-sessions`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ programId: programId }),
-  });
-
-  const session = await sessionRes.json();
-  const userSessionId = session.userSessionId;
-
-  // Lagre scores
-  for (let i = 0; i < scores.length; i++) {
-    await fetch(`https://localhost:8000/api/user-scores`, {
+  try {
+    // Opprett userSession
+    const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        userSessionId: userSessionId,
-        correctScoreId: exercises[i].correctScoreId,
-        userScore: scores[i],
-      }),
+      body: JSON.stringify({ programId: programId }),
     });
+
+    const session = await sessionRes.json();
+    const userSessionId = session.userSessionId;
+
+    // Lagre scores
+    for (let i = 0; i < scores.length; i++) {
+      await fetch(`http://localhost:8000/api/user-scores`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userSessionId: userSessionId,
+          correctScoreId: exercises[i].correctScoreId,
+          userScore: scores[i],
+        }),
+      });
+    }
+
+    console.log('✅ Karakterer lagret:', scores);
+    
+    // Mostramos a mensagem de sucesso depois de salvar
+    document.getElementById('success-message').style.display = 'block';
+  } catch (error) {
+    console.error('Erro ao salvar dados:', error);
+    alert('Erro ao salvar suas notas. Por favor, tente novamente.');
+  }
+}
+
+function showComparison() {
+  const resultDiv = document.getElementById('result-table');
+  if (!resultDiv) {
+    console.error('Elemento result-table não encontrado!');
+    return;
+  }
+  
+  resultDiv.innerHTML = '<h3 class="text-center mb-3">Comparação de Resultados</h3>';
+
+  const table = document.createElement('table');
+  table.classList.add('character-table');
+
+  let thead = document.createElement('thead');
+  thead.innerHTML = `
+    <tr>
+      <th>Nr</th>
+      <th>Beskrivelse</th>
+      <th>Sua nota</th>
+      <th>Nota correta</th>
+      <th>Resultado</th>
+    </tr>
+  `;
+
+  let tbody = document.createElement('tbody');
+
+  for (let i = 0; i < exercises.length; i++) {
+    const exercise = exercises[i];
+    const userScore = scores[i];
+    // Busca o score correto pelo correctScoreId
+    const correctScoreObj = correctScores.find(cs => cs.programScoreId === exercise.correctScoreId);
+    const correctScore = correctScoreObj ? correctScoreObj.score : null;
+
+    // Verifica se acertou (pode ajustar a tolerância se quiser)
+    const acertou = userScore === correctScore;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${exercise.name}</td>
+      <td>${userScore !== undefined ? userScore : '-'}</td>
+      <td>${correctScore !== null ? correctScore : '-'}</td>
+      <td style="color:${acertou ? 'green' : 'red'};font-weight:bold">
+        ${acertou ? '✔️' : '❌'}
+      </td>
+    `;
+    tbody.appendChild(row);
   }
 
-  console.log('✅ Karakterer lagret:', scores);
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  resultDiv.appendChild(table);
+  resultDiv.style.display = 'block';
+  
+  // Scroll para a tabela de resultados
+  resultDiv.scrollIntoView({ behavior: 'smooth' });
 }
