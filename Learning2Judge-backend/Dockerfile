@@ -15,6 +15,10 @@ RUN useradd -m usuario
 WORKDIR /app
 RUN chown usuario:usuario /app
 
+# Create migrations directory with correct permissions
+RUN mkdir -p /app/Learning2Judge/migrations && \
+    chown -R usuario:usuario /app/Learning2Judge
+
 # Switch to non-root user
 USER usuario
 
