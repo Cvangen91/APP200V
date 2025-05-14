@@ -107,8 +107,12 @@ class UserSessionSchema(BaseModel):
         populate_by_name = True
 
 class UserSessionCreateSchema(BaseModel):
-    programId: int = Field(alias='program_id')
+    program_id: int
     details: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True
 
 class UserSessionDetailSchema(BaseModel):
     userSessionId: int = Field(alias='user_session_id')
@@ -116,6 +120,7 @@ class UserSessionDetailSchema(BaseModel):
     programId: int = Field(alias='program_id')
     timestamp: datetime
     programName: str = Field(alias='program_name')
+    details: Optional[str] = None
     scores: List['UserScoreSchema']
 
     class Config:
@@ -136,8 +141,12 @@ class UserScoreSchema(BaseModel):
         populate_by_name = True
 
 class UserScoreCreateSchema(BaseModel):
-    userSessionId: int = Field(alias='user_session_id')
-    correctScoreId: int = Field(alias='correct_score_id')
-    userScore: float = Field(alias='user_score')
-    exerciseName: Optional[str] = Field(alias='exercise_name', default=None)
-    expertScore: Optional[float] = Field(alias='expert_score', default=None)
+    user_session_id: int
+    correct_score_id: int
+    user_score: float
+    exercise_name: Optional[str] = None
+    expert_score: Optional[float] = None
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True

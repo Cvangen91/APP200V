@@ -1,130 +1,117 @@
+// Function to get sessionId from URL
+function getSessionIdFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('sessionId');
+}
+
 // Results page specific JavaScript
 document.addEventListener('DOMContentLoaded', async function() {
-    // Get test index and session ID from localStorage
-    const testIndex = localStorage.getItem('selectedTestIndex');
-    const sessionId = localStorage.getItem('selectedSessionId');
+    // Get session ID from URL or localStorage
+    let sessionId = getSessionIdFromURL();
+    
+    // If not in URL, try from localStorage
+    if (!sessionId) {
+        sessionId = localStorage.getItem('selectedSessionId');
+    }
     
     try {
+        if (!sessionId) {
+            showError('Nenhuma sessão selecionada. Volte para a página de perfil e selecione um resultado.');
+            return;
+        }
+        
+        // Buscar dados da sessão do backend
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            showError('Usuário não autenticado');
+            return;
+        }
+        
+        // Buscar a sessão do backend
+        const sessionRes = await fetch(`http://localhost:8000/api/user-sessions/${sessionId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!sessionRes.ok) {
+            throw new Error(`Erro ao buscar sessão: ${sessionRes.status}`);
+        }
+        
+        const session = await sessionRes.json();
         let testResult;
         
-        // Se temos um sessionId, tentamos buscar do backend primeiro
-        if (sessionId) {
-            try {
-                const token = localStorage.getItem('access_token');
-                if (!token) throw new Error('Usuário não autenticado');
-                
-                // Buscar a sessão do backend
-                const sessionRes = await fetch(`http://localhost:8000/api/user-sessions/${sessionId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                
-                if (!sessionRes.ok) {
-                    throw new Error(`Erro ao buscar sessão: ${sessionRes.status}`);
-                }
-                
-                const session = await sessionRes.json();
-                
-                // Verificar se temos detalhes na sessão
-                if (session.details) {
-                    // Temos os detalhes completos
-                    const details = JSON.parse(session.details);
-                    testResult = {
-                        ...details,
-                        sessionId,
-                        date: new Date(session.timestamp || details.timestamp).toLocaleDateString('no-NO')
-                    };
-                } else {
-                    // Buscar os scores individualmente
-                    const scoresRes = await fetch(`http://localhost:8000/api/user-scores/session/${sessionId}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    
-                    if (!scoresRes.ok) {
-                        throw new Error(`Erro ao buscar scores: ${scoresRes.status}`);
-                    }
-                    
-                    const scores = await scoresRes.json();
-                    
-                    if (!scores || scores.length === 0) {
-                        throw new Error('Nenhum score encontrado para esta sessão');
-                    }
-                    
-                    // Buscar informações do programa
-                    const programRes = await fetch(`http://localhost:8000/api/programs/${session.programId}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    
-                    if (!programRes.ok) {
-                        throw new Error(`Erro ao buscar programa: ${programRes.status}`);
-                    }
-                    
-                    const program = await programRes.json();
-                    
-                    // Calcular as porcentagens
-                    let totalUserScore = 0;
-                    let totalExpertScore = 0;
-                    let totalMatch = 0;
-                    
-                    scores.forEach(score => {
-                        const userScore = parseFloat(score.userScore);
-                        const expertScore = parseFloat(score.expertScore);
-                        
-                        totalUserScore += userScore;
-                        totalExpertScore += expertScore;
-                        
-                        // Calcular o match
-                        const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
-                        totalMatch += match;
-                    });
-                    
-                    const userPercentage = (totalUserScore / (scores.length * 10) * 100).toFixed(1);
-                    const expertPercentage = (totalExpertScore / (scores.length * 10) * 100).toFixed(1);
-                    const matchPercentage = (totalMatch / scores.length).toFixed(1);
-                    
-                    testResult = {
-                        sessionId,
-                        programId: session.programId,
-                        programName: program.name,
-                        equipageId: program.equipageId,
-                        date: new Date(session.timestamp).toLocaleDateString('no-NO'),
-                        userPercentage,
-                        expertPercentage,
-                        matchPercentage,
-                        scores: scores.map(s => parseFloat(s.userScore)),
-                        exercises: scores.map(s => s.exerciseName),
-                        correctScores: scores.map(s => parseFloat(s.expertScore))
-                    };
-                }
-                
-                console.log('Dados recuperados do backend:', testResult);
-            } catch (error) {
-                console.error('Erro ao buscar do backend, tentando backup:', error);
-                // Falha ao buscar do backend, tentamos o backup do localStorage
-                testResult = null;
+        // Verificar se temos detalhes na sessão
+        if (session.details) {
+            // Temos os detalhes completos
+            const details = JSON.parse(session.details);
+            testResult = {
+                ...details,
+                sessionId,
+                date: new Date(session.timestamp || details.timestamp).toLocaleDateString('no-NO')
+            };
+        } else {
+            // Buscar os scores individualmente
+            const scoresRes = await fetch(`http://localhost:8000/api/user-scores/session/${sessionId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            if (!scoresRes.ok) {
+                throw new Error(`Erro ao buscar scores: ${scoresRes.status}`);
             }
+            
+            const scores = await scoresRes.json();
+            
+            if (!scores || scores.length === 0) {
+                throw new Error('Nenhum score encontrado para esta sessão');
+            }
+            
+            // Buscar informações do programa
+            const programRes = await fetch(`http://localhost:8000/api/programs/${session.programId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            if (!programRes.ok) {
+                throw new Error(`Erro ao buscar programa: ${programRes.status}`);
+            }
+            
+            const program = await programRes.json();
+            
+            // Calcular as porcentagens
+            let totalUserScore = 0;
+            let totalExpertScore = 0;
+            let totalMatch = 0;
+            
+            scores.forEach(score => {
+                const userScore = parseFloat(score.userScore);
+                const expertScore = parseFloat(score.expertScore);
+                
+                totalUserScore += userScore;
+                totalExpertScore += expertScore;
+                
+                // Calcular o match
+                const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
+                totalMatch += match;
+            });
+            
+            const userPercentage = (totalUserScore / (scores.length * 10) * 100).toFixed(1);
+            const expertPercentage = (totalExpertScore / (scores.length * 10) * 100).toFixed(1);
+            const matchPercentage = (totalMatch / scores.length).toFixed(1);
+            
+            testResult = {
+                sessionId,
+                programId: session.programId,
+                programName: program.name,
+                equipageId: program.equipageId,
+                date: new Date(session.timestamp).toLocaleDateString('no-NO'),
+                userPercentage,
+                expertPercentage,
+                matchPercentage,
+                scores: scores.map(s => parseFloat(s.userScore)),
+                exercises: scores.map(s => s.exerciseName),
+                correctScores: scores.map(s => parseFloat(s.expertScore))
+            };
         }
         
-        // Se não conseguimos do backend, usamos os dados do localStorage
-        if (!testResult) {
-            console.log('Usando dados do localStorage');
-            
-            // Tentar usar os resultados processados primeiro
-            const processedResults = JSON.parse(localStorage.getItem('processedResults') || '[]');
-            
-            if (processedResults.length > 0 && testIndex < processedResults.length) {
-                testResult = processedResults[testIndex];
-            } else {
-                // Tentar usar os resultados brutos
-                const testResults = JSON.parse(localStorage.getItem('testResults') || '[]');
-                
-                if (testResults.length === 0 || testIndex >= testResults.length) {
-                    showError('Test data not found');
-                    return;
-                }
-                
-                testResult = testResults[testIndex];
-            }
-        }
+        console.log('Dados recuperados do backend:', testResult);
         
         // Display test information
         displayTestInfo(testResult);
@@ -133,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         createComparisonTable(testResult);
     } catch (error) {
         console.error('Error loading test result:', error);
-        showError(`Error loading test result: ${error.message}`);
+        showError(`Erro ao carregar resultados: ${error.message}`);
     }
 });
 

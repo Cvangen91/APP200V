@@ -7,31 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get username from localStorage to personalize greeting
         const username = localStorage.getItem('username');
         
-        // In a real application, you would fetch the user's profile data
-        // from the backend using the authFetch helper
-        /*
-        window.auth.authFetch('http://localhost:8000/api/profile/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load profile data');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Update profile with fetched data
-                updateProfileUI(data);
-            })
-            .catch(error => {
-                console.error('Error loading profile data:', error);
-                // Show error message in profile content
-                profileContent.innerHTML = `
-                    <div class="error-message">
-                        <h2>Feil ved lasting av profildata</h2>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-            });
-        */
+        // Limpar o localStorage de resultados antigos
+        localStorage.removeItem('testResults');
+        localStorage.removeItem('processedResults');
+        localStorage.removeItem('selectedTestIndex');
+        localStorage.removeItem('selectedSessionId');
         
         // For now, just show a welcome message
         // This will be replaced with real API data in production
@@ -41,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             nameElement.textContent = username;
         }
         
-        // Load test results from localStorage
+        // Load test results from backend
         loadTestResults();
     }
     

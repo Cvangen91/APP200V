@@ -253,14 +253,17 @@ def get_user_session(request, user_session_id: int):
         "program_id": user_session.program.program_id,
         "timestamp": user_session.timestamp,
         "program_name": user_session.program.name,
+        "details": user_session.details,
         "scores": scores
     }
 
 @api.post("/user-sessions", response=UserSessionSchema, auth=JWTAuth())
 def create_user_session(request, payload: UserSessionCreateSchema):
+    data = payload.dict() 
     user_session = UserSession.objects.create(
         user=request.user,
-        program_id=payload.program_id
+        program_id=data.get('program_id'),  # Usar dict para maior compatibilidade
+        details=data.get('details')
     )
     return user_session
 
@@ -285,14 +288,15 @@ def get_user_score(request, user_score_id: int):
 
 @api.post("/user-scores", response=UserScoreSchema, auth=JWTAuth())
 def create_user_score(request, payload: UserScoreCreateSchema):
-    user_session = get_object_or_404(UserSession, user_session_id=payload.user_session_id)
+    data = payload.dict()
+    user_session = get_object_or_404(UserSession, user_session_id=data.get('user_session_id'))
     
     # Ensure the user owns this session
     if user_session.user != request.user:
         return api.create_response(request, {"error": "Permission denied"}, status=403)
     
     # Create the user score
-    user_score = UserScore.objects.create(**payload.dict())
+    user_score = UserScore.objects.create(**data)
     return user_score
 
 @api.delete("/user-scores/{user_score_id}", auth=JWTAuth())

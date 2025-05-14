@@ -224,7 +224,7 @@ function handleInput(input) {
       
       finishButton.addEventListener('click', function() {
         showComparison();
-        showSuccess();
+    showSuccess();
       });
       
       container.appendChild(finishButton);
@@ -234,7 +234,7 @@ function handleInput(input) {
 
 async function showSuccess() {
   document.getElementById('give-characters').style.display = 'none';
-  
+
   const token = localStorage.getItem('access_token');
   const programId = getProgramIdFromURL();
 
@@ -254,26 +254,33 @@ async function showSuccess() {
       expertPercentage: expertPercentage,
       matchPercentage: matchPercentage,
       exercises: exercises.map(e => e.name),
+      correctScores: correctScores.map(cs => cs.score),
+      scores: [...scores],
       timestamp: new Date().toISOString()
     };
     
     // Salvar no localStorage como backup
     saveTestResults(programId, userPercentage, expertPercentage, matchPercentage);
     
-    // Criar userSession no backend
+    // Criar userSession no backend - usando snake_case para compatibilidade com validação da API
     const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
-        programId: programId,
-        details: JSON.stringify(testDetails) // Salvamos os detalhes completos como JSON
+      body: JSON.stringify({
+        program_id: parseInt(programId),
+        details: JSON.stringify(testDetails)
       }),
     });
-
+    
     if (!sessionRes.ok) {
+      console.error('Erro ao criar sessão:', sessionRes.status, sessionRes.statusText);
+      try {
+        const errorText = await sessionRes.text();
+        console.error('Resposta de erro:', errorText);
+      } catch (e) {}
       throw new Error(`Erro ao criar sessão: ${sessionRes.status} ${sessionRes.statusText}`);
     }
 
@@ -300,11 +307,11 @@ async function showSuccess() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userSessionId: userSessionId,
-            correctScoreId: exercise.correctScoreId,
-            userScore: scores[i],
-            exerciseName: exercise.name,
-            expertScore: correctScore ? correctScore.score : null
+            user_session_id: userSessionId,
+            correct_score_id: exercise.correctScoreId,
+            user_score: scores[i],
+            exercise_name: exercise.name,
+            expert_score: correctScore ? correctScore.score : null
           }),
         })
       );
@@ -315,11 +322,52 @@ async function showSuccess() {
 
     console.log('✅ Karakterer lagret:', scores);
     
+    // Salvar o ID da sessão no localStorage para facilitar a navegação para a página de resultados
+    localStorage.setItem('lastSessionId', userSessionId);
+    
     // Mostramos a mensagem de sucesso depois de salvar
-    document.getElementById('success-message').style.display = 'block';
+    const successMsg = document.getElementById('success-message');
+    successMsg.innerHTML = `
+      <i class="fas fa-check-circle fa-4x mb-3" style="color: var(--secondary)"></i>
+      <h3>Program fullført!</h3>
+      <p>Din bedømmelse er lagret. Du kan nå se sammenligningen med fasit.</p>
+      <div class="mt-3">
+        <a href="myprofile.html" class="btn btn-outline"><i class="fas fa-user"></i> Se min profil</a>
+        <a href="resultat.html?sessionId=${userSessionId}" class="btn"><i class="fas fa-chart-bar"></i> Se resultater</a>
+      </div>
+    `;
+    successMsg.style.display = 'block';
   } catch (error) {
     console.error('Erro ao salvar dados:', error);
-    alert('Erro ao salvar suas notas. Por favor, tente novamente.');
+    
+    let errorMessage = 'Erro ao salvar os dados da avaliação.';
+    
+    if (error.message.includes('422')) {
+      errorMessage = 'Erro de validação. Por favor, tente novamente.';
+    } else if (error.message.includes('500')) {
+      errorMessage = 'Erro interno no servidor. Tente novamente mais tarde.';
+    }
+    
+    alert(errorMessage);
+    
+    // Salvamos no localStorage mesmo em caso de erro
+    console.log('Salvando no localStorage como backup');
+    
+    // Mostrar mensagem de erro
+    const successMsg = document.getElementById('success-message');
+    if (successMsg) {
+      successMsg.innerHTML = `
+        <i class="fas fa-exclamation-triangle fa-4x mb-3" style="color: var(--danger)"></i>
+        <h3>Erro ao salvar avaliação</h3>
+        <p>${errorMessage}</p>
+        <p class="small">Seus dados foram salvos localmente, mas não no servidor.</p>
+        <div class="mt-3">
+          <a href="myprofile.html" class="btn btn-outline"><i class="fas fa-user"></i> Ver meu perfil</a>
+          <button onclick="location.reload()" class="btn"><i class="fas fa-sync"></i> Tentar novamente</button>
+        </div>
+      `;
+      successMsg.style.display = 'block';
+    }
   }
 }
 
