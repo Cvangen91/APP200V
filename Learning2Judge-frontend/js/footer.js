@@ -1,6 +1,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         //the header string. all the links
-        const headerHTML = `
+        const footerHTML = `
      <footer>
       <div class="container py-2 text-center">
         <div class="footer-logo">
@@ -11,5 +11,5 @@
       </div>
     </footer>
         `;
-        document.getElementById('footer').innerHTML = headerHTML; //finds element with id 'header' in html and adds html code
+        document.getElementById('footer').innerHTML = footerHTML; //finds element with id 'header' in html and adds html code
     });
