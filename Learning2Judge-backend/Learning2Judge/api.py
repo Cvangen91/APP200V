@@ -108,7 +108,7 @@ def list_programs(request):
         "name": p.name,
         "equipageId": p.equipage_id,
         "videoPath": p.video_path,
-        "exercises": [int(x) for x in p.exercise_order.split(',')] if p.exercise_order else []
+        "exercises": [int(x.strip()) for x in p.exercise_order.split(',')] if p.exercise_order else []
     } for p in programs]
 
 @api.get("/programs/{program_id}", response=ProgramDetailSchema, auth=JWTAuth())
@@ -119,7 +119,7 @@ def get_program(request, program_id: int):
         "name": program.name,
         "equipageId": program.equipage_id,
         "videoPath": program.video_path,
-        "exercises": [int(x) for x in program.exercise_order.split(',')] if program.exercise_order else []
+        "exercises": [int(x.strip()) for x in program.exercise_order.split(',')] if program.exercise_order else []
     }
 
 @api.post("/programs", response=ProgramSchema, auth=JWTAuth())

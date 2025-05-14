@@ -97,6 +97,9 @@ function createTable() {
   const container = document.getElementById('give-characters');
   if (!container) return;
 
+  // Limpa o container antes de adicionar a tabela
+  container.innerHTML = '';
+
   const table = document.createElement('table');
   table.classList.add('character-table');
 
@@ -112,7 +115,7 @@ function createTable() {
   let tbody = document.createElement('tbody');
   tbody.id = 'exercise-body';
 
-  for (let i = 0; i < Math.min(visibleCount, exercises.length); i++) {
+  for (let i = 0; i < exercises.length; i++) {
     const exercise = exercises[i];
     const row = document.createElement('tr');
     row.innerHTML = `
