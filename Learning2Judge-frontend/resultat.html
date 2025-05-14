@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Results - Learning2Judge</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/improved-styles.css" />
+    <link rel="stylesheet" href="css/testing.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const resultContent = document.getElementById('result-container');
+        const authContent = document.getElementById('auth-required');
+
+        if (localStorage.getItem('access_token') === null) {
+          if (resultContent) resultContent.style.display = 'none';
+          if (authContent) authContent.style.display = 'block';
+        } else {
+          if (resultContent) resultContent.style.display = 'block';
+          if (authContent) authContent.style.display = 'none';
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a href="#maincontent" class="skiplink">Skip to main content</a>
+    <div id="header"></div>
+
+    <main id="maincontent" class="animate-fadeIn">
+      <div
+        id="auth-required"
+        class="card text-center animate-slideInUp"
+        style="
+          display: none;
+          padding: 40px;
+          max-width: 600px;
+          margin: 40px auto;
+        "
+      >
+        <i class="fas fa-lock fa-4x mb-3" style="color: var(--primary)"></i>
+        <h2>Du må være innlogget for å se resultater</h2>
+        <p class="mb-4">
+          Vennligst klikk på "Login" knappen i menyen for å logge inn.
+        </p>
+        <button
+          class="btn btn-lg"
+          onclick="document.getElementById('login-container').style.display='flex';"
+        >
+          <i class="fas fa-sign-in-alt"></i> Logg inn nå
+        </button>
+      </div>
+
+      <div id="result-container" class="animate-slideInUp">
+        <div class="result-header card">
+          <div class="result-info">
+            <h2 class="mb-2" id="program-title">
+              <i class="fas fa-tasks"></i> <span id="program-name">Loading program...</span>
+            </h2>
+            <div class="result-meta">
+              <div><strong>Date:</strong> <span id="test-date">-</span></div>
+              <div><strong>Equipage:</strong> <span id="equipage-id">-</span></div>
+              <div class="result-percentages">
+                <div class="percentage-box">
+                  <strong>Your Score:</strong> 
+                  <span id="user-percentage" class="percentage">-%</span>
+                </div>
+                <div class="percentage-box">
+                  <strong>Expert Score:</strong> 
+                  <span id="expert-percentage" class="percentage">-%</span>
+                </div>
+                <div class="percentage-box">
+                  <strong>Match:</strong> 
+                  <span id="match-percentage" class="percentage">-%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="result-table" class="card scoring-container">
+          <h3 class="text-center mb-3">Detailed Score Comparison</h3>
+          <!-- Table will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="nav-buttons card">
+          <a href="myprofile.html" class="btn"><i class="fas fa-arrow-left"></i> Back to Profile</a>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+    
+    <script src="js/footer.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/resultat.js"></script>
+    <script src="js/header.js"></script>
+  </body>
+</html>

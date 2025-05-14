@@ -239,6 +239,15 @@ async function showSuccess() {
   const programId = getProgramIdFromURL();
 
   try {
+    // Calcular as porcentagens antes de salvar
+    const { userPercentage, expertPercentage, matchPercentage } = calculateScorePercentages();
+    console.log('User Score %:', userPercentage);
+    console.log('Expert Score %:', expertPercentage);
+    console.log('Match %:', matchPercentage);
+    
+    // Salvar as porcentagens no localStorage para uso posterior
+    saveTestResults(programId, userPercentage, expertPercentage, matchPercentage);
+    
     // Opprett userSession
     const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
@@ -281,6 +290,82 @@ async function showSuccess() {
     console.error('Erro ao salvar dados:', error);
     alert('Erro ao salvar suas notas. Por favor, tente novamente.');
   }
+}
+
+// Função para calcular as porcentagens de acerto
+function calculateScorePercentages() {
+  let totalUserScore = 0;
+  let totalExpertScore = 0;
+  let totalPossibleScore = 0;
+  let totalMatch = 0;
+  let countedExercises = 0;
+  
+  for (let i = 0; i < exercises.length; i++) {
+    const userScore = scores[i];
+    if (userScore === undefined) continue;
+    
+    // Busca o score correto para este exercício
+    const correctScoreObj = correctScores.find(cs => 
+      cs.exerciseId === exercises[i].exerciseId
+    );
+    
+    if (!correctScoreObj) continue;
+    
+    const expertScore = correctScoreObj.score;
+    
+    // Adiciona aos totais
+    totalUserScore += userScore;
+    totalExpertScore += expertScore;
+    totalPossibleScore += 10; // Pontuação máxima por exercício é 10
+    
+    // Calcula o match (quanto mais próximo de 100%, melhor)
+    const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
+    totalMatch += match;
+    
+    countedExercises++;
+  }
+  
+  // Calcula as porcentagens
+  const userPercentage = (totalUserScore / (countedExercises * 10)) * 100;
+  const expertPercentage = (totalExpertScore / (countedExercises * 10)) * 100;
+  const matchPercentage = totalMatch / countedExercises;
+  
+  return {
+    userPercentage: userPercentage.toFixed(1),
+    expertPercentage: expertPercentage.toFixed(1),
+    matchPercentage: matchPercentage.toFixed(1)
+  };
+}
+
+// Função para salvar os resultados no localStorage
+function saveTestResults(programId, userPercentage, expertPercentage, matchPercentage) {
+  // Busca o objeto do programa para obter o nome
+  const programName = program.name;
+  const equipageId = program.equipageId;
+  
+  // Criar objeto com os resultados
+  const testResult = {
+    date: new Date().toLocaleDateString('no-NO'),
+    programId: programId,
+    programName: programName,
+    equipageId: equipageId,
+    userPercentage: userPercentage,
+    expertPercentage: expertPercentage,
+    matchPercentage: matchPercentage,
+    scores: [...scores],
+    exercises: exercises.map(e => e.name),
+    correctScores: correctScores.map(cs => cs.score),
+    timestamp: new Date().toISOString()
+  };
+  
+  // Obter resultados existentes ou iniciar um array vazio
+  const existingResults = JSON.parse(localStorage.getItem('testResults') || '[]');
+  
+  // Adicionar o novo resultado
+  existingResults.push(testResult);
+  
+  // Salvar de volta no localStorage
+  localStorage.setItem('testResults', JSON.stringify(existingResults));
 }
 
 function showComparison() {
