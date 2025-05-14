@@ -42,7 +42,7 @@ class CategoryCreateSchema(BaseModel):
 class ProgramSchema(BaseModel):
     programId: int = Field(alias='program_id')
     name: str
-    equipageId: Optional[int] = Field(alias='equipage_id', default=None)
+    equipageId: Optional[str] = Field(alias='equipage_id', default=None)
     videoPath: Optional[str] = Field(alias='video_path', default=None)
     exercises: List[int] = []
 
@@ -52,14 +52,14 @@ class ProgramSchema(BaseModel):
 
 class ProgramCreateSchema(BaseModel):
     name: str
-    equipageId: Optional[int] = Field(alias='equipage_id', default=None)
+    equipageId: Optional[str] = Field(alias='equipage_id', default=None)
     videoPath: Optional[str] = Field(alias='video_path', default=None)
     exercises: List[int] = []
 
 class ProgramDetailSchema(BaseModel):
     programId: int = Field(alias='program_id')
     name: str
-    equipageId: Optional[int] = Field(alias='equipage_id', default=None)
+    equipageId: Optional[str] = Field(alias='equipage_id', default=None)
     videoPath: Optional[str] = Field(alias='video_path', default=None)
     exercises: List[int]
 
