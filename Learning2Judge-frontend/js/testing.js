@@ -53,22 +53,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     let rawCorrectScores = await correctRes.json();
     console.log('Scores corretos (raw):', rawCorrectScores);
     
-    // Processar os scores corretos para mapear cada exercício
+    // Process correct scores to map each exercise
     correctScores = [];
     
-    // Se não temos scores no banco ainda, criamos um array vazio
+    // If no scores found in database, create empty array
     if (!rawCorrectScores || rawCorrectScores.length === 0) {
-      console.warn('Nenhum score correto encontrado para este programa');
+      console.warn('No correct scores found for this program');
     }
     
-    // Mapeia os exercícios do programa
+    // Map program exercises
     exercises = program.exercises.map((exerciseId, index) => {
       const exerciseDetails = allExercises.find(ex => ex.exerciseId === exerciseId);
       
-      // Procura o score correto para este exercício
+      // Find correct score for this exercise
       const correctScore = rawCorrectScores.find(cs => cs.exerciseId === exerciseId);
       
-      // Se encontrou, adiciona ao array de scores corretos
+      // If found, add to correct scores array
       if (correctScore) {
         correctScores.push(correctScore);
       }
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       return {
         exerciseId: exerciseId,
         correctScoreId: correctScore ? correctScore.programScoreId : null,
-        name: exerciseDetails ? exerciseDetails.name : `Exercício ID ${exerciseId}`
+        name: exerciseDetails ? exerciseDetails.name : `Exercise ID ${exerciseId}`
       };
     });
 
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   const videoContainer = document.getElementById('video-container');
   if (videoContainer && program && program.videoPath) {
-    // Converte o URL do YouTube para o formato de embed
+    // Convert YouTube URL to embed format
     const videoUrl = program.videoPath.replace('watch?v=', 'embed/');
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
@@ -122,7 +122,7 @@ function createTable() {
   const container = document.getElementById('give-characters');
   if (!container) return;
 
-  // Limpa o container antes de adicionar a tabela
+  // Clear container before adding table
   container.innerHTML = '';
 
   const table = document.createElement('table');
@@ -174,7 +174,7 @@ function attachInputListeners() {
       }
     });
     
-    // Adiciona listener para Tab para garantir que todos os inputs sejam processados
+    // Add listener for Tab to ensure all inputs are processed
     input.addEventListener('blur', function() {
       if (this.value.trim() !== '') {
         handleInput(this);
@@ -197,22 +197,22 @@ function handleInput(input) {
   scores[index] = value;
   console.log(`Score ${index + 1} definido como ${value}`);
 
-  // Marca o input como preenchido
-  input.style.backgroundColor = '#e6ffe6'; // Verde claro para indicar preenchido
+  // Mark input as completed
+  input.style.backgroundColor = '#e6ffe6'; // Light green to indicate filled
   
-  // Move para o próximo input quando pressiona Enter
+  // Move to next input on Enter
   const allInputs = document.querySelectorAll('.score-input');
   const currentIndex = Array.from(allInputs).indexOf(input);
   
   if (currentIndex < allInputs.length - 1) {
-    // Ainda há inputs para preencher, move para o próximo
+    // More inputs to fill, move to next
     allInputs[currentIndex + 1].focus();
   } else {
-    // Último input preenchido, verificamos se todos foram preenchidos
+    // Last input filled, check if all are completed
     const allFilled = Array.from(allInputs).every(inp => inp.value.trim() !== '');
     
     if (allFilled && !document.getElementById('finish-button')) {
-      // Todos os exercícios foram avaliados, mostra o botão de finalizar
+      // All exercises evaluated, show finish button
       const container = document.getElementById('give-characters');
       
       const finishButton = document.createElement('button');
@@ -239,13 +239,13 @@ async function showSuccess() {
   const programId = getProgramIdFromURL();
 
   try {
-    // Calcular as porcentagens antes de salvar
+    // Calculate percentages before saving
     const { userPercentage, expertPercentage, matchPercentage } = calculateScorePercentages();
     console.log('User Score %:', userPercentage);
     console.log('Expert Score %:', expertPercentage);
     console.log('Match %:', matchPercentage);
     
-    // Criar um objeto com os resultados detalhados
+    // Create object with detailed results
     const testDetails = {
       programId: programId,
       programName: program.name,
@@ -259,10 +259,10 @@ async function showSuccess() {
       timestamp: new Date().toISOString()
     };
     
-    // Salvar no localStorage como backup
+    // Save to localStorage as backup
     saveTestResults(programId, userPercentage, expertPercentage, matchPercentage);
     
-    // Criar userSession no backend - usando snake_case para compatibilidade com validação da API
+    // Create userSession in backend - using snake_case for API validation compatibility
     const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
       headers: {
@@ -287,43 +287,8 @@ async function showSuccess() {
     const session = await sessionRes.json();
     const userSessionId = session.userSessionId;
 
-    // Salvar cada score individualmente
-    const scorePromises = [];
-    for (let i = 0; i < scores.length; i++) {
-      if (scores[i] === undefined) continue; // Pula scores não preenchidos
-      
-      const exercise = exercises[i];
-      if (!exercise.correctScoreId) continue; // Pula exercícios sem score correto
-      
-      // Encontrar o score correto para este exercício
-      const correctScore = correctScores.find(cs => cs.exerciseId === exercise.exerciseId);
-      
-      // Adicionar a requisição à lista de promessas
-      scorePromises.push(
-        fetch(`http://localhost:8000/api/user-scores`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_session_id: userSessionId,
-            correct_score_id: exercise.correctScoreId,
-            user_score: scores[i],
-            exercise_name: exercise.name,
-            expert_score: correctScore ? correctScore.score : null
-          }),
-        })
-      );
-    }
-    
-    // Esperar todas as requisições de scores terminarem
-    await Promise.all(scorePromises);
-
-    console.log('✅ Karakterer lagret:', scores);
-    
-    // Salvar o ID da sessão no localStorage para facilitar a navegação para a página de resultados
-    localStorage.setItem('lastSessionId', userSessionId);
+    // Save to localStorage even in case of error
+    console.log('Saving to localStorage as backup');
     
     // Mostramos a mensagem de sucesso depois de salvar
     const successMsg = document.getElementById('success-message');
@@ -349,9 +314,6 @@ async function showSuccess() {
     }
     
     alert(errorMessage);
-    
-    // Salvamos no localStorage mesmo em caso de erro
-    console.log('Salvando no localStorage como backup');
     
     // Mostrar mensagem de erro
     const successMsg = document.getElementById('success-message');
@@ -383,7 +345,7 @@ function calculateScorePercentages() {
     const userScore = scores[i];
     if (userScore === undefined) continue;
     
-    // Busca o score correto para este exercício
+    // Find correct score for this exercise
     const correctScoreObj = correctScores.find(cs => 
       cs.exerciseId === exercises[i].exerciseId
     );
@@ -392,19 +354,19 @@ function calculateScorePercentages() {
     
     const expertScore = correctScoreObj.score;
     
-    // Adiciona aos totais
+    // Add to totals
     totalUserScore += userScore;
     totalExpertScore += expertScore;
-    totalPossibleScore += 10; // Pontuação máxima por exercício é 10
+    totalPossibleScore += 10; // Maximum score per exercise is 10
     
-    // Calcula o match (quanto mais próximo de 100%, melhor)
+    // Calculate match (closer to 100% is better)
     const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
     totalMatch += match;
     
     countedExercises++;
   }
   
-  // Calcula as porcentagens
+  // Calculate percentages
   const userPercentage = (totalUserScore / (countedExercises * 10)) * 100;
   const expertPercentage = (totalExpertScore / (countedExercises * 10)) * 100;
   const matchPercentage = totalMatch / countedExercises;
@@ -418,11 +380,11 @@ function calculateScorePercentages() {
 
 // Função para salvar os resultados no localStorage
 function saveTestResults(programId, userPercentage, expertPercentage, matchPercentage) {
-  // Busca o objeto do programa para obter o nome
+  // Get program object to get name
   const programName = program.name;
   const equipageId = program.equipageId;
   
-  // Criar objeto com os resultados
+  // Create object with results
   const testResult = {
     date: new Date().toLocaleDateString('no-NO'),
     programId: programId,
@@ -437,13 +399,13 @@ function saveTestResults(programId, userPercentage, expertPercentage, matchPerce
     timestamp: new Date().toISOString()
   };
   
-  // Obter resultados existentes ou iniciar um array vazio
+  // Get existing results or initialize empty array
   const existingResults = JSON.parse(localStorage.getItem('testResults') || '[]');
   
-  // Adicionar o novo resultado
+  // Add new result
   existingResults.push(testResult);
   
-  // Salvar de volta no localStorage
+  // Save back to localStorage
   localStorage.setItem('testResults', JSON.stringify(existingResults));
 }
 
@@ -476,14 +438,14 @@ function showComparison() {
     const exercise = exercises[i];
     const userScore = scores[i];
     
-    // Busca o score correto para este exercício
+    // Find correct score for this exercise
     const correctScoreObj = correctScores.find(cs => 
       cs.exerciseId === exercise.exerciseId
     );
     
     const correctScore = correctScoreObj ? correctScoreObj.score : null;
     
-    // Calcula a diferença e categoriza o resultado
+    // Calculate difference and categorize result
     let assessment = '';
     let assessmentColor = '';
     
@@ -492,26 +454,26 @@ function showComparison() {
       
       if (difference === 0) {
         assessment = 'Excellent';
-        assessmentColor = '#28a745'; // Verde - excelente
+        assessmentColor = '#28a745'; // Green - excellent
       } else if (difference <= 0.5) {
         assessment = 'Very Good';
-        assessmentColor = '#5cb85c'; // Verde claro - muito bom
+        assessmentColor = '#5cb85c'; // Light green - very good
       } else if (difference <= 1.0) {
         assessment = 'Good';
-        assessmentColor = '#17a2b8'; // Azul - bom
+        assessmentColor = '#17a2b8'; // Blue - good
       } else if (difference <= 1.5) {
         assessment = 'Fair';
-        assessmentColor = '#ffc107'; // Amarelo - razoável
+        assessmentColor = '#ffc107'; // Yellow - fair
       } else if (difference <= 2.0) {
         assessment = 'Needs Work';
-        assessmentColor = '#fd7e14'; // Laranja - precisa melhorar
+        assessmentColor = '#fd7e14'; // Orange - needs improvement
       } else {
         assessment = 'Significant Difference';
-        assessmentColor = '#dc3545'; // Vermelho - grande diferença
+        assessmentColor = '#dc3545'; // Red - significant difference
       }
     } else {
       assessment = 'Not Evaluated';
-      assessmentColor = '#6c757d'; // Cinza - não avaliado
+      assessmentColor = '#6c757d'; // Gray - not evaluated
     }
 
     const row = document.createElement('tr');
@@ -531,7 +493,7 @@ function showComparison() {
   table.appendChild(tbody);
   resultDiv.appendChild(table);
   
-  // Adiciona uma legenda para explicar as categorias
+  // Add legend to explain categories
   const legend = document.createElement('div');
   legend.className = 'assessment-legend';
   legend.style.marginTop = '20px';
@@ -553,6 +515,6 @@ function showComparison() {
   
   resultDiv.style.display = 'block';
   
-  // Scroll para a tabela de resultados
+  // Scroll to results table
   resultDiv.scrollIntoView({ behavior: 'smooth' });
 }
