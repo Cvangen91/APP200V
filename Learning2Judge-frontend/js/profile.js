@@ -7,12 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get username from localStorage to personalize greeting
         const username = localStorage.getItem('username');
         
-        // Limpar o localStorage de resultados antigos
-        localStorage.removeItem('testResults');
-        localStorage.removeItem('processedResults');
-        localStorage.removeItem('selectedTestIndex');
-        localStorage.removeItem('selectedSessionId');
-        
         // For now, just show a welcome message
         // This will be replaced with real API data in production
         const nameElement = document.getElementById('name');
@@ -59,27 +53,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Verificar se retornou um array vazio
             if (!sessions || sessions.length === 0) {
-                // Se não há dados no backend, vamos tentar o localStorage como backup
-                const localResults = JSON.parse(localStorage.getItem('testResults') || '[]');
-                
-                if (localResults.length === 0) {
-                    // Não há resultados em nenhum lugar
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center">
-                                <p style="padding: 20px;">
-                                    <i class="fas fa-info-circle"></i> Ingen testresultater er registrert ennå. 
-                                    <a href="program.html">Gå til programmer</a> for å starte din første test.
-                                </p>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                // Usamos os resultados do localStorage
-                console.log('Nenhum resultado no backend, usando localStorage:', localResults);
-                processTestResults(localResults);
+                // Não há resultados no banco de dados
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <p style="padding: 20px;">
+                                <i class="fas fa-info-circle"></i> Ingen testresultater er registrert ennå. 
+                                <a href="program.html">Gå til programmer</a> for å starte din første test.
+                            </p>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
             
@@ -196,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Função para processar os resultados dos testes (tanto do backend quanto do localStorage)
+    // Função para processar os resultados dos testes
     function processTestResults(testResults) {
         const testsTable = document.getElementById('completeTestsTable');
         if (!testsTable) return;
@@ -239,8 +223,8 @@ document.addEventListener('DOMContentLoaded', function() {
             tableBody.appendChild(row);
         });
         
-        // Salvar os resultados processados no localStorage para usar na página de resultados
-        localStorage.setItem('processedResults', JSON.stringify(testResults));
+        // Guardar o índice do resultado atual para referência
+        window.currentResults = testResults;
         
         // Atualizar estatísticas
         updateStatistics(testResults);
@@ -405,24 +389,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         protocolButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Get test index from data attribute
-                const testIndex = this.getAttribute('data-index');
                 const sessionId = this.getAttribute('data-session-id');
                 
-                if (!testIndex) {
-                    console.error('No test index found on button');
+                if (!sessionId) {
+                    console.error('No session ID found on button');
                     return;
                 }
                 
-                // Salvar o índice selecionado e o sessionId no localStorage
-                localStorage.setItem('selectedTestIndex', testIndex);
-                
-                if (sessionId) {
-                    localStorage.setItem('selectedSessionId', sessionId);
-                }
-                
-                // Redirect to result page
-                window.location.href = 'resultat.html';
+                // Redirect to result page with session ID
+                window.location.href = `resultat.html?sessionId=${sessionId}`;
             });
         });
     }
@@ -432,8 +407,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // If user is logged in, load profile data
         if (localStorage.getItem('access_token') !== null) {
             loadProfileData();
-            // Add listeners after data is loaded and table is populated
-            setTimeout(addProtocolButtonListeners, 100);
         }
     }
     

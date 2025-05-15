@@ -259,9 +259,6 @@ async function showSuccess() {
       timestamp: new Date().toISOString()
     };
     
-    // Save to localStorage as backup
-    saveTestResults(programId, userPercentage, expertPercentage, matchPercentage);
-    
     // Create userSession in backend - using snake_case for API validation compatibility
     const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
@@ -286,9 +283,6 @@ async function showSuccess() {
 
     const session = await sessionRes.json();
     const userSessionId = session.userSessionId;
-
-    // Save to localStorage even in case of error
-    console.log('Saving to localStorage as backup');
     
     // Mostramos a mensagem de sucesso depois de salvar
     const successMsg = document.getElementById('success-message');
@@ -322,7 +316,7 @@ async function showSuccess() {
         <i class="fas fa-exclamation-triangle fa-4x mb-3" style="color: var(--danger)"></i>
         <h3>Erro ao salvar avaliação</h3>
         <p>${errorMessage}</p>
-        <p class="small">Seus dados foram salvos localmente, mas não no servidor.</p>
+        <p>Por favor, tente novamente mais tarde.</p>
         <div class="mt-3">
           <a href="myprofile.html" class="btn btn-outline"><i class="fas fa-user"></i> Ver meu perfil</a>
           <button onclick="location.reload()" class="btn"><i class="fas fa-sync"></i> Tentar novamente</button>
@@ -376,37 +370,6 @@ function calculateScorePercentages() {
     expertPercentage: expertPercentage.toFixed(1),
     matchPercentage: matchPercentage.toFixed(1)
   };
-}
-
-// Função para salvar os resultados no localStorage
-function saveTestResults(programId, userPercentage, expertPercentage, matchPercentage) {
-  // Get program object to get name
-  const programName = program.name;
-  const equipageId = program.equipageId;
-  
-  // Create object with results
-  const testResult = {
-    date: new Date().toLocaleDateString('no-NO'),
-    programId: programId,
-    programName: programName,
-    equipageId: equipageId,
-    userPercentage: userPercentage,
-    expertPercentage: expertPercentage,
-    matchPercentage: matchPercentage,
-    scores: [...scores],
-    exercises: exercises.map(e => e.name),
-    correctScores: correctScores.map(cs => cs.score),
-    timestamp: new Date().toISOString()
-  };
-  
-  // Get existing results or initialize empty array
-  const existingResults = JSON.parse(localStorage.getItem('testResults') || '[]');
-  
-  // Add new result
-  existingResults.push(testResult);
-  
-  // Save back to localStorage
-  localStorage.setItem('testResults', JSON.stringify(existingResults));
 }
 
 function showComparison() {

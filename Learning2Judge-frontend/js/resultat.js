@@ -6,13 +6,8 @@ function getSessionIdFromURL() {
 
 // Results page specific JavaScript
 document.addEventListener('DOMContentLoaded', async function() {
-    // Get session ID from URL or localStorage
+    // Get session ID from URL
     let sessionId = getSessionIdFromURL();
-    
-    // If not in URL, try from localStorage
-    if (!sessionId) {
-        sessionId = localStorage.getItem('selectedSessionId');
-    }
     
     try {
         if (!sessionId) {
@@ -100,7 +95,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 sessionId,
                 programId: session.programId,
                 programName: program.name,
-                equipageId: program.equipageId,
                 date: new Date(session.timestamp).toLocaleDateString('no-NO'),
                 userPercentage,
                 expertPercentage,
@@ -111,15 +105,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             };
         }
         
-        console.log('Dados recuperados do backend:', testResult);
-        
-        // Display test information
-        displayTestInfo(testResult);
-        
-        // Create detailed comparison table
-        createComparisonTable(testResult);
+        // Mostrar os dados do teste
+        displayTestResults(testResult);
     } catch (error) {
-        console.error('Error loading test result:', error);
+        console.error('Erro ao carregar resultados:', error);
         showError(`Erro ao carregar resultados: ${error.message}`);
     }
 });
@@ -261,6 +250,127 @@ function createComparisonTable(testResult) {
             <li><span style="color:#ffc107;font-weight:bold">Fair:</span> Within 1.5 points of expert score</li>
             <li><span style="color:#fd7e14;font-weight:bold">Needs Work:</span> Within 2.0 points of expert score</li>
             <li><span style="color:#dc3545;font-weight:bold">Significant Difference:</span> More than 2.0 points difference</li>
+        </ul>
+    `;
+    resultTableDiv.appendChild(legend);
+}
+
+// Função para mostrar resultados do teste
+function displayTestResults(testResult) {
+    // Esconder mensagem de carregamento
+    document.getElementById('loading').style.display = 'none';
+    
+    // Mostrar contêiner de resultados
+    document.getElementById('result-container').style.display = 'block';
+    
+    // Preencher cabeçalho
+    document.getElementById('test-date').textContent = testResult.date;
+    document.getElementById('test-program').textContent = testResult.programName;
+    
+    // Preencher porcentagens
+    document.getElementById('user-percentage').textContent = `${testResult.userPercentage}%`;
+    document.getElementById('expert-percentage').textContent = `${testResult.expertPercentage}%`;
+    document.getElementById('match-percentage').textContent = `${testResult.matchPercentage}%`;
+    
+    // Definir classe para match percentage
+    const matchElement = document.getElementById('match-percentage');
+    if (parseFloat(testResult.matchPercentage) >= 95) {
+        matchElement.className = 'score-excellent';
+    } else if (parseFloat(testResult.matchPercentage) >= 85) {
+        matchElement.className = 'score-good';
+    } else {
+        matchElement.className = 'score-needs-work';
+    }
+    
+    // Criar tabela de comparação
+    const resultTableDiv = document.getElementById('result-table');
+    resultTableDiv.innerHTML = '';
+    
+    // Criar cabeçalho
+    const header = document.createElement('h3');
+    header.textContent = 'Detalhes da Avaliação';
+    resultTableDiv.appendChild(header);
+    
+    // Criar tabela
+    const table = document.createElement('table');
+    table.className = 'comparison-table';
+    
+    // Adicionar cabeçalho da tabela
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+        <tr>
+            <th>Nr</th>
+            <th>Exercício</th>
+            <th>Sua Nota</th>
+            <th>Nota Expert</th>
+            <th>Diferença</th>
+            <th>Avaliação</th>
+        </tr>
+    `;
+    table.appendChild(thead);
+    
+    // Criar corpo da tabela
+    const tbody = document.createElement('tbody');
+    
+    // Adicionar linhas para cada exercício
+    for (let i = 0; i < testResult.exercises.length; i++) {
+        const row = document.createElement('tr');
+        
+        const userScore = testResult.scores[i];
+        const expertScore = testResult.correctScores[i];
+        const diff = Math.abs(userScore - expertScore);
+        
+        // Determinar a classe da avaliação
+        let assessmentClass = '';
+        let assessment = '';
+        
+        if (diff === 0) {
+            assessment = 'Excelente';
+            assessmentClass = 'excellent';
+        } else if (diff <= 0.5) {
+            assessment = 'Muito Bom';
+            assessmentClass = 'very-good';
+        } else if (diff <= 1.0) {
+            assessment = 'Bom';
+            assessmentClass = 'good';
+        } else if (diff <= 1.5) {
+            assessment = 'Razoável';
+            assessmentClass = 'fair';
+        } else if (diff <= 2.0) {
+            assessment = 'Precisa Melhorar';
+            assessmentClass = 'needs-work';
+        } else {
+            assessment = 'Diferença Significativa';
+            assessmentClass = 'significant-diff';
+        }
+        
+        row.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${testResult.exercises[i]}</td>
+            <td>${userScore.toFixed(1)}</td>
+            <td>${expertScore.toFixed(1)}</td>
+            <td>${diff.toFixed(1)}</td>
+            <td class="${assessmentClass}">${assessment}</td>
+        `;
+        
+        tbody.appendChild(row);
+    }
+    
+    table.appendChild(tbody);
+    resultTableDiv.appendChild(table);
+    
+    // Adicionar legenda
+    const legend = document.createElement('div');
+    legend.className = 'legend';
+    legend.innerHTML = `
+        <h4>Guia de Avaliação</h4>
+        <ul>
+            <li><span class="excellent">Excelente:</span> Nota idêntica à do expert</li>
+            <li><span class="very-good">Muito Bom:</span> Diferença de até 0,5 ponto</li>
+            <li><span class="good">Bom:</span> Diferença de até 1,0 ponto</li>
+            <li><span class="fair">Razoável:</span> Diferença de até 1,5 pontos</li>
+            <li><span class="needs-work">Precisa Melhorar:</span> Diferença de até 2,0 pontos</li>
+            <li><span class="significant-diff">Diferença Significativa:</span> Diferença maior que 2,0 pontos</li>
         </ul>
     `;
     resultTableDiv.appendChild(legend);
