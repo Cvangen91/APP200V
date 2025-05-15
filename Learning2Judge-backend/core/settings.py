@@ -135,3 +135,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "Learning2Judge.User"
+
+# Configurações do JWT para aumentar o tempo de expiração
+from datetime import timedelta
+
+NINJA_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),  # Aumentado para 24 horas
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Aumentado para 30 dias
+}
