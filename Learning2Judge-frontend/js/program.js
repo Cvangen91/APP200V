@@ -26,47 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   showContent();
-/*
 
-  function createBoxes(rowId) {
-    const row = document.getElementById(rowId);
-
-    if (!row) {
-      console.warn(`Element with ID '${rowId}' not found`);
-      return;
-    }
-
-    for (let i = 0; i < numBoxes; i++) {
-      const box = document.createElement('a');
-      box.classList.add('task-box');
-      box.href = `testing.html?programId=${i + 1}`; // Link to test page
-
-      // Placeholder for images in case of missing
-      
-      const imgSrc = `images/programId${i + 1}.jpg`;
-      const fallbackSrc =
-        i % 2 === 0 ? 'images/bilde1.jpg' : 'images/bilde2.jpg';
-
-      const img = document.createElement('img');
-      img.alt = `Program ${i + 1}`;
-
-      // Try to load image, use fallback if failed
-      img.onerror = function () {
-        this.src = fallbackSrc;
-      };
-      img.src = imgSrc;
-
-      box.appendChild(img);
-      row.appendChild(box);
-    }
-  }
-
-  // Create boxes for each row
-  createBoxes('row1');
-  createBoxes('row2');
-  createBoxes('row3');
-
-  */
 
   function createBoxes(rowId, imagePath, programId) {
   const row = document.getElementById(rowId);
