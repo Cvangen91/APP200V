@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // program.js - Håndterer oppgavevisning, scrolling og klikk til video.html
   const numBoxes = 3; //  antall bokser
   const visibleBoxes = 3; // Antall synlige bokser
-  const scrollStep = 3; // Hvor mange bokser som flyttes per klikk
+  const scrollStep = 1; // Hvor mange bokser som flyttes per klikk
+
+
 
   // Check if user is authenticated and display appropriate content
   const showContent = function () {
@@ -24,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   showContent();
+/*
 
   function createBoxes(rowId) {
     const row = document.getElementById(rowId);
@@ -39,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
       box.href = `testing.html?programId=${i + 1}`; // Link to test page
 
       // Placeholder for images in case of missing
+      
       const imgSrc = `images/programId${i + 1}.jpg`;
       const fallbackSrc =
         i % 2 === 0 ? 'images/bilde1.jpg' : 'images/bilde2.jpg';
@@ -61,6 +65,38 @@ document.addEventListener('DOMContentLoaded', function () {
   createBoxes('row1');
   createBoxes('row2');
   createBoxes('row3');
+
+  */
+
+  function createBoxes(rowId, imagePath, programId) {
+  const row = document.getElementById(rowId);
+
+  if (!row) {
+    console.warn(`Element with ID '${rowId}' not found`);
+    return;
+  }
+
+  for (let i = 0; i < numBoxes; i++) {
+    const box = document.createElement('a');
+    box.classList.add('task-box');
+    box.href = `testing.html?programId=${programId}`;
+
+    const img = document.createElement('img');
+    img.alt = `Program ${programId}`;
+    img.onerror = function () {
+      this.src = 'images/fallback.jpg'; // Fallback-bilde
+    };
+    img.src = imagePath;
+
+    box.appendChild(img);
+    row.appendChild(box);
+  }
+}
+
+// Kall funksjonen med hardkodede verdier for hver rad, det blir samme bilde på hver rad
+createBoxes('row1', 'images/programId1.jpg', 1);
+createBoxes('row2', 'images/programId2.jpg', 2);
+createBoxes('row3', 'images/programId3.jpg', 3);
 
   function updateButtonState(rowId, currentScroll) {
     const prevButton = document.querySelector(`.prev-btn[data-row="${rowId}"]`);
