@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const navLinks =
     document.querySelector('.nav-links'); /*gets navigationmenu */
   /*legger til en klikkhendelse på hamburgermenyen */
-  menuToggle.addEventListener('click', function () {
-    navLinks.classList.toggle('active'); //switch showcasing the menu
-  });
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', function () {
+      navLinks.classList.toggle('active'); //switch showcasing the menu
+    });
+  }
 });
 
 /* henter brukernavn til velkommen message */

@@ -6,110 +6,46 @@ function getSessionIdFromURL() {
 
 // Results page specific JavaScript
 document.addEventListener('DOMContentLoaded', async function() {
-    // Get session ID from URL
-    let sessionId = getSessionIdFromURL();
-    
+    const sessionId = getSessionIdFromURL();
+    if (!sessionId) {
+        alert('❌ Mangler sessionId i URL');
+        return;
+    }
+
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
     try {
-        if (!sessionId) {
-            showError('Nenhuma sessão selecionada. Volte para a página de perfil e selecione um resultado.');
-            return;
-        }
-        
-        // Buscar dados da sessão do backend
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            showError('Usuário não autenticado');
-            return;
-        }
-        
-        // Buscar a sessão do backend
-        const sessionRes = await fetch(`http://localhost:8000/api/user-sessions/${sessionId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        const sessionRes = await fetch(
+            `http://localhost:8000/api/user-sessions/${sessionId}`,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
         
         if (!sessionRes.ok) {
-            throw new Error(`Erro ao buscar sessão: ${sessionRes.status}`);
+            throw new Error(`Erro ao carregar sessão: ${sessionRes.status}`);
         }
-        
+
         const session = await sessionRes.json();
-        let testResult;
+        const details = JSON.parse(session.details);
+
+        // Atualiza os elementos da página com os dados da sessão
+        document.getElementById('program-name').textContent = details.programName;
+        document.getElementById('test-date').textContent = new Date(details.timestamp).toLocaleDateString('no-NO');
+        document.getElementById('equipage-id').textContent = details.equipageId || 'N/A';
         
-        // Verificar se temos detalhes na sessão
-        if (session.details) {
-            // Temos os detalhes completos
-            const details = JSON.parse(session.details);
-            testResult = {
-                ...details,
-                sessionId,
-                date: new Date(session.timestamp || details.timestamp).toLocaleDateString('no-NO')
-            };
-        } else {
-            // Buscar os scores individualmente
-            const scoresRes = await fetch(`http://localhost:8000/api/user-scores/session/${sessionId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            
-            if (!scoresRes.ok) {
-                throw new Error(`Erro ao buscar scores: ${scoresRes.status}`);
-            }
-            
-            const scores = await scoresRes.json();
-            
-            if (!scores || scores.length === 0) {
-                throw new Error('Nenhum score encontrado para esta sessão');
-            }
-            
-            // Buscar informações do programa
-            const programRes = await fetch(`http://localhost:8000/api/programs/${session.programId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            
-            if (!programRes.ok) {
-                throw new Error(`Erro ao buscar programa: ${programRes.status}`);
-            }
-            
-            const program = await programRes.json();
-            
-            // Calcular as porcentagens
-            let totalUserScore = 0;
-            let totalExpertScore = 0;
-            let totalMatch = 0;
-            
-            scores.forEach(score => {
-                const userScore = parseFloat(score.userScore);
-                const expertScore = parseFloat(score.expertScore);
-                
-                totalUserScore += userScore;
-                totalExpertScore += expertScore;
-                
-                // Calcular o match
-                const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
-                totalMatch += match;
-            });
-            
-            const userPercentage = (totalUserScore / (scores.length * 10) * 100).toFixed(1);
-            const expertPercentage = (totalExpertScore / (scores.length * 10) * 100).toFixed(1);
-            const matchPercentage = (totalMatch / scores.length).toFixed(1);
-            
-            testResult = {
-                sessionId,
-                programId: session.programId,
-                programName: program.name,
-                date: new Date(session.timestamp).toLocaleDateString('no-NO'),
-                userPercentage,
-                expertPercentage,
-                matchPercentage,
-                scores: scores.map(s => parseFloat(s.userScore)),
-                exercises: scores.map(s => s.exerciseName),
-                correctScores: scores.map(s => parseFloat(s.expertScore))
-            };
-        }
-        
-        // Mostrar os dados do teste
-        displayTestResults(testResult);
+        // Atualiza as porcentagens
+        document.getElementById('user-percentage').textContent = `${details.userPercentage}%`;
+        document.getElementById('expert-percentage').textContent = `${details.expertPercentage}%`;
+        document.getElementById('match-percentage').textContent = `${details.matchPercentage}%`;
+
+        // Cria a tabela de comparação
+        createComparisonTable(details);
+
     } catch (error) {
-        console.error('Erro ao carregar resultados:', error);
-        showError(`Erro ao carregar resultados: ${error.message}`);
+        console.error('🚨 Erro ao carregar dados:', error);
+        alert('Kunne ikke laste inn resultatene. Vennligst prøv igjen senere.');
     }
 });
 
@@ -152,89 +88,80 @@ function displayTestInfo(testResult) {
 }
 
 // Create the detailed comparison table
-function createComparisonTable(testResult) {
-    const resultTableDiv = document.getElementById('result-table');
-    
-    // Create table element
+function createComparisonTable(details) {
+    const resultDiv = document.getElementById('result-table');
+    if (!resultDiv) return;
+
     const table = document.createElement('table');
     table.classList.add('character-table');
-    
-    // Create table header
-    const thead = document.createElement('thead');
+
+    let thead = document.createElement('thead');
     thead.innerHTML = `
         <tr>
             <th>Nr</th>
-            <th>Description</th>
-            <th>Your Score</th>
-            <th>Expert Score</th>
-            <th>Assessment</th>
+            <th>Beskrivelse</th>
+            <th>Din Karakter</th>
+            <th>Ekspert Karakter</th>
+            <th>Vurdering</th>
         </tr>
     `;
-    
-    // Create table body
-    const tbody = document.createElement('tbody');
-    
-    // Get the exercises, user scores, and correct scores
-    const exercises = testResult.exercises || [];
-    const userScores = testResult.scores || [];
-    const correctScores = testResult.correctScores || [];
-    
-    // Add rows for each exercise
-    for (let i = 0; i < exercises.length; i++) {
-        if (userScores[i] === undefined) continue;
+
+    let tbody = document.createElement('tbody');
+
+    for (let i = 0; i < details.exercises.length; i++) {
+        const exercise = details.exercises[i];
+        const userScore = details.scores[i];
+        const expertScore = details.correctScores[i];
         
-        const row = document.createElement('tr');
-        
-        // Calculate assessment
-        const userScore = userScores[i];
-        const correctScore = correctScores[i];
-        const difference = Math.abs(userScore - correctScore);
-        
+        // Calculate difference and categorize result
         let assessment = '';
         let assessmentColor = '';
         
-        if (difference === 0) {
-            assessment = 'Excellent';
-            assessmentColor = '#28a745';
-        } else if (difference <= 0.5) {
-            assessment = 'Very Good';
-            assessmentColor = '#5cb85c';
-        } else if (difference <= 1.0) {
-            assessment = 'Good';
-            assessmentColor = '#17a2b8';
-        } else if (difference <= 1.5) {
-            assessment = 'Fair';
-            assessmentColor = '#ffc107';
-        } else if (difference <= 2.0) {
-            assessment = 'Needs Work';
-            assessmentColor = '#fd7e14';
+        if (expertScore !== null && userScore !== undefined) {
+            const difference = Math.abs(userScore - expertScore);
+            
+            if (difference === 0) {
+                assessment = 'Utmerket';
+                assessmentColor = '#28a745'; // Green - excellent
+            } else if (difference <= 0.5) {
+                assessment = 'Veldig God';
+                assessmentColor = '#5cb85c'; // Light green - very good
+            } else if (difference <= 1.0) {
+                assessment = 'God';
+                assessmentColor = '#17a2b8'; // Blue - good
+            } else if (difference <= 1.5) {
+                assessment = 'Gjennomsnittlig';
+                assessmentColor = '#ffc107'; // Yellow - fair
+            } else if (difference <= 2.0) {
+                assessment = 'Trenger Forbedring';
+                assessmentColor = '#fd7e14'; // Orange - needs improvement
+            } else {
+                assessment = 'Betydelig Forskjell';
+                assessmentColor = '#dc3545'; // Red - significant difference
+            }
         } else {
-            assessment = 'Significant Difference';
-            assessmentColor = '#dc3545';
+            assessment = 'Ikke Evaluert';
+            assessmentColor = '#6c757d'; // Gray - not evaluated
         }
-        
+
+        const row = document.createElement('tr');
         row.innerHTML = `
             <td>${i + 1}</td>
-            <td>${exercises[i]}</td>
-            <td>${userScore.toFixed(1)}</td>
-            <td>${correctScore.toFixed(1)}</td>
+            <td>${exercise}</td>
+            <td>${userScore !== undefined ? userScore.toFixed(1) : '-'}</td>
+            <td>${expertScore !== null ? expertScore.toFixed(1) : '-'}</td>
             <td style="color:${assessmentColor};font-weight:bold">
                 ${assessment}
             </td>
         `;
-        
         tbody.appendChild(row);
     }
-    
-    // Add table to page
+
     table.appendChild(thead);
     table.appendChild(tbody);
+    resultDiv.appendChild(table);
     
-    // Clear existing content and add table
-    resultTableDiv.innerHTML = '<h3 class="text-center mb-3">Detailed Score Comparison</h3>';
-    resultTableDiv.appendChild(table);
-    
-    // Add assessment legend
+    // Add legend to explain categories
     const legend = document.createElement('div');
     legend.className = 'assessment-legend';
     legend.style.marginTop = '20px';
@@ -242,69 +169,74 @@ function createComparisonTable(testResult) {
     legend.style.backgroundColor = '#f8f9fa';
     legend.style.borderRadius = '5px';
     legend.innerHTML = `
-        <h4>Assessment Guide</h4>
+        <h4>Vurderingsguide</h4>
         <ul style="list-style: none; padding-left: 0;">
-            <li><span style="color:#28a745;font-weight:bold">Excellent:</span> Perfect match with expert score</li>
-            <li><span style="color:#5cb85c;font-weight:bold">Very Good:</span> Within 0.5 points of expert score</li>
-            <li><span style="color:#17a2b8;font-weight:bold">Good:</span> Within 1.0 point of expert score</li>
-            <li><span style="color:#ffc107;font-weight:bold">Fair:</span> Within 1.5 points of expert score</li>
-            <li><span style="color:#fd7e14;font-weight:bold">Needs Work:</span> Within 2.0 points of expert score</li>
-            <li><span style="color:#dc3545;font-weight:bold">Significant Difference:</span> More than 2.0 points difference</li>
+            <li><span style="color:#28a745;font-weight:bold">Utmerket:</span> Perfekt samsvar med ekspertkarakter</li>
+            <li><span style="color:#5cb85c;font-weight:bold">Veldig God:</span> Innen 0.5 poeng av ekspertkarakter</li>
+            <li><span style="color:#17a2b8;font-weight:bold">God:</span> Innen 1.0 poeng av ekspertkarakter</li>
+            <li><span style="color:#ffc107;font-weight:bold">Gjennomsnittlig:</span> Innen 1.5 poeng av ekspertkarakter</li>
+            <li><span style="color:#fd7e14;font-weight:bold">Trenger Forbedring:</span> Innen 2.0 poeng av ekspertkarakter</li>
+            <li><span style="color:#dc3545;font-weight:bold">Betydelig Forskjell:</span> Mer enn 2.0 poeng forskjell</li>
         </ul>
     `;
-    resultTableDiv.appendChild(legend);
+    resultDiv.appendChild(legend);
 }
 
 // Função para mostrar resultados do teste
 function displayTestResults(testResult) {
     // Esconder mensagem de carregamento
-    document.getElementById('loading').style.display = 'none';
+    const loadingEl = document.getElementById('loading');
+    if (loadingEl) loadingEl.style.display = 'none';
     
     // Mostrar contêiner de resultados
-    document.getElementById('result-container').style.display = 'block';
+    const resultContainer = document.getElementById('result-container');
+    if (resultContainer) resultContainer.style.display = 'block';
     
     // Preencher cabeçalho
-    document.getElementById('test-date').textContent = testResult.date;
-    document.getElementById('test-program').textContent = testResult.programName;
+    const testDate = document.getElementById('test-date');
+    if (testDate) testDate.textContent = testResult.date;
+    const testProgram = document.getElementById('test-program');
+    if (testProgram) testProgram.textContent = testResult.programName;
     
     // Preencher porcentagens
-    document.getElementById('user-percentage').textContent = `${testResult.userPercentage}%`;
-    document.getElementById('expert-percentage').textContent = `${testResult.expertPercentage}%`;
-    document.getElementById('match-percentage').textContent = `${testResult.matchPercentage}%`;
+    const userPercentage = document.getElementById('user-percentage');
+    if (userPercentage) userPercentage.textContent = `${testResult.userPercentage}%`;
+    const expertPercentage = document.getElementById('expert-percentage');
+    if (expertPercentage) expertPercentage.textContent = `${testResult.expertPercentage}%`;
+    const matchPercentage = document.getElementById('match-percentage');
+    if (matchPercentage) matchPercentage.textContent = `${testResult.matchPercentage}%`;
     
     // Definir classe para match percentage
-    const matchElement = document.getElementById('match-percentage');
-    if (parseFloat(testResult.matchPercentage) >= 95) {
-        matchElement.className = 'score-excellent';
-    } else if (parseFloat(testResult.matchPercentage) >= 85) {
-        matchElement.className = 'score-good';
-    } else {
-        matchElement.className = 'score-needs-work';
+    if (matchPercentage) {
+      if (parseFloat(testResult.matchPercentage) >= 95) {
+          matchPercentage.className = 'score-excellent percentage';
+      } else if (parseFloat(testResult.matchPercentage) >= 85) {
+          matchPercentage.className = 'score-good percentage';
+      } else {
+          matchPercentage.className = 'score-needs-work percentage';
+      }
     }
     
     // Criar tabela de comparação
     const resultTableDiv = document.getElementById('result-table');
-    resultTableDiv.innerHTML = '';
-    
-    // Criar cabeçalho
-    const header = document.createElement('h3');
-    header.textContent = 'Detalhes da Avaliação';
-    resultTableDiv.appendChild(header);
+    if (!resultTableDiv) return;
+    // Limpa apenas o conteúdo dinâmico, mantendo o h3
+    resultTableDiv.querySelectorAll('table, .legend, .assessment-legend').forEach(el => el.remove());
     
     // Criar tabela
     const table = document.createElement('table');
-    table.className = 'comparison-table';
+    table.className = 'comparison-table character-table';
     
     // Adicionar cabeçalho da tabela
     const thead = document.createElement('thead');
     thead.innerHTML = `
         <tr>
             <th>Nr</th>
-            <th>Exercício</th>
-            <th>Sua Nota</th>
-            <th>Nota Expert</th>
-            <th>Diferença</th>
-            <th>Avaliação</th>
+            <th>Øvelse</th>
+            <th>Din karakter</th>
+            <th>Ekspertens karakter</th>
+            <th>Forskjell</th>
+            <th>Vurdering</th>
         </tr>
     `;
     table.appendChild(thead);
@@ -325,22 +257,22 @@ function displayTestResults(testResult) {
         let assessment = '';
         
         if (diff === 0) {
-            assessment = 'Excelente';
+            assessment = 'Perfekt';
             assessmentClass = 'excellent';
         } else if (diff <= 0.5) {
-            assessment = 'Muito Bom';
+            assessment = 'Veldig bra';
             assessmentClass = 'very-good';
         } else if (diff <= 1.0) {
-            assessment = 'Bom';
+            assessment = 'Bra';
             assessmentClass = 'good';
         } else if (diff <= 1.5) {
-            assessment = 'Razoável';
+            assessment = 'Ok';
             assessmentClass = 'fair';
         } else if (diff <= 2.0) {
-            assessment = 'Precisa Melhorar';
+            assessment = 'Trenger forbedring';
             assessmentClass = 'needs-work';
         } else {
-            assessment = 'Diferença Significativa';
+            assessment = 'Stor forskjell';
             assessmentClass = 'significant-diff';
         }
         
@@ -363,14 +295,14 @@ function displayTestResults(testResult) {
     const legend = document.createElement('div');
     legend.className = 'legend';
     legend.innerHTML = `
-        <h4>Guia de Avaliação</h4>
+        <h4>Vurderingsguide</h4>
         <ul>
-            <li><span class="excellent">Excelente:</span> Nota idêntica à do expert</li>
-            <li><span class="very-good">Muito Bom:</span> Diferença de até 0,5 ponto</li>
-            <li><span class="good">Bom:</span> Diferença de até 1,0 ponto</li>
-            <li><span class="fair">Razoável:</span> Diferença de até 1,5 pontos</li>
-            <li><span class="needs-work">Precisa Melhorar:</span> Diferença de até 2,0 pontos</li>
-            <li><span class="significant-diff">Diferença Significativa:</span> Diferença maior que 2,0 pontos</li>
+            <li><span class="excellent">Perfekt:</span> Samme karakter som ekspert</li>
+            <li><span class="very-good">Veldig bra:</span> Forskjell på maks 0,5 poeng</li>
+            <li><span class="good">Bra:</span> Forskjell på maks 1,0 poeng</li>
+            <li><span class="fair">Ok:</span> Forskjell på maks 1,5 poeng</li>
+            <li><span class="needs-work">Trenger forbedring:</span> Forskjell på maks 2,0 poeng</li>
+            <li><span class="significant-diff">Stor forskjell:</span> Mer enn 2,0 poeng forskjell</li>
         </ul>
     `;
     resultTableDiv.appendChild(legend);

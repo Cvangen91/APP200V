@@ -28,47 +28,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Event listener for login button
-    loginButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        if (isLoggedIn()) {
-            // Handle logout
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('username');
-            updateUIState();
-            alert('Du har blitt logget ut.');
-            // Redirect to login page after logout
-            window.location.href = 'login.html';
-        } else {
-            // Show login form
-            loginContainer.style.display = 'flex';
-        }
-    });
+    if (loginButton) {
+        loginButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isLoggedIn()) {
+                // Handle logout
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('username');
+                updateUIState();
+                alert('Du har blitt logget ut.');
+                // Redirect to login page after logout
+                window.location.href = 'login.html';
+            } else if (loginContainer) {
+                // Show login form
+                loginContainer.style.display = 'flex';
+            }
+        });
+    }
 
     // Event listener for cancel button
-    cancelLogin.addEventListener('click', function() {
-        loginContainer.style.display = 'none';
-        loginForm.reset();
-        loginError.style.display = 'none';
-    });
+    if (cancelLogin && loginContainer && loginForm && loginError) {
+        cancelLogin.addEventListener('click', function() {
+            loginContainer.style.display = 'none';
+            loginForm.reset();
+            loginError.style.display = 'none';
+        });
+    }
 
     // Event listener for login form submission
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        // Basic validation
-        if (!username || !password) {
-            showError('Skriv inn brukernavn og passord.');
-            return;
-        }
-        
-        // Send login request
-        login(username, password);
-    });
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            // Basic validation
+            if (!username || !password) {
+                showError('Skriv inn brukernavn og passord.');
+                return;
+            }
+            // Send login request
+            login(username, password);
+        });
+    }
 
     // Function to display error messages
     function showError(message) {

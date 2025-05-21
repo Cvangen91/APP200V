@@ -199,6 +199,11 @@ function handleInput(input) {
 
   // Mark input as completed
   input.style.backgroundColor = '#e6ffe6'; // Light green to indicate filled
+  // Esconde a linha inteira (tr) do campo preenchido
+  setTimeout(() => {
+    const tr = input.closest('tr');
+    if (tr) tr.style.display = 'none';
+  }, 200); // Pequeno delay para feedback visual
   
   // Move to next input on Enter
   const allInputs = document.querySelectorAll('.score-input');
@@ -234,6 +239,13 @@ function handleInput(input) {
 
 async function showSuccess() {
   document.getElementById('give-characters').style.display = 'none';
+  // Esconde outros elementos principais da tela
+  const videoContainer = document.getElementById('video-container');
+  if (videoContainer) videoContainer.style.display = 'none';
+  const resultTable = document.getElementById('result-table');
+  if (resultTable) resultTable.style.display = 'none';
+  const titleEl = document.getElementById('program-title');
+  if (titleEl) titleEl.style.display = 'none';
 
   const token = localStorage.getItem('access_token');
   const programId = getProgramIdFromURL();
@@ -287,15 +299,23 @@ async function showSuccess() {
     // Mostramos a mensagem de sucesso depois de salvar
     const successMsg = document.getElementById('success-message');
     successMsg.innerHTML = `
-      <i class="fas fa-check-circle fa-4x mb-3" style="color: var(--secondary)"></i>
+      <i class=\"fas fa-check-circle fa-4x mb-3\" style=\"color: var(--secondary)\"></i>
       <h3>Program fullført!</h3>
-      <p>Din bedømmelse er lagret. Du kan nå se sammenligningen med fasit.</p>
-      <div class="mt-3">
-        <a href="myprofile.html" class="btn btn-outline"><i class="fas fa-user"></i> Se min profil</a>
-        <a href="resultat.html?sessionId=${userSessionId}" class="btn"><i class="fas fa-chart-bar"></i> Se resultater</a>
+      <p>Din bedømmelse er lagret. Hva vil du gjøre nå?</p>
+      <div class=\"mt-3\">
+        <button id=\"try-again-btn\" class=\"btn btn-outline\"><i class=\"fas fa-redo\"></i> Prøv igjen</button>
+        <button id=\"see-results-btn\" class=\"btn\"><i class=\"fas fa-chart-bar\"></i> Se sammenligning</button>
       </div>
     `;
     successMsg.style.display = 'block';
+
+    // Adiciona listeners aos botões
+    document.getElementById('try-again-btn').onclick = function() {
+      location.reload();
+    };
+    document.getElementById('see-results-btn').onclick = function() {
+      window.location.href = `resultat.html?sessionId=${userSessionId}`;
+    };
   } catch (error) {
     console.error('Erro ao salvar dados:', error);
     
