@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const headerHTML = `
       <header>
         <nav>
+        <a href="#maincontent" class="skiplink">Hopp til hovedinnhold</a>
           <div class="logo">
             <img src="images/logotextny.png" alt="Learning2Judge">
           </div>

@@ -37,15 +37,18 @@
 } 
 /* Resets e estilos base */ 
 body, html { 
-font-family: 'Montserrat', sans-serif; 
+font-family: var(--font);
 color: var(--text-dark); 
 background-color: var(--bg-light); 
 line-height: 1.6; 
 scroll-behavior: smooth; 
+overflow-x: hidden;
+margin: 0;   
+padding: 0;
 } 
  
 h1, h2, h3, h4, h5, h6 { 
-font-family: 'Raleway', sans-serif; 
+font-family: var(--font); 
 font-weight: 600; 
 margin-bottom: 1rem; 
 color: var(--text-dark); 
@@ -172,19 +175,7 @@ padding: 1rem 2rem;
 font-size: 1.1rem; 
 } 
  
-/* Cards melhorados */ 
-.card { 
-background-color: var(--bg-white); 
-border-radius: var(--radius-md); 
-box-shadow: var(--shadow-sm); 
-padding: 1.5rem; 
-transition: transform var(--transition-normal), box-shadow var(--transition-normal); 
-} 
- 
-.card:hover { 
-transform: translateY(-5px); 
-box-shadow: var(--shadow-lg); 
-} 
+
  
 /* Aprimoramento para galeria de imagens */ 
 .image-gallery { 
@@ -305,18 +296,13 @@ background-color: rgba(0, 0, 0, 0.02);
 footer { 
 background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); 
 color: white; 
-padding: 2rem 0; 
-margin-top: 3rem; 
+padding: 1rem 0; 
+margin-top: 1rem; 
 } 
  
 footer p { 
 margin: 0; 
 font-size: 1rem; 
-} 
- 
-footer .logo { 
-max-width: 150px; 
-margin-bottom: 1rem; 
 } 
  
 footer a { 
@@ -327,32 +313,7 @@ text-decoration: none;
 footer a:hover { 
 text-decoration: underline; 
 } 
- 
-/* Animações e efeitos */ 
-@keyframes fadeIn { 
-from { opacity: 0; } 
-to { opacity: 1; } 
-} 
- 
-.animate-fadeIn { 
-animation: fadeIn 0.5s ease; 
-} 
- 
-@keyframes slideInUp { 
-from { 
-transform: translateY(50px); 
-opacity: 0; 
-} 
-to { 
-transform: translateY(0); 
-opacity: 1; 
-} 
-} 
- 
-.animate-slideInUp { 
-animation: slideInUp 0.5s ease; 
-} 
- 
+
 /* Responsividade para dispositivos móveis */ 
 @media screen and (max-width: 768px) { 
 h1 { 
@@ -405,7 +366,7 @@ used different places in CSS, it makes it easier to change colors.*/
 .skiplink { 
 /*Skip to main content link*/ 
 position: absolute; 
-top: -40px; /*hides link so user cant see before pressing tab*/ 
+top: -50px; /*hides link so user cant see before pressing tab*/ 
 left: 10px; 
 background: var(--primaryblue); 
 color: white; 
@@ -473,15 +434,8 @@ display: flex;
 display: block; 
 } 
 } 
-/* Footer */ 
-footer { 
-background: var(--primaryblue); 
-color: white; 
-text-align: center; 
-padding: 15px 0; 
-width: 100%; 
-bottom: 0%; 
-} 
+
+
 main { 
 flex: 1; 
 margin: auto; 
@@ -567,15 +521,48 @@ font-weight: normal;
 font-size: 16px; 
 color: #333; 
 } 
+
+.features{
+  display: flex; 
+justify-content: center; 
+flex-wrap: wrap; 
+gap: 30px; 
+padding: 40px 20px; 
+max-width: 95%; 
+margin: 0 auto; 
+
+}
 .features-grid { 
 display: flex; 
 flex-wrap: wrap; 
 justify-content: center; /* <-- viktig for å sentrere kortene */ 
 gap: 2rem; /* mellomrom mellom kortene */ 
 } 
+
+
+.feature-card {
+  width: 280px; /* Viktig: tvinger kortene til jevn størrelse */
+  background-color: var(--bg-white); 
+  border-radius: var(--radius-md); 
+  box-shadow: var(--shadow-sm); 
+  padding: 1.5rem; 
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal); 
+}
+/* Cards melhorados */ 
+.cardwithanimation { 
+  background-color: var(--bg-white); 
+  border-radius: var(--radius-md); 
+  box-shadow: var(--shadow-sm); 
+  padding: 1.5rem; 
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal); 
+  } 
+   
+  .cardwithanimation { 
+  transform: translateY(-5px); 
+  box-shadow: var(--shadow-lg); 
+  } 
+
  
-
-
 
 /* Innlogging === */
 
