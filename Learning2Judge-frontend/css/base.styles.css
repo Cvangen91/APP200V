@@ -107,23 +107,24 @@ align-items: center;
 position: relative; 
 margin: 0 0.5rem; 
 } 
- 
-.nav-links a { 
-color: white; 
-font-weight: 500; 
-padding: 0.5rem 1rem; 
-border-radius: var(--radius-sm); 
-transition: background-color var(--transition-fast); 
-} 
- 
-.nav-links a:hover { 
-background-color: rgba(255, 255, 255, 0.1); 
-text-decoration: none; 
-} 
- 
-.nav-links a.active { 
-background-color: rgba(255, 255, 255, 0.2); 
-} 
+.nav-links a {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.nav-links a::after {
+  position: absolute;
+  left: 15px;
+  bottom: 8px;
+  width: 0%;
+  height: 2px;  
+}
+
+.nav-links a:hover {
+  color: var(--primary-dark);
+}
+
  
 /* Botões melhorados */ 
 .btn { 
@@ -335,9 +336,6 @@ padding: 0.65rem 1.25rem;
 .table-responsive { 
 overflow-x: auto; 
 } 
- 
- 
- 
 .menu-toggle { 
 display: flex; 
 } 
@@ -405,7 +403,7 @@ margin: 0 15px;
 .nav-links a { 
 text-decoration: none; /*removes lines under links*/ 
 color: white; 
-font-weight: 600; 
+font-weight: 300; 
 } 
 /* Hamburgermenu */ 
 .menu-toggle { 
@@ -415,12 +413,13 @@ color: white;
 cursor: pointer; 
 padding-bottom: 10px; 
 } 
+
 @media screen and (max-width: 768px) { 
 .nav-links { 
 display: none; /* hides menu in phoneview.*/ 
 flex-direction: column; /*vertical menu*/ 
 position: absolute; 
-background: var(--lightblue); 
+background: var(--primary); 
 width: 100%; /*menu cover the whole width of the site*/ 
 top: 60px; 
 left: 0; 

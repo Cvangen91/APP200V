@@ -1,10 +1,7 @@
 /* Estilos melhorados para a página de perfil */
 main {
-  min-width: 70%;
-  margin: 0 auto;
-  padding: 0 20px;
+  flex: 1;
 }
-
 .container {
   display: flex;
   gap: 30px;
@@ -167,6 +164,9 @@ h3 {
 
 .tab-content {
   background-color: transparent;
+  min-width: 70%;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .tab-pane {
