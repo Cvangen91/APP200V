@@ -185,7 +185,6 @@ flex-wrap: wrap;
 justify-content: center; 
 gap: 2rem; 
 padding: 2rem 0; 
-max-width: 1200px; 
 margin: 0 auto; 
 } 
  
@@ -436,18 +435,19 @@ display: block;
 
 
 main { 
+max-width: 1200px;
 flex: 1; 
-margin: auto; 
 margin-bottom: 100px; 
 align-content: center; 
-} 
-.container { 
-max-width: 70%; 
-display: flex; /* Aktiverer Flexbox */ 
-gap: 30px; /* Avstand mellom div-ene */ 
-margin: 20px; 
+margin-left: auto;
+margin-right: auto;
 flex-direction: column; 
-} 
+display: flex; /* Aktiverer Flexbox */
+}
+main#maincontent {
+  min-height: calc(100vh - 279px); /* juster tallet om nødvendig */
+}
+
  
 .image-dressage { 
 display: flex; 
@@ -469,7 +469,8 @@ width: 100vw;
 background: var(--white); 
 padding: 20px 0px; 
 text-align: center; 
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+box-shadow: 10px 20px 20px rgba(0, 0, 0, 0.1); 
+margin-bottom: 30px;
 } 
 .desc { 
 background-color: var(--white); 
@@ -492,8 +493,7 @@ display: flex;
 justify-content: center; 
 flex-wrap: wrap; 
 gap: 30px; 
-padding: 40px 20px; 
-max-width: 70%; 
+padding: 40px 20px;  
 margin: 0 auto; 
 } 
 .gallery-card { 
