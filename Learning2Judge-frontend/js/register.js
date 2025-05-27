@@ -20,12 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const username = document.getElementById('username').value;
+        const fullName = document.getElementById('full-name').value;
+        const birthDate = document.getElementById('birth-date').value;
+        const judgeLevel = document.getElementById('judge-level').value;
+        const judgeSince = document.getElementById('judge-since').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const passwordConfirm = document.getElementById('password-confirm').value;
         
         // Basic validation
-        if (!username || !email || !password || !passwordConfirm) {
+        if (!username || !fullName || !birthDate || !judgeLevel || !judgeSince || !email || !password || !passwordConfirm) {
             showError('Alle påkrevde felt må fylles ut.');
             return;
         }
@@ -41,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Send registration request
-        register(username, email, password);
+        register(username, fullName, birthDate, judgeLevel, judgeSince, email, password);
     });
 
     // Function to display error messages
@@ -59,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to handle registration request
-    function register(username, email, password) {
+    function register(username, fullName, birthDate, judgeLevel, judgeSince, email, password) {
         fetch(`${API_URL}${REGISTER_ENDPOINT}`, {
             method: 'POST',
             headers: {
@@ -68,6 +72,10 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 username: username,
+                full_name: fullName,
+                birth_date: birthDate,
+                judge_level: judgeLevel,
+                judge_since: parseInt(judgeSince),
                 email: email,
                 password: password
             }),

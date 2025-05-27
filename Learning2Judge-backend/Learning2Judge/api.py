@@ -33,14 +33,22 @@ def register_user(request, payload: UserCreateSchema):
         user = User.objects.create_user(
             username=payload.username,
             email=payload.email,
-            password=payload.password.get_secret_value()
+            password=payload.password.get_secret_value(),
+            full_name=payload.full_name,
+            birth_date=payload.birth_date,
+            judge_level=payload.judge_level,
+            judge_since=payload.judge_since
         )
         return 200, {
             "id": user.id,
             "username": user.username,
             "email": user.email,
             "is_judge": user.is_judge,
-            "created_at": user.created_at
+            "created_at": user.created_at,
+            "full_name": user.full_name,
+            "birth_date": user.birth_date,
+            "judge_level": user.judge_level,
+            "judge_since": user.judge_since
         }
     except Exception as e:
         return 500, {"error": str(e)}
