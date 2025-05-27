@@ -1,4 +1,4 @@
-/* Estilos melhorados para a página de testes */
+/*Stylesheet for the test page */
 .test-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -53,7 +53,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Estilos para tabela de pontuação */
+/* Styles for the scoring table */
 .character-table {
   width: 100%;
   border-collapse: collapse;
@@ -91,7 +91,7 @@
   opacity: 1;
 }
 
-/* Inputs de pontuação */
+/* Scoring inputs */
 .score-input {
   width: 80px;
   height: 40px;
@@ -109,7 +109,7 @@
   box-shadow: 0 0 0 3px rgba(44, 110, 209, 0.25);
 }
 
-/* Mensagem de sucesso */
+/* Success message */
 #success-message {
   text-align: center;
   padding: 40px;
@@ -121,7 +121,7 @@
   margin-bottom: 15px;
 }
 
-/* Estilo para pontuação de 0 a 10 */
+/* Style for score from 0 to 10 */
 .score-scale {
   display: flex;
   justify-content: space-between;
@@ -152,7 +152,7 @@
   font-size: 0.8rem;
 }
 
-/* Responsividade */
+/* Responsive for smaller screens*/
 @media screen and (max-width: 768px) {
   .test-container {
     padding: 0 10px;

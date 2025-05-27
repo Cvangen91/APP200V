@@ -1,41 +1,33 @@
-/* Learning2Judge - Arquivo de estilos melhorados */ 
- 
-/* Importação de fontes do Google */ 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&display=swap'); 
- 
-/* Esquema de cores atualizado */ 
+/* Learning2Judge - Base Stylesheet */
+/* This file contains the base styles for the Learning2Judge project, including resets, typography, colors, and layout. */
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Global variables. Root define global variables that can be 
+used different places in CSS, it makes it easier to change colors.*/ 
 :root { 
---primary: #2c6ed1; /* Azul mais vivo e moderno */ 
---primary-dark: #1a4a9e; /* Azul escuro para hover */ 
---primary-light: #e8f0fe; /* Azul claro para backgrounds */ 
---secondary: #42b883; /* Verde para acentos e sucessos */ 
---secondary-dark: #33825f;/* Verde escuro para hover */ 
---accent: #ff6b6b; /* Coral para alertas e destaques */ 
---text-dark: #333333; /* Quase preto para texto principal */ 
---text-medium: #555555; /* Cinza escuro para subtextos */ 
---text-light: #888888; /* Cinza médio para textos menos importantes */ 
---bg-light: #f9f9f9; /* Quase branco para fundos */ 
---bg-white: #ffffff; /* Branco puro */ 
---border-light: #e0e0e0; /* Cinza claro para bordas */ 
+--primary: #2c6ed1; /* Primary color for the site */
+--primary-dark: #1a4a9e; /* Darker shade of primary*/
+--primary-light: #e8f0fe; /* Lighter shade of primary */
+--accent: #ff6b6b; 
+--text-dark: #333333; 
+--text-medium: #555555;  
+--bg-light: #f9f9f9; 
+--bg-white: #ffffff; 
+--border-light: #e0e0e0;
 --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05); 
 --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1); 
 --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1); 
 --radius-sm: 4px; 
 --radius-md: 8px; 
---radius-lg: 12px; 
 --transition-fast: 0.2s ease; 
 --transition-normal: 0.3s ease; 
---lightblue: #05c8f0; 
---lightgreen: #a5d7bb; 
 --primaryblue: #75a1ea; 
---darkwhite: #dff6ff; 
---darkblue: #0040a0; 
---darkgreen: #146136; 
---black: #000000; 
+--darkblue: #0040a0;  
 --white: #ffffff; 
 --font: 'Inter', sans-serif; 
 } 
-/* Resets e estilos base */ 
+/* Global styles */
 body, html { 
 font-family: var(--font);
 color: var(--text-dark); 
@@ -46,7 +38,8 @@ overflow-x: hidden;
 margin: 0;   
 padding: 0;
 } 
- 
+
+/*add some styling for heading style h1, h2...*/
 h1, h2, h3, h4, h5, h6 { 
 font-family: var(--font); 
 font-weight: 600; 
@@ -54,110 +47,103 @@ margin-bottom: 1rem;
 color: var(--text-dark); 
 } 
  
-h1 { 
+h1 { /* Improved heading style for h1 */
 font-size: 2.5rem; 
 color: var(--primary-dark); 
 } 
  
-h2 { 
+h2 { /* Improved heading style for h2 */
 font-size: 2rem; 
 color: var(--primary); 
 } 
  
-h3 { 
+h3 { /* Improved heading style for h3 */
 font-size: 1.5rem; 
 } 
  
-p { 
+p { /* Improved paragraph style */
 margin-bottom: 1rem; 
 } 
  
 a { 
-color: var(--primary); 
+color: var(--primary); /* Link color */
 text-decoration: none; 
-transition: color var(--transition-fast); 
+transition: color var(--transition-fast); /* Smooth color transition */
 } 
  
-a:hover { 
+a:hover {  /*link hover effect */
 color: var(--primary-dark); 
-text-decoration: underline; 
+text-decoration: underline; /* Underline on hover */
 } 
  
-/* Header e navegação aprimorados */ 
+/*Navigation styles */
 header { 
-background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
-padding: 1rem 0; 
-box-shadow: var(--shadow-md); 
-position: sticky; 
+background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); /* Gradient background for header */
+padding: 1rem 0; /* Padding for header */
+box-shadow: var(--shadow-md); /* Subtle shadow for depth */
+position: sticky; /* Sticky header */
 top: 0; 
-z-index: 1000; 
+z-index: 1000; /* Ensure header stays on top */
 } 
  
-header .logo img { 
+header .logo img { /* Logo image styles */
 max-width: 250px; 
 height: auto; 
 } 
- 
+/* Navigation links styled as a horizontal list */
 .nav-links { 
-display: flex; 
-align-items: center; 
+display: flex; /* Aligns links horizontally */
+align-items: center; /* Centers links vertically */
 } 
  
-.nav-links li { 
+.nav-links li {
 position: relative; 
-margin: 0 0.5rem; 
+margin: 0 0.5rem; /*add some space between links */
 } 
 .nav-links a {
   position: relative;
   display: inline-block;
-  text-decoration: none;
+  text-decoration: none; /*remove underline from links */
 }
-
 .nav-links a::after {
   position: absolute;
   left: 15px;
   bottom: 8px;
-  width: 0%;
+  width: 0%; /*hidden underline effect*/
   height: 2px;  
 }
-
+/* Change color on hover*/
 .nav-links a:hover {
   color: var(--primary-dark);
 }
 
  
-/* Botões melhorados */ 
+/* Buttons with hover effects and consistent padding */ 
 .btn { 
 display: inline-block; 
 background-color: var(--primary); 
 color: white; 
-padding: 0.75rem 1.5rem; 
-border-radius: var(--radius-sm); 
+padding: 0.75rem 1.5rem; /* Consistent padding for buttons */
+border-radius: var(--radius-sm); /* Rounded corners */
 border: none; 
 cursor: pointer; 
 font-weight: 500; 
 text-align: center; 
-transition: all var(--transition-fast); 
+transition: all var(--transition-fast); /* Smooth transition for hover effects */
+border: 1px solid var(--primary); 
 } 
  
 .btn:hover { 
 background-color: var(--primary-dark); 
-transform: translateY(-2px); 
+transform: translateY(-2px); /* Slight lift effect on hover */
 box-shadow: var(--shadow-md); 
 text-decoration: none; 
+color: white;
 } 
- 
-.btn-secondary { 
-background-color: var(--secondary); 
-} 
- 
-.btn-secondary:hover { 
-background-color: var(--secondary-dark); 
-} 
- 
-.btn-outline { 
+
+.btn-outline { /* Outline button style */
 background-color: transparent; 
-border: 2px solid var(--primary); 
+border: 1px solid var(--primary); 
 color: var(--primary); 
 } 
  
@@ -166,80 +152,24 @@ background-color: var(--primary);
 color: white; 
 } 
  
-.btn-sm { 
-padding: 0.5rem 1rem; 
-font-size: 0.875rem; 
-} 
- 
-.btn-lg { 
+.btn-lg { /*makes buttons larger */
 padding: 1rem 2rem; 
 font-size: 1.1rem; 
 } 
- 
 
- 
-/* Aprimoramento para galeria de imagens */ 
-.image-gallery { 
-display: flex; 
-flex-wrap: wrap; 
-justify-content: center; 
-gap: 2rem; 
-padding: 2rem 0; 
-margin: 0 auto; 
-} 
- 
-.gallery-card { 
-background-color: var(--bg-white); 
-border-radius: var(--radius-md); 
-overflow: hidden; 
-width: 280px; 
-box-shadow: var(--shadow-sm); 
-transition: all var(--transition-normal); 
-} 
- 
-.gallery-card:hover { 
-transform: translateY(-10px); 
-box-shadow: var(--shadow-lg); 
-} 
- 
-.gallery-card img { 
-width: 100%; 
-height: 200px; 
-object-fit: cover; 
-transition: transform var(--transition-normal); 
-} 
- 
-.gallery-card:hover img { 
-transform: scale(1.05); 
-} 
- 
-.gallery-card .card-content { 
-padding: 1.25rem; 
-} 
- 
-.gallery-card h3 { 
-font-size: 1.2rem; 
-margin-bottom: 0.5rem; 
-} 
- 
-.gallery-card p { 
-color: var(--text-medium); 
-font-size: 0.95rem; 
-} 
- 
-/* Formulários melhorados */ 
+/* Form styles for consistent input and label spacing */
 .form-group { 
-margin-bottom: 1.5rem; 
+margin-bottom: 1.5rem; /* Adds spacing between form groups */
 } 
  
 .form-group label { 
-display: block; 
-margin-bottom: 0.5rem; 
+display: block; /* Ensures labels are on their own line */
+margin-bottom: 0.5rem; /* Adds spacing below labels */
 color: var(--text-dark); 
-font-weight: 500; 
+font-weight: 500; /* Makes labels thicker for better readability */
 } 
  
-.form-control { 
+.form-control {  
 width: 100%; 
 padding: 0.75rem 1rem; 
 font-size: 1rem; 
@@ -265,7 +195,7 @@ height: auto;
 min-height: 120px; 
 } 
  
-/* Tabelas aprimoradas */ 
+/* Table styles for better readability and effects */ 
 .table { 
 width: 100%; 
 border-collapse: collapse; 
@@ -292,12 +222,13 @@ background-color: rgba(44, 110, 209, 0.05);
 background-color: rgba(0, 0, 0, 0.02); 
 } 
  
-/* Footer melhorado */ 
+/* Footer styles for consistent design and readability */ 
 footer { 
 background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); 
 color: white; 
 padding: 1rem 0; 
-margin-top: 1rem; 
+margin-top: auto;
+position: relative; 
 } 
  
 footer p { 
@@ -313,34 +244,8 @@ text-decoration: none;
 footer a:hover { 
 text-decoration: underline; 
 } 
-
-/* Responsividade para dispositivos móveis */ 
-@media screen and (max-width: 768px) { 
-h1 { 
-font-size: 2rem; 
-} 
-h2 { 
-font-size: 1.75rem; 
-} 
-.gallery-card { 
-width: 100%; 
-max-width: 340px; 
-} 
-.card { 
-padding: 1.25rem; 
-} 
-.btn { 
-padding: 0.65rem 1.25rem; 
-} 
-.table-responsive { 
-overflow-x: auto; 
-} 
-.menu-toggle { 
-display: flex; 
-} 
-} 
  
-/* Classes utilitárias */ 
+/* Utility classes for common styles */
 .text-center { text-align: center; } 
 .text-right { text-align: right; } 
 .mb-1 { margin-bottom: 0.5rem; } 
@@ -356,12 +261,8 @@ display: flex;
 .py-4 { padding-top: 2rem; padding-bottom: 2rem; } 
 .px-2 { padding-left: 1rem; padding-right: 1rem; } 
 .px-4 { padding-left: 2rem; padding-right: 2rem; } 
- 
-/* Global variables. Root define global variables that can be 
-used different places in CSS, it makes it easier to change colors.*/ 
- 
-.skiplink { 
-/*Skip to main content link*/ 
+
+.skiplink { /*Skip to main content link*/ 
 position: absolute; 
 top: -50px; /*hides link so user cant see before pressing tab*/ 
 left: 10px; 
@@ -372,38 +273,46 @@ text-decoration: none; /*removes underline from text*/
 font-weight: bold; /*thick text*/ 
 z-index: 100; /*link stays on top*/ 
 transition: top 0.2s; /*transition speed for animation*/ 
-} 
+}
+
 .skiplink:focus { 
 top: 20px; /*moves link into view when focused*/ 
-} 
+}
+
 nav { 
-display: flex; /*flexible navbar*/ 
+display: flex; /*flexible navigation bar*/ 
 justify-content: space-between; /*logo to left, menu to right*/ 
 align-items: center; 
 max-width: 1200px; /*removes possibility that elements get spread on bigger screens*/ 
 margin: auto; 
 } 
+
 .logo { 
 display: flex; /* Ensures proper alignment */ 
 align-items: left; 
 } 
+
 .logo img { 
 width: 300px; /* Adjust size as needed */ 
 height: auto; /* Maintains aspect ratio */ 
 } 
+
 /*horisontal list menu*/ 
 .nav-links { 
 list-style: none; 
 display: flex; 
 } 
+
 .nav-links li { 
 margin: 0 15px; 
 } 
+
 .nav-links a { 
 text-decoration: none; /*removes lines under links*/ 
 color: white; 
 font-weight: 300; 
-} 
+}
+
 /* Hamburgermenu */ 
 .menu-toggle { 
 display: none; 
@@ -413,7 +322,7 @@ cursor: pointer;
 padding-bottom: 10px; 
 } 
 
-@media screen and (max-width: 768px) { 
+@media screen and (max-width: 768px) { /* Responsive styles for smaller screens */
 .nav-links { 
 display: none; /* hides menu in phoneview.*/ 
 flex-direction: column; /*vertical menu*/ 
@@ -425,16 +334,37 @@ left: 0;
 padding: 15px 0; 
 text-align: center; 
 } 
-.nav-links.active { 
+.nav-links.active { /*shows menu when hamburger is pressed*/
 display: flex; 
 } 
 .menu-toggle { 
-display: block; 
+display: block; /*shows hamburger icon in phoneview*/ 
 } 
+.image-dressage img {
+display: none; /* hides image in phoneview */ 
+}
+h1 { 
+  font-size: 2rem; 
+  } 
+  h2 { 
+  font-size: 1.75rem; 
+  } 
+  .gallery-card { 
+  width: 100%; /* Makes the gallery cards responsive */
+  max-width: 340px; 
+  } 
+  .btn { 
+  padding: 0.65rem 1.25rem; 
+  } 
+  .table-responsive { 
+  overflow-x: auto; /* Allows horizontal scrolling for tables on small screens */
+  } 
+  .menu-toggle { 
+  display: flex; 
+  } 
 } 
 
-
-main { 
+main { /* Main layout: sets max width and flex layout for content */
 max-width: 1200px;
 flex: 1; 
 margin-bottom: 100px; 
@@ -442,13 +372,12 @@ align-content: center;
 margin-left: auto;
 margin-right: auto;
 flex-direction: column; 
-display: flex; /* Aktiverer Flexbox */
+display: flex; /* Ensures main content is flexible */
 }
 main#maincontent {
-  min-height: calc(100vh - 279px); /* juster tallet om nødvendig */
+  min-height: calc(100vh - 279px); /* Forces the main content area to stretch and push the footer down */
 }
 
- 
 .image-dressage { 
 display: flex; 
 justify-content: center; 
@@ -458,7 +387,7 @@ align-items: center;
 width: 100%; /* Stretch across the full width */ 
 height: 100%; /* Ensure it fills the container */ 
 } 
-/*styling for infobox, bilder, nyheter*/ 
+/*styling for infobox*/ 
 .info-box { 
 position: relative; 
 left: 50%; 
@@ -472,22 +401,24 @@ text-align: center;
 box-shadow: 10px 20px 20px rgba(0, 0, 0, 0.1); 
 margin-bottom: 30px;
 } 
-.desc { 
-background-color: var(--white); 
-padding: 50px 50px; 
+/* Section used for descriptive title + text */
+.desc {  
 margin: 40px auto; 
-border-radius: 20px; 
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-max-width: 60%; 
-text-align: center; 
+max-width: 100%; 
+text-align: center;
 font-family: var(--font); 
 } 
 .desc h2 { 
-font-size: 30px; 
-font-weight: normal; 
-color: #333; 
-line-height: 1.5; 
+font-size: 40px; 
+font-weight: bold; 
+line-height: 1.5;
+color: var(--primary); 
 } 
+.desc p {
+font-size: 20px;
+}
+
+/* Image gallery layout with wrapping and spacing */
 .image-gallery { 
 display: flex; 
 justify-content: center; 
@@ -496,6 +427,7 @@ gap: 30px;
 padding: 40px 20px;  
 margin: 0 auto; 
 } 
+/* Card styling for each image in the gallery */
 .gallery-card { 
 background-color: var(--white); 
 border-radius: 10px; 
@@ -505,7 +437,7 @@ width: 240px;
 text-align: center; 
 transition: transform 0.3s ease, box-shadow 0.3s ease; 
 } 
-.gallery-card:hover { 
+.gallery-card:hover { /* Hover effect for gallery cards */
 transform: translateY(-10px) scale(1.02); 
 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); 
 } 
@@ -514,13 +446,19 @@ width: 100%;
 height: 220px; 
 object-fit: cover; 
 } 
+.gallery-card h3 { 
+  font-size: 1.5rem; 
+  margin-bottom: 0.5rem; 
+  } 
 .gallery-card p { 
-padding: 15px 5px; 
-font-weight: normal; 
-font-size: 16px; 
-color: #333; 
+color: var(--text-medium);
+font-size: 0.95rem; 
 } 
+.gallery-card .card-content { /* Content inside the card */
+  padding: 1rem; 
+  } 
 
+/* Features section with cards for each feature */
 .features{
   display: flex; 
 justify-content: center; 
@@ -531,40 +469,23 @@ max-width: 95%;
 margin: 0 auto; 
 
 }
-.features-grid { 
+.features-grid { /* Grid layout for features section */
 display: flex; 
 flex-wrap: wrap; 
-justify-content: center; /* <-- viktig for å sentrere kortene */ 
-gap: 2rem; /* mellomrom mellom kortene */ 
+justify-content: center; /* Centers the grid */ 
+gap: 2rem; /* Spacing between cards */
 } 
 
 
 .feature-card {
-  width: 280px; /* Viktig: tvinger kortene til jevn størrelse */
+  width: 280px; /* Fixed width for feature cards */
   background-color: var(--bg-white); 
   border-radius: var(--radius-md); 
   box-shadow: var(--shadow-sm); 
   padding: 1.5rem; 
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal); 
 }
-/* Cards melhorados */ 
-.cardwithanimation { 
-  background-color: var(--bg-white); 
-  border-radius: var(--radius-md); 
-  box-shadow: var(--shadow-sm); 
-  padding: 1.5rem; 
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal); 
-  } 
-   
-  .cardwithanimation { 
-  transform: translateY(-5px); 
-  box-shadow: var(--shadow-lg); 
-  } 
 
- 
-
-/* Innlogging === */
-
+/*login popup overlay */
 .login-container {
     position: fixed;
     top: 0;
@@ -578,6 +499,7 @@ gap: 2rem; /* mellomrom mellom kortene */
     z-index: 1000;
   }
   
+  /* Styling for the login form card */
   .login-form {
     background-color: var(--white);
     padding: 30px;
@@ -586,7 +508,7 @@ gap: 2rem; /* mellomrom mellom kortene */
     width: 100%;
     max-width: 400px;
   }
-  
+
   .login-form h2 {
     color: var(--darkblue);
     margin-bottom: 20px;
@@ -611,7 +533,7 @@ gap: 2rem; /* mellomrom mellom kortene */
     box-sizing: border-box;
   }
   
-  .form-group button {
+  .form-group button { 
     background-color: var(--primaryblue);
     color: white;
     border: none;
@@ -625,7 +547,7 @@ gap: 2rem; /* mellomrom mellom kortene */
     background-color: var(--darkblue);
   }
   
-  .error-message {
+  .error-message { /* Error message styling */
     color: red;
     margin-bottom: 15px;
     text-align: center;

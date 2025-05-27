@@ -10,7 +10,7 @@ h2 {
   font-weight: bold;
 }
 
-/* Estilos para a página de programas */
+/* Program Header Styles */
 .program-header {
   margin-bottom: 2rem;
   max-width: 1200px;
@@ -154,7 +154,7 @@ h2 {
   transform: none;
 }
 
-/* Responsividade */
+/* Responsive styles */
 @media screen and (max-width: 768px) {
   .program-search {
     flex-direction: column;
