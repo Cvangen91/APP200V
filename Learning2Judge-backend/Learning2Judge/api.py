@@ -63,7 +63,6 @@ def update_user(request, payload: UserUpdateSchema):
         user = request.user
         print(f"Atualizando usuário {user.id} com dados: {payload.dict()}")
         
-        # Atualizar campos básicos
         if payload.email is not None:
             user.email = payload.email
             print(f"Email atualizado para: {payload.email}")
@@ -88,11 +87,9 @@ def update_user(request, payload: UserUpdateSchema):
             user.set_password(payload.password.get_secret_value())
             print("Senha atualizada")
         
-        # Salvar as alterações
         user.save()
         print(f"Usuário {user.id} atualizado com sucesso")
         
-        # Retornar os dados atualizados
         return {
             "id": user.id,
             "username": user.username,
