@@ -442,30 +442,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const email = document.getElementById('profile-email').value;
         const name = document.getElementById('profile-name').value;
+        const birthDate = document.getElementById('profile-birthdate').value;
+        const judgeLevel = document.getElementById('profile-judge-level').value;
+        const judgeSince = document.getElementById('profile-judge-since').value;
         const newPassword = document.getElementById('profile-password').value;
         const confirmPassword = document.getElementById('profile-password-confirm').value;
+
+        console.log('Dados do formulário:', {
+            email,
+            name,
+            birthDate,
+            judgeLevel,
+            judgeSince,
+            hasNewPassword: !!newPassword
+        });
 
         // Validar senha se fornecida
         if (newPassword) {
             if (newPassword !== confirmPassword) {
-                alert('As senhas não coincidem');
+                alert('Passordene stemmer ikke overens');
                 return;
             }
             if (newPassword.length < 8) {
-                alert('A senha deve ter pelo menos 8 caracteres');
+                alert('Passordet må være minst 8 tegn');
                 return;
             }
         }
 
         try {
-            const updateData = {
-                email,
-                name
-            };
+            const updateData = {};
+            
+            // Só incluir campos que foram alterados
+            if (email) updateData.email = email;
+            if (name) updateData.full_name = name;
+            if (birthDate) updateData.birth_date = birthDate;
+            if (judgeLevel) updateData.judge_level = judgeLevel;
+            if (judgeSince) updateData.judge_since = parseInt(judgeSince);
+            if (newPassword) updateData.password = newPassword;
 
-            if (newPassword) {
-                updateData.password = newPassword;
-            }
+            console.log('Dados enviados para o backend:', updateData);
 
             const response = await fetch('http://localhost:8000/api/users/me', {
                 method: 'PUT',
@@ -476,23 +491,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(updateData)
             });
 
+            const responseData = await response.json();
+            console.log('Resposta do backend:', responseData);
+
             if (!response.ok) {
-                throw new Error('Falha ao atualizar perfil');
+                throw new Error(responseData.error || 'Kunne ikke oppdatere profil');
             }
 
             // Limpar campos de senha
             document.getElementById('profile-password').value = '';
             document.getElementById('profile-password-confirm').value = '';
 
-            // Atualizar nome na interface
+            // Atualizar a interface imediatamente com os dados recebidos
             const nameElement = document.getElementById('name');
-            if (nameElement) nameElement.textContent = name;
+            const ageElement = document.getElementById('age');
+            const degreeElement = document.getElementById('degree');
+            const timeElement = document.getElementById('time');
 
-            alert('Perfil atualizado com sucesso!');
+            if (nameElement) {
+                nameElement.textContent = responseData.full_name || responseData.username || 'Navn ikke definert';
+            }
+
+            if (ageElement && responseData.birth_date) {
+                try {
+                    const [year, month, day] = responseData.birth_date.split('-');
+                    const birthDate = new Date(year, month - 1, day);
+                    ageElement.textContent = calculateAge(birthDate);
+                } catch (error) {
+                    console.error('Erro ao calcular idade:', error);
+                    ageElement.textContent = 'Beregningsfeil';
+                }
+            }
+
+            if (degreeElement) {
+                degreeElement.textContent = responseData.judge_level || 'Nivå ikke definert';
+            }
+
+            if (timeElement) {
+                timeElement.textContent = responseData.judge_since || 'År ikke definert';
+            }
+
+            // Recarregar dados do perfil para garantir que tudo está atualizado
+            await loadProfileData();
+
+            alert('Profil oppdatert!');
             
         } catch (error) {
             console.error('Erro ao atualizar perfil:', error);
-            alert('Erro ao atualizar perfil. Por favor, tente novamente.');
+            alert(error.message || 'Kunne ikke oppdatere profil. Vennligst prøv igjen.');
         }
     }
     

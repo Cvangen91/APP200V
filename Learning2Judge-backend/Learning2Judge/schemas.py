@@ -33,6 +33,7 @@ class UserUpdateSchema(BaseModel):
     birth_date: Optional[date] = None
     judge_level: Optional[str] = None
     judge_since: Optional[int] = None
+    password: Optional[SecretStr] = None
 
 class UserLoginSchema(BaseModel):
     username: str
