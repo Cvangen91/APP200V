@@ -1,4 +1,4 @@
-/* Estilos para a página de resultados */
+/* Styles for the results page */
 .result-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -95,7 +95,7 @@
   margin-top: 20px;
 }
 
-/* Responsividade */
+/* Responsiveness for smaller screens */
 @media screen and (max-width: 768px) {
   .result-container {
     padding: 0 10px;

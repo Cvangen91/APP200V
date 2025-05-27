@@ -1,4 +1,9 @@
-.container {
+/** * Contact Page Styles
+ * This file contains styles for the contact page, including the contact form,
+ * contact information, and responsive design.
+ */
+
+.container { /* Main container for the contact page */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,11 +27,11 @@
 .contact-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px; /* redusert fra 30px */
+    gap: 15px;
     width: 100%;
-    max-width: 900px; /* valgfritt: begrenser bredden */
-    margin: 0 auto;    /* sentrerer containeren */
-    padding: 0 15px;   /* gir litt luft på sidene */
+    max-width: 900px; 
+    margin: 0 auto;    
+    padding: 0 15px;   
     box-sizing: border-box;
 }
 
@@ -169,8 +174,7 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Responsiv støtte for mobil og nettbrett */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 768px) { /* Responsive styles for smaller screens */
     .container {
         padding: 15px;
         margin: 10px;

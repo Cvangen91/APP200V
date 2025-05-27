@@ -5,6 +5,16 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_judge = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    full_name = models.CharField(max_length=255, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    judge_level = models.CharField(max_length=4, choices=[
+        ('DDA', 'DDA'),
+        ('DD1', 'DD1'),
+        ('DD2', 'DD2'),
+        ('DD3', 'DD3'),
+        ('DD4', 'DD4')
+    ], blank=True)
+    judge_since = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.username

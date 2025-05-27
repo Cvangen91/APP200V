@@ -1,10 +1,11 @@
-/* Estilos melhorados para a página de perfil */
+/* Layout wrapper for main profile content and side panels */
 .container {
   display: flex;
   gap: 30px;
   margin: 20px 0;
 }
 
+/* Decorative horizontal line under headings or between sections */
 .line {
   height: 10px;
   width: 100;
@@ -17,6 +18,7 @@
   margin: 20px;
 }
 
+/* Table displaying a user's completed test history */
 #completeTestsTable {
   width: 80%;
   font-size: 14px;
@@ -60,7 +62,7 @@ h3 {
   font-size: 14px;
 }
 
-/* Header do perfil */
+/* Main visual header section in the profile view */
 .profile-header {
   background: linear-gradient(
     135deg,
@@ -73,21 +75,7 @@ h3 {
   margin-bottom: 30px;
 }
 
-.profile-avatar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.avatar-image {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid white;
-  box-shadow: var(--shadow-md);
-}
-
+/* Contains text details and heading for profile */
 .profile-details {
   flex: 1;
 }
@@ -97,6 +85,7 @@ h3 {
   color: var(--primary-dark);
 }
 
+/* Grid of metadata (email, location, etc.) about the user */
 .profile-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -115,11 +104,12 @@ h3 {
   text-align: center;
 }
 
-/* Sistema de abas */
+/* Tab control area for switching between sections */
 .profile-tabs {
   margin-bottom: 20px;
 }
 
+/* Navigation bar for profile tabs */
 .tab-nav {
   display: flex;
   list-style: none;
@@ -170,12 +160,13 @@ h3 {
   display: none;
 }
 
+/* Makes the selected tab content visible with fade animation */
 .tab-pane.active {
   display: block;
   animation: fadeIn 0.3s ease;
 }
 
-/* Cards de estatísticas */
+/* Grid layout holding stat-cards */
 .stats-overview {
   display: flex;
   flex-wrap: wrap;
@@ -183,6 +174,7 @@ h3 {
   margin-bottom: 30px;
 }
 
+/* Individual card showing a single stat (score, rank, etc.) */
 .stat-card {
   flex: 1;
   background-color: var(--bg-white);
@@ -213,6 +205,7 @@ h3 {
 }
 
 /* Barras de progresso */
+/* Outer container for a visual progress bar */
 .progress-bar {
   width: 100%;
   height: 20px;
@@ -222,6 +215,7 @@ h3 {
   position: relative;
 }
 
+/* Inner animated fill bar representing progress */
 .progress {
   height: 100%;
   background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
@@ -239,7 +233,6 @@ h3 {
   font-weight: bold;
 }
 
-/* Tabelas */
 #completeTestsTable,
 #statsTable {
   width: 100%;
@@ -268,6 +261,7 @@ h3 {
   background-color: rgba(0, 0, 0, 0.02);
 }
 
+/* Tag-style label used for status or category */
 .badge {
   display: inline-block;
   padding: 4px 8px;
@@ -283,6 +277,7 @@ h3 {
   color: var(--secondary-dark);
 }
 
+/* Action button for viewing test protocol */
 .protokollBtn {
   padding: 5px 10px;
   background-color: var(--primary);
@@ -297,16 +292,18 @@ h3 {
   background-color: var(--primary-dark);
 }
 
-/* Responsividade */
 @media screen and (max-width: 768px) {
+/* Layout wrapper for main profile content and side panels */
   .container {
     flex-direction: column;
   }
 
+/* Grid of metadata (email, location, etc.) about the user */
   .profile-meta {
     grid-template-columns: 1fr;
   }
 
+/* Navigation bar for profile tabs */
   .tab-nav {
     flex-direction: column;
     border-radius: var(--radius-md);
@@ -319,10 +316,12 @@ h3 {
     left: 0;
   }
 
+/* Grid layout holding stat-cards */
   .stats-overview {
     flex-direction: column;
   }
 
+/* Individual card showing a single stat (score, rank, etc.) */
   .stat-card {
     min-width: auto;
   }
