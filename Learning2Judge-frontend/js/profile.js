@@ -3,20 +3,120 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileContent = document.getElementById('profile-content');
     
     // Load profile data if user is authenticated
-    function loadProfileData() {
-        // Get username from localStorage to personalize greeting
-        const username = localStorage.getItem('username');
-        
-        // For now, just show a welcome message
-        // This will be replaced with real API data in production
-        const nameElement = document.getElementById('name');
-        if (nameElement && username) {
-            // Personalize with the logged-in username
-            nameElement.textContent = username;
+    async function loadProfileData() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/api/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Kunne ikke laste profil: ${response.status} ${response.statusText}`);
+            }
+
+            const userData = await response.json();
+            
+            // Atualizar os elementos da UI com os dados do usuário
+            const nameElement = document.getElementById('name');
+            const ageElement = document.getElementById('age');
+            const degreeElement = document.getElementById('degree');
+            const timeElement = document.getElementById('time');
+            const emailElement = document.getElementById('profile-email');
+            const profileNameElement = document.getElementById('profile-name');
+
+            // Verificar se os elementos existem e atualizar seus valores
+            if (nameElement) {
+                nameElement.textContent = userData.fullName || userData.username || 'Navn ikke definert';
+            }
+            
+            if (ageElement) {
+                // Calcular idade a partir da data de nascimento
+                let age = 'Alder ikke definert';
+                if (userData.birthDate) {
+                    try {
+                        // Converter a string da data para um objeto Date
+                        const [year, month, day] = userData.birthDate.split('-');
+                        const birthDate = new Date(year, month - 1, day); // month - 1 porque em JavaScript os meses começam em 0
+                        const today = new Date();
+                        
+                        // Verificar se a data está no futuro
+                        if (birthDate > today) {
+                            age = 'Fremtidig dato';
+                        } else if (!isNaN(birthDate.getTime())) {
+                            age = calculateAge(birthDate);
+                        } else {
+                            age = 'Ugyldig dato';
+                        }
+                    } catch (error) {
+                        age = 'Beregningsfeil';
+                    }
+                }
+                ageElement.textContent = age;
+            }
+            
+            if (degreeElement) {
+                degreeElement.textContent = userData.judgeLevel || 'Nivå ikke definert';
+            }
+            
+            if (timeElement) {
+                timeElement.textContent = userData.judgeSince || 'År ikke definert';
+            }
+            
+            if (emailElement) {
+                emailElement.value = userData.email || '';
+            }
+            
+            if (profileNameElement) {
+                profileNameElement.value = userData.fullName || userData.username || '';
+            }
+            
+        } catch (error) {
+            alert('Kunne ikke laste profil. Vennligst prøv igjen.');
         }
         
         // Load test results from backend
         loadTestResults();
+    }
+    
+    // Função auxiliar para calcular a idade
+    function calculateAge(birthDate) {
+        try {
+            const today = new Date();
+            
+            // Verificar se a data é válida
+            if (isNaN(birthDate.getTime())) {
+                return 'Ugyldig dato';
+            }
+
+            // Verificar se a data de nascimento está no futuro
+            if (birthDate > today) {
+                return 'Fremtidig dato';
+            }
+            
+            // Calcular a idade
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            // Ajustar a idade se o aniversário ainda não ocorreu este ano
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            // Verificar se a idade é razoável
+            if (age < 0 || age > 120) {
+                return 'Ugyldig alder';
+            }
+            
+            return age;
+        } catch (error) {
+            return 'Beregningsfeil';
+        }
     }
     
     // Load and display test results from backend
@@ -402,13 +502,102 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Initialize the page
-    function init() {
-        // If user is logged in, load profile data
-        if (localStorage.getItem('access_token') !== null) {
-            loadProfileData();
+    // Função para salvar as alterações do perfil
+    async function saveProfileChanges(event) {
+        event.preventDefault();
+        
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+
+        const email = document.getElementById('profile-email').value;
+        const name = document.getElementById('profile-name').value;
+        const newPassword = document.getElementById('profile-password').value;
+        const confirmPassword = document.getElementById('profile-password-confirm').value;
+
+        // Validar senha se fornecida
+        if (newPassword) {
+            if (newPassword !== confirmPassword) {
+                alert('As senhas não coincidem');
+                return;
+            }
+            if (newPassword.length < 8) {
+                alert('A senha deve ter pelo menos 8 caracteres');
+                return;
+            }
+        }
+
+        try {
+            const updateData = {
+                email,
+                name
+            };
+
+            if (newPassword) {
+                updateData.password = newPassword;
+            }
+
+            const response = await fetch('http://localhost:8000/api/users/me', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao atualizar perfil');
+            }
+
+            // Limpar campos de senha
+            document.getElementById('profile-password').value = '';
+            document.getElementById('profile-password-confirm').value = '';
+
+            // Atualizar nome na interface
+            const nameElement = document.getElementById('name');
+            if (nameElement) nameElement.textContent = name;
+
+            alert('Perfil atualizado com sucesso!');
+            
+        } catch (error) {
+            console.error('Erro ao atualizar perfil:', error);
+            alert('Erro ao atualizar perfil. Por favor, tente novamente.');
         }
     }
     
+    // Initialize the page
+    function init() {
+        // Verificar se o usuário está autenticado
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            // Carregar dados do perfil
+            loadProfileData();
+            
+            // Configurar listeners para as tabs
+            const tabLinks = document.querySelectorAll('.tab-nav li');
+            const tabContents = document.querySelectorAll('.tab-pane');
+            
+            tabLinks.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remover classe active de todas as tabs
+                    tabLinks.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Adicionar classe active na tab clicada
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Configurar listener para o formulário de configurações
+            const profileSettingsForm = document.getElementById('profile-settings-form');
+            if (profileSettingsForm) {
+                profileSettingsForm.addEventListener('submit', saveProfileChanges);
+            }
+        }
+    }
+    
+    // Inicializar a página
     init();
 });
