@@ -22,10 +22,6 @@ used different places in CSS, it makes it easier to change colors.*/
 --radius-md: 8px; 
 --transition-fast: 0.2s ease; 
 --transition-normal: 0.3s ease; 
-<<<<<<< HEAD
---primaryblue: #75a1ea; 
---darkblue: #0040a0;  
-=======
 --lightblue: #05c8f0; 
 --lightgreen: #a5d7bb; 
 --primaryblue: #007bff; 
@@ -33,7 +29,6 @@ used different places in CSS, it makes it easier to change colors.*/
 --darkblue: #0056b3; 
 --darkgreen: #146136; 
 --black: #000000; 
->>>>>>> e4b890650a1a17771a536de66972200fddbf048c
 --white: #ffffff; 
 --font: 'Inter', sans-serif; 
 --lightgray: #f8f9fa;
