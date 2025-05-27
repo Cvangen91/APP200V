@@ -1,10 +1,8 @@
-// Function to get sessionId from URL
 function getSessionIdFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get('sessionId');
 }
 
-// Results page specific JavaScript
 document.addEventListener('DOMContentLoaded', async function() {
     const sessionId = getSessionIdFromURL();
     if (!sessionId) {
@@ -30,17 +28,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const session = await sessionRes.json();
         const details = JSON.parse(session.details);
 
-        // Updates page elements with session data
         document.getElementById('program-name').textContent = details.programName;
         document.getElementById('test-date').textContent = new Date(details.timestamp).toLocaleDateString('no-NO');
         document.getElementById('equipage-id').textContent = details.equipageId || 'N/A';
         
-        // Updates the percentages
         document.getElementById('user-percentage').textContent = `${details.userPercentage}%`;
         document.getElementById('expert-percentage').textContent = `${details.expertPercentage}%`;
         document.getElementById('match-percentage').textContent = `${details.matchPercentage}%`;
 
-        // Create the comparison table
         createComparisonTable(details);
 
     } catch (error) {
@@ -49,7 +44,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// Display error message
 function showError(message) {
     const container = document.getElementById('result-container');
     container.innerHTML = `
@@ -62,7 +56,6 @@ function showError(message) {
     `;
 }
 
-// Display test information (program, date, percentages)
 function displayTestInfo(testResult) {
     document.getElementById('program-name').textContent = testResult.programName;
     document.getElementById('test-date').textContent = testResult.date;
@@ -76,7 +69,6 @@ function displayTestInfo(testResult) {
     expertPercentageElement.textContent = `${testResult.expertPercentage}%`;
     matchPercentageElement.textContent = `${testResult.matchPercentage}%`;
     
-    // Add color classes based on match percentage
     const matchPercentage = parseFloat(testResult.matchPercentage);
     if (matchPercentage >= 95) {
         matchPercentageElement.classList.add('success');
@@ -87,7 +79,6 @@ function displayTestInfo(testResult) {
     }
 }
 
-// Create the detailed comparison table
 function createComparisonTable(details) {
     const resultDiv = document.getElementById('result-table');
     if (!resultDiv) return;
@@ -113,7 +104,6 @@ function createComparisonTable(details) {
         const userScore = details.scores[i];
         const expertScore = details.correctScores[i];
         
-        // Calculate difference and categorize result
         let assessment = '';
         let assessmentColor = '';
         
@@ -161,7 +151,6 @@ function createComparisonTable(details) {
     table.appendChild(tbody);
     resultDiv.appendChild(table);
     
-    // Add legend to explain categories
     const legend = document.createElement('div');
     legend.className = 'assessment-legend';
     legend.style.marginTop = '20px';
@@ -182,13 +171,10 @@ function createComparisonTable(details) {
     resultDiv.appendChild(legend);
 }
 
-// Function to show test results
 function displayTestResults(testResult) {
-    // Hide loading message
     const loadingEl = document.getElementById('loading');
     if (loadingEl) loadingEl.style.display = 'none';
     
-    // Show results container
     const resultContainer = document.getElementById('result-container');
     if (resultContainer) resultContainer.style.display = 'block';
     
@@ -214,12 +200,10 @@ function displayTestResults(testResult) {
       }
     }
     
-    // Create comparison table
     const resultTableDiv = document.getElementById('result-table');
     if (!resultTableDiv) return;
     resultTableDiv.querySelectorAll('table, .legend, .assessment-legend').forEach(el => el.remove());
     
-    // Create table
     const table = document.createElement('table');
     table.className = 'comparison-table character-table';
     
@@ -238,7 +222,6 @@ function displayTestResults(testResult) {
     
     const tbody = document.createElement('tbody');
     
-    // Add rows for each exercise
     for (let i = 0; i < testResult.exercises.length; i++) {
         const row = document.createElement('tr');
         
@@ -246,7 +229,6 @@ function displayTestResults(testResult) {
         const expertScore = testResult.correctScores[i];
         const diff = Math.abs(userScore - expertScore);
         
-        // Determine the assessment class
         let assessmentClass = '';
         let assessment = '';
         
@@ -285,7 +267,6 @@ function displayTestResults(testResult) {
     table.appendChild(tbody);
     resultTableDiv.appendChild(table);
     
-    // Add caption
     const legend = document.createElement('div');
     legend.className = 'legend';
     legend.innerHTML = `

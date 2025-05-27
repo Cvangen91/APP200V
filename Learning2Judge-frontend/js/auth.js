@@ -1,22 +1,17 @@
-// Authentication module for Learning2Judge
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
     const loginButton = document.getElementById('login-button');
     const loginContainer = document.getElementById('login-container');
     const loginForm = document.getElementById('login-form');
     const cancelLogin = document.getElementById('cancel-login');
     const loginError = document.getElementById('login-error');
 
-    // Constants
     const API_URL = 'http://localhost:8000';
     const TOKEN_ENDPOINT = '/api/token/pair';
 
-    // Check if user is already logged in
     function isLoggedIn() {
         return localStorage.getItem('access_token') !== null;
     }
 
-    // Update UI based on login state
     function updateUIState() {
         if (isLoggedIn()) {
             loginButton.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
@@ -27,27 +22,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Event listener for login button
     if (loginButton) {
         loginButton.addEventListener('click', function(e) {
             e.preventDefault();
             if (isLoggedIn()) {
-                // Handle logout
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('username');
                 updateUIState();
                 alert('Du har blitt logget ut.');
-                // Redirect to login page after logout
                 window.location.href = 'login.html';
             } else if (loginContainer) {
-                // Show login form
                 loginContainer.style.display = 'flex';
             }
         });
     }
 
-    // Event listener for cancel button
     if (cancelLogin && loginContainer && loginForm && loginError) {
         cancelLogin.addEventListener('click', function() {
             loginContainer.style.display = 'none';
@@ -56,29 +46,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Event listener for login form submission
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            // Basic validation
             if (!username || !password) {
                 showError('Skriv inn brukernavn og passord.');
                 return;
             }
-            // Send login request
             login(username, password);
         });
     }
 
-    // Function to display error messages
     function showError(message) {
         loginError.textContent = message;
         loginError.style.display = 'block';
     }
 
-    // Function to handle login request
     function login(username, password) {
         fetch(`${API_URL}${TOKEN_ENDPOINT}`, {
             method: 'POST',
@@ -106,17 +91,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            // Store tokens in localStorage
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
             localStorage.setItem('username', data.username || username); // Fallback to entered username if not provided by server
             
-            // Update UI and hide login form
             updateUIState();
             loginContainer.style.display = 'none';
             loginForm.reset();
             
-            // Redirect to home page after successful login
             window.location.href = 'index.html';
         })
         .catch(error => {
@@ -125,12 +107,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to get current access token
     function getAccessToken() {
         return localStorage.getItem('access_token');
     }
 
-    // Function to refresh token
     function refreshToken() {
         const refresh = localStorage.getItem('refresh_token');
         
@@ -166,9 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Helper function for authenticated requests
     function authFetch(url, options = {}) {
-        // Set up options with authentication header
         const requestOptions = {
             ...options,
             headers: {
@@ -183,16 +161,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return fetch(url, requestOptions)
             .then(response => {
                 if (response.status === 401) {
-                    // Token expired, try to refresh
                     return refreshToken()
                         .then(newToken => {
-                            // Update header with new token
                             requestOptions.headers['Authorization'] = `Bearer ${newToken}`;
-                            // Retry the request
                             return fetch(url, requestOptions);
                         })
                         .catch(error => {
-                            // If refresh fails, redirect to login
                             localStorage.removeItem('access_token');
                             localStorage.removeItem('refresh_token');
                             localStorage.removeItem('username');
@@ -210,10 +184,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Initialize UI state
     updateUIState();
 
-    // Export functions for use in other scripts
     window.auth = {
         isLoggedIn,
         getAccessToken,

@@ -1,5 +1,4 @@
     document.addEventListener('DOMContentLoaded', function() {
-        //the header string. all the links
         const footerHTML = `
      <footer>
       <div class="footer-inner py-2 text-center">

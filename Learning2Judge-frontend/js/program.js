@@ -1,25 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // program.js - Håndterer oppgavevisning, scrolling og klikk til video.html
   const numBoxes = 3; 
   const visibleBoxes = 3; 
   const scrollStep = 1; 
 
 
 
-  // Check if user is authenticated and display appropriate content
   const showContent = function () {
     const mainContent = document.getElementById('page-content');
     const authContent = document.getElementById('auth-required');
 
-    // For local testing, always show content
     const forceShow = true; // Set to false for production
 
     if (localStorage.getItem('access_token') === null && !forceShow) {
-      // Not logged in, show auth required message
       if (mainContent) mainContent.style.display = 'none';
       if (authContent) authContent.style.display = 'block';
     } else {
-      // Logged in or force show is true, show content
       if (mainContent) mainContent.style.display = 'block';
       if (authContent) authContent.style.display = 'none';
     }
@@ -53,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 }
 
-// Kall funksjonen med hardkodede verdier for hver rad, det blir samme bilde på hver rad
 createBoxes('row1', 'images/programId1.jpg', 1);
 createBoxes('row2', 'images/programId2.jpg', 2);
 createBoxes('row3', 'images/programId3.jpg', 3);
@@ -71,7 +65,6 @@ createBoxes('row3', 'images/programId3.jpg', 3);
     nextButton.disabled = currentScroll >= numBoxes - visibleBoxes;
   }
 
-  // Event listeners for buttons
   document.querySelectorAll('.prev-btn, .next-btn').forEach((button) => {
     button.addEventListener('click', function () {
       const rowId = this.dataset.row;
@@ -99,12 +92,10 @@ createBoxes('row3', 'images/programId3.jpg', 3);
       slider.style.transform = `translateX(-${currentScroll * 155}px)`;
       slider.dataset.scroll = currentScroll;
 
-      // Update button appearance
       updateButtonState(rowId, currentScroll);
     });
   });
 
-  // Initial state for buttons
   updateButtonState('row1', 0);
   updateButtonState('row2', 0);
   updateButtonState('row3', 0);

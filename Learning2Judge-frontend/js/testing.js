@@ -53,22 +53,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     let rawCorrectScores = await correctRes.json();
     console.log('Scores corretos (raw):', rawCorrectScores);
     
-    // Process correct scores to map each exercise
     correctScores = [];
     
-    // If no scores found in database, create empty array
     if (!rawCorrectScores || rawCorrectScores.length === 0) {
       console.warn('No correct scores found for this program');
     }
     
-    // Map program exercises
     exercises = program.exercises.map((exerciseId, index) => {
       const exerciseDetails = allExercises.find(ex => ex.exerciseId === exerciseId);
       
-      // Find correct score for this exercise
       const correctScore = rawCorrectScores.find(cs => cs.exerciseId === exerciseId);
       
-      // If found, add to correct scores array
       if (correctScore) {
         correctScores.push(correctScore);
       }
@@ -106,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     videoContainer.innerHTML = `<p style="color: red">❌ Video ikke tilgjengelig</p>`;
   }
 
-  // Adds the element to the results table if it does not exist
   if (!document.getElementById('result-table')) {
     const resultTable = document.createElement('div');
     resultTable.id = 'result-table';
@@ -119,7 +113,6 @@ function createTable() {
   const container = document.getElementById('give-characters');
   if (!container) return;
 
-  // Clear container before adding table
   container.innerHTML = '';
 
   const table = document.createElement('table');
@@ -171,7 +164,6 @@ function attachInputListeners() {
       }
     });
     
-    // Add listener for Tab to ensure all inputs are processed
     input.addEventListener('blur', function() {
       if (this.value.trim() !== '') {
         handleInput(this);
@@ -193,27 +185,21 @@ function handleInput(input) {
 
   scores[index] = value;
 
-  // Mark input as completed
   input.style.backgroundColor = '#e6ffe6'; // Light green to indicate filled
-  // Hides the entire line (tr) of the filled field
   setTimeout(() => {
     const tr = input.closest('tr');
     if (tr) tr.style.display = 'none';
   }, 200); // Small delay for visual feedback
   
-  // Move to next input on Enter
   const allInputs = document.querySelectorAll('.score-input');
   const currentIndex = Array.from(allInputs).indexOf(input);
   
   if (currentIndex < allInputs.length - 1) {
-    // More inputs to fill, move to next
     allInputs[currentIndex + 1].focus();
   } else {
-    // Last input filled, check if all are completed
     const allFilled = Array.from(allInputs).every(inp => inp.value.trim() !== '');
     
     if (allFilled && !document.getElementById('finish-button')) {
-      // All exercises evaluated, show finish button
       const container = document.getElementById('give-characters');
       
       const finishButton = document.createElement('button');
@@ -235,7 +221,6 @@ function handleInput(input) {
 
 async function showSuccess() {
   document.getElementById('give-characters').style.display = 'none';
-  // Hides other main screen elements
   const videoContainer = document.getElementById('video-container');
   if (videoContainer) videoContainer.style.display = 'none';
   const resultTable = document.getElementById('result-table');
@@ -247,13 +232,11 @@ async function showSuccess() {
   const programId = getProgramIdFromURL();
 
   try {
-    // Calculate percentages before saving
     const { userPercentage, expertPercentage, matchPercentage } = calculateScorePercentages();
     console.log('User Score %:', userPercentage);
     console.log('Expert Score %:', expertPercentage);
     console.log('Match %:', matchPercentage);
     
-    // Create object with detailed results
     const testDetails = {
       programId: programId,
       programName: program.name,
@@ -267,7 +250,6 @@ async function showSuccess() {
       timestamp: new Date().toISOString()
     };
     
-    // Create userSession in backend - using snake_case for API validation compatibility
     const sessionRes = await fetch(`http://localhost:8000/api/user-sessions`, {
       method: 'POST',
       headers: {
@@ -292,7 +274,6 @@ async function showSuccess() {
     const session = await sessionRes.json();
     const userSessionId = session.userSessionId;
     
-    // Show success message after saving
     const successMsg = document.getElementById('success-message');
     successMsg.innerHTML = `
       <i class=\"fas fa-check-circle fa-4x mb-3\" style=\"color: var(--secondary)\"></i>
@@ -305,7 +286,6 @@ async function showSuccess() {
     `;
     successMsg.style.display = 'block';
 
-    // Add listeners to buttons
     document.getElementById('try-again-btn').onclick = function() {
       location.reload();
     };
@@ -325,7 +305,6 @@ async function showSuccess() {
     
     alert(errorMessage);
     
-    // Show error message
     const successMsg = document.getElementById('success-message');
     if (successMsg) {
       successMsg.innerHTML = `
@@ -343,7 +322,6 @@ async function showSuccess() {
   }
 }
 
-// Function to calculate the percentages of success
 function calculateScorePercentages() {
   let totalUserScore = 0;
   let totalExpertScore = 0;
@@ -355,7 +333,6 @@ function calculateScorePercentages() {
     const userScore = scores[i];
     if (userScore === undefined) continue;
     
-    // Find correct score for this exercise
     const correctScoreObj = correctScores.find(cs => 
       cs.exerciseId === exercises[i].exerciseId
     );
@@ -364,19 +341,16 @@ function calculateScorePercentages() {
     
     const expertScore = correctScoreObj.score;
     
-    // Add to totals
     totalUserScore += userScore;
     totalExpertScore += expertScore;
     totalPossibleScore += 10; // Maximum score per exercise is 10
     
-    // Calculate match (closer to 100% is better)
     const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
     totalMatch += match;
     
     countedExercises++;
   }
   
-  // Calculate percentages
   const userPercentage = (totalUserScore / (countedExercises * 10)) * 100;
   const expertPercentage = (totalExpertScore / (countedExercises * 10)) * 100;
   const matchPercentage = totalMatch / countedExercises;
@@ -417,14 +391,12 @@ function showComparison() {
     const exercise = exercises[i];
     const userScore = scores[i];
     
-    // Find correct score for this exercise
     const correctScoreObj = correctScores.find(cs => 
       cs.exerciseId === exercise.exerciseId
     );
     
     const correctScore = correctScoreObj ? correctScoreObj.score : null;
     
-    // Calculate difference and categorize result
     let assessment = '';
     let assessmentColor = '';
     
@@ -472,7 +444,6 @@ function showComparison() {
   table.appendChild(tbody);
   resultDiv.appendChild(table);
   
-  // Add legend to explain categories
   const legend = document.createElement('div');
   legend.className = 'assessment-legend';
   legend.style.marginTop = '20px';
@@ -494,6 +465,5 @@ function showComparison() {
   
   resultDiv.style.display = 'block';
   
-  // Scroll to results table
   resultDiv.scrollIntoView({ behavior: 'smooth' });
 }

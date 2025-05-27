@@ -1,8 +1,6 @@
-// Import functions from Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
-// Firebase-configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCX7kC8hSJKEflhRUMVrcUI86o2dElrUgI",
   authDomain: "learning2judge.firebaseapp.com",
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const emne = document.getElementById('emne').value;
     const message = document.getElementById('message').value;
 
-   //Check if everything is filled out before sending
     if (!name || !email || !message) {
       formStatus.innerText = '❌ Alle feltene må fylles ut.'; 
       formStatus.style.color = 'red';  
@@ -49,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
         timestamp: new Date() 
       });
 
-      // Success message
       formStatus.innerText = '✅ Meldingen ble sendt!'; 
       formStatus.style.color = 'green'; 
       formStatus.style.display = 'block'; 
@@ -63,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log("Melding sendt med ID:", docRef.id); 
 
     } catch (error) {
-      // If there is some error, show error message
       formStatus.innerText = `❌ Feil: ${error.message}. Prøv igjen senere.`;
       formStatus.style.color = 'red';  
       formStatus.style.display = 'block'; 

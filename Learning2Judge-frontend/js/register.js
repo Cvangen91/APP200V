@@ -1,21 +1,15 @@
-// Register page specific JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in
     if (localStorage.getItem('access_token') !== null) {
-        // Already logged in, redirect to home page
         window.location.href = 'index.html';
     }
     
-    // DOM Elements
     const registerForm = document.getElementById('register-form');
     const registerError = document.getElementById('register-error');
     const registerSuccess = document.getElementById('register-success');
 
-    // Constants
     const API_URL = 'http://localhost:8000';
     const REGISTER_ENDPOINT = '/api/register';
     
-    // Event listener for register form submission
     registerForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -28,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = document.getElementById('password').value;
         const passwordConfirm = document.getElementById('password-confirm').value;
         
-        // Basic validation
         if (!username || !fullName || !birthDate || !judgeLevel || !judgeSince || !email || !password || !passwordConfirm) {
             showError('Alle påkrevde felt må fylles ut.');
             return;
@@ -44,25 +37,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Send registration request
         register(username, fullName, birthDate, judgeLevel, judgeSince, email, password);
     });
 
-    // Function to display error messages
     function showError(message) {
         registerError.textContent = message;
         registerError.style.display = 'block';
         registerSuccess.style.display = 'none';
     }
     
-    // Function to display success message
     function showSuccess(message) {
         registerSuccess.textContent = message;
         registerSuccess.style.display = 'block';
         registerError.style.display = 'none';
     }
 
-    // Function to handle registration request
     function register(username, fullName, birthDate, judgeLevel, judgeSince, email, password) {
         fetch(`${API_URL}${REGISTER_ENDPOINT}`, {
             method: 'POST',
@@ -90,13 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            // Show success message
             showSuccess('Registrering vellykket! Du vil bli videresendt til innlogging...');
             
-            // Clear the form
             registerForm.reset();
             
-            // Redirect to login page after a delay
             setTimeout(() => {
                 window.location.href = 'login.html';
             }, 2000);
