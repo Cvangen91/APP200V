@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
   // program.js - Håndterer oppgavevisning, scrolling og klikk til video.html
-  const numBoxes = 3; //  antall bokser
-  const visibleBoxes = 3; // Antall synlige bokser
-  const scrollStep = 1; // Hvor mange bokser som flyttes per klikk
+  const numBoxes = 3; 
+  const visibleBoxes = 3; 
+  const scrollStep = 1; 
 
 
 
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const img = document.createElement('img');
     img.alt = `Program ${programId}`;
     img.onerror = function () {
-      this.src = 'images/fallback.jpg'; // Fallback-bilde
+      this.src = 'images/fallback.jpg'; // Fallback-picture
     };
     img.src = imagePath;
 

@@ -30,21 +30,21 @@ document.addEventListener('DOMContentLoaded', async function() {
         const session = await sessionRes.json();
         const details = JSON.parse(session.details);
 
-        // Atualiza os elementos da página com os dados da sessão
+        // Updates page elements with session data
         document.getElementById('program-name').textContent = details.programName;
         document.getElementById('test-date').textContent = new Date(details.timestamp).toLocaleDateString('no-NO');
         document.getElementById('equipage-id').textContent = details.equipageId || 'N/A';
         
-        // Atualiza as porcentagens
+        // Updates the percentages
         document.getElementById('user-percentage').textContent = `${details.userPercentage}%`;
         document.getElementById('expert-percentage').textContent = `${details.expertPercentage}%`;
         document.getElementById('match-percentage').textContent = `${details.matchPercentage}%`;
 
-        // Cria a tabela de comparação
+        // Create the comparison table
         createComparisonTable(details);
 
     } catch (error) {
-        console.error('🚨 Erro ao carregar dados:', error);
+        console.error('🚨 Error, could not load results', error);
         alert('Kunne ikke laste inn resultatene. Vennligst prøv igjen senere.');
     }
 });
@@ -55,9 +55,9 @@ function showError(message) {
     container.innerHTML = `
         <div class="card text-center" style="padding: 30px; margin: 30px auto">
             <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: var(--danger)"></i>
-            <h3>Error Loading Results</h3>
+            <h3>Error ved lasting av resultater</h3>
             <p>${message}</p>
-            <a href="myprofile.html" class="btn mt-3"><i class="fas fa-arrow-left"></i> Back to Profile</a>
+            <a href="myprofile.html" class="btn mt-3"><i class="fas fa-arrow-left"></i> Gå tilbake til din profil</a>
         </div>
     `;
 }
@@ -101,7 +101,7 @@ function createComparisonTable(details) {
             <th>Nr</th>
             <th>Beskrivelse</th>
             <th>Din Karakter</th>
-            <th>Ekspert Karakter</th>
+            <th>Fasit</th>
             <th>Vurdering</th>
         </tr>
     `;
@@ -182,23 +182,21 @@ function createComparisonTable(details) {
     resultDiv.appendChild(legend);
 }
 
-// Função para mostrar resultados do teste
+// Function to show test results
 function displayTestResults(testResult) {
-    // Esconder mensagem de carregamento
+    // Hide loading message
     const loadingEl = document.getElementById('loading');
     if (loadingEl) loadingEl.style.display = 'none';
     
-    // Mostrar contêiner de resultados
+    // Show results container
     const resultContainer = document.getElementById('result-container');
     if (resultContainer) resultContainer.style.display = 'block';
     
-    // Preencher cabeçalho
     const testDate = document.getElementById('test-date');
     if (testDate) testDate.textContent = testResult.date;
     const testProgram = document.getElementById('test-program');
     if (testProgram) testProgram.textContent = testResult.programName;
     
-    // Preencher porcentagens
     const userPercentage = document.getElementById('user-percentage');
     if (userPercentage) userPercentage.textContent = `${testResult.userPercentage}%`;
     const expertPercentage = document.getElementById('expert-percentage');
@@ -206,7 +204,6 @@ function displayTestResults(testResult) {
     const matchPercentage = document.getElementById('match-percentage');
     if (matchPercentage) matchPercentage.textContent = `${testResult.matchPercentage}%`;
     
-    // Definir classe para match percentage
     if (matchPercentage) {
       if (parseFloat(testResult.matchPercentage) >= 95) {
           matchPercentage.className = 'score-excellent percentage';
@@ -217,17 +214,15 @@ function displayTestResults(testResult) {
       }
     }
     
-    // Criar tabela de comparação
+    // Create comparison table
     const resultTableDiv = document.getElementById('result-table');
     if (!resultTableDiv) return;
-    // Limpa apenas o conteúdo dinâmico, mantendo o h3
     resultTableDiv.querySelectorAll('table, .legend, .assessment-legend').forEach(el => el.remove());
     
-    // Criar tabela
+    // Create table
     const table = document.createElement('table');
     table.className = 'comparison-table character-table';
     
-    // Adicionar cabeçalho da tabela
     const thead = document.createElement('thead');
     thead.innerHTML = `
         <tr>
@@ -241,10 +236,9 @@ function displayTestResults(testResult) {
     `;
     table.appendChild(thead);
     
-    // Criar corpo da tabela
     const tbody = document.createElement('tbody');
     
-    // Adicionar linhas para cada exercício
+    // Add rows for each exercise
     for (let i = 0; i < testResult.exercises.length; i++) {
         const row = document.createElement('tr');
         
@@ -252,7 +246,7 @@ function displayTestResults(testResult) {
         const expertScore = testResult.correctScores[i];
         const diff = Math.abs(userScore - expertScore);
         
-        // Determinar a classe da avaliação
+        // Determine the assessment class
         let assessmentClass = '';
         let assessment = '';
         
@@ -291,7 +285,7 @@ function displayTestResults(testResult) {
     table.appendChild(tbody);
     resultTableDiv.appendChild(table);
     
-    // Adicionar legenda
+    // Add caption
     const legend = document.createElement('div');
     legend.className = 'legend';
     legend.innerHTML = `

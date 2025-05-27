@@ -22,8 +22,8 @@
           const mainContent = document.getElementById('page-content');
           const authContent = document.getElementById('auth-required');
           
-          // Para testes locais, sempre mostrar o conteúdo
-          const forceShow = true; // Defina como false para produção
+          // For local testing, show all 
+          const forceShow = true; // Set to false for production
           
           if (localStorage.getItem('access_token') === null && !forceShow) {
             // Not logged in, show auth required message
@@ -36,7 +36,7 @@
           }
         };
 
-        showContent(); // Exibe o conteúdo da página
+        showContent(); // Displays the page content
       });
     </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -72,7 +72,7 @@
       <div id="auth-required" class="text-center" style="display: none; padding: 40px; max-width: 600px; margin: 40px auto;">
         <i class="fas fa-lock fa-4x mb-3" style="color: var(--primary);"></i>
         <h2>Du må være innlogget for å se denne siden</h2>
-        <p class="mb-4">Vennligst klikk på "Login" knappen i menyen for å logge inn.</p>
+        <p class="mb-4">Vennligst klikk på "Logg inn" knappen i menyen for å logge inn.</p>
         <button class="btn btn-lg" onclick="document.getElementById('login-container').style.display='flex';">
           <i class="fas fa-sign-in-alt"></i> Logg inn nå
         </button>
@@ -97,7 +97,7 @@
                 <input type="text" id="email" name="email" class="form-control" required />
               </div>
               <div class="form-group">
-                <label for="emne"><i class="fas fa-tag"></i> Emne:</label> <!-- Endret her fra subject til emne -->
+                <label for="emne"><i class="fas fa-tag"></i> Emne:</label> 
                 <input type="text" id="emne" name="emne" class="form-control" required />
               </div>
               <div class="form-group">

@@ -1,8 +1,8 @@
-// Importer nødvendige funksjoner fra Firebase SDK
+// Import functions from Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
-// Firebase-konfigurasjon
+// Firebase-configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCX7kC8hSJKEflhRUMVrcUI86o2dElrUgI",
   authDomain: "learning2judge.firebaseapp.com",
@@ -13,68 +13,61 @@ const firebaseConfig = {
   measurementId: "G-1XQBFR18SM"
 };
 
-// Initialiser Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Vent til DOM er lastet før vi legger til event listener
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('contact-form');
-  const formStatus = document.getElementById('form-status');  // Her vises statusmeldingen
+  const formStatus = document.getElementById('form-status'); 
 
-  // Når skjemaet blir sendt
   form.addEventListener('submit', async function (event) {
-    event.preventDefault(); // Hindrer at skjemaet lastes på nytt
+    event.preventDefault(); 
 
-    // Hent verdiene fra inputfeltene
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const emne = document.getElementById('emne').value;
     const message = document.getElementById('message').value;
 
-    // Validere at alle nødvendige felter er fylt ut
+   //Check if everything is filled out before sending
     if (!name || !email || !message) {
-      formStatus.innerText = '❌ Alle feltene må fylles ut.';  // Feilmelding
-      formStatus.style.color = 'red';  // Rød tekst for feil
-      formStatus.style.display = 'block';  // Vis statusmelding
+      formStatus.innerText = '❌ Alle feltene må fylles ut.'; 
+      formStatus.style.color = 'red';  
+      formStatus.style.display = 'block'; 
       return;
     }
 
-    // Oppdater status til "Sender melding"
     formStatus.innerText = '⏳ Sender melding...';
-    formStatus.style.color = 'blue'; // Blå tekst for sending
-    formStatus.style.display = 'block';  // Vis statusmelding
+    formStatus.style.color = 'blue'; 
+    formStatus.style.display = 'block';
 
     try {
-      // Legg til dataene i Firestore
       const docRef = await addDoc(collection(db, "contactMessages"), {
         name: name,
         email: email,
         message: message,
         emne: emne,
-        timestamp: new Date()  // Legger til tidsstempel
+        timestamp: new Date() 
       });
 
-      // Bekreft at meldingen ble sendt
-      formStatus.innerText = '✅ Meldingen ble sendt!';  // Vist suksessmelding
-      formStatus.style.color = 'green';  // Grønn tekst for suksess
-      formStatus.style.display = 'block';  // Vis statusmelding
-      form.reset();  // Tøm skjemaet etter sending
+      // Success message
+      formStatus.innerText = '✅ Meldingen ble sendt!'; 
+      formStatus.style.color = 'green'; 
+      formStatus.style.display = 'block'; 
+      form.reset(); 
 
-      // Fjern statusmelding etter noen sekunder (valgfritt)
       setTimeout(() => {
-        formStatus.innerText = '';  // Tøm statusmelding etter 5 sekunder
-        formStatus.style.display = 'none';  // Skjul meldingen
+        formStatus.innerText = ''; 
+        formStatus.style.display = 'none'; 
       }, 5000);
 
-      console.log("Melding sendt med ID:", docRef.id);  // Logg dokument-ID for å bekrefte at meldingen ble sendt
+      console.log("Melding sendt med ID:", docRef.id); 
 
     } catch (error) {
-      // Hvis det oppstår en feil, vis en feilmelding
+      // If there is some error, show error message
       formStatus.innerText = `❌ Feil: ${error.message}. Prøv igjen senere.`;
-      formStatus.style.color = 'red';  // Rød tekst for feil
-      formStatus.style.display = 'block';  // Vis statusmelding
-      console.error('Feil:', error);  // Logg feilmelding i konsollen
+      formStatus.style.color = 'red';  
+      formStatus.style.display = 'block'; 
+      console.error('Feil:', error); 
     }
   });
 });

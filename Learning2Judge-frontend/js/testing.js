@@ -80,21 +80,18 @@ document.addEventListener('DOMContentLoaded', async function () {
       };
     });
 
-    console.log('Exercícios correlacionados:', exercises);
-    console.log('Scores corretos processados:', correctScores);
     createTable();
   } catch (error) {
-    console.error('🚨 Erro ao carregar dados:', error);
+    console.error('🚨 Error cant find scores', error);
   }
 
   const titleEl = document.getElementById('program-title');
   if (titleEl) {  
-    titleEl.innerHTML = `<i class="fas fa-tasks"></i> Dressurtest: ${program.name}`;
+    titleEl.innerHTML = `<i class="fas fa-tasks"></i> Program: ${program.name}`;
   }
 
   const videoContainer = document.getElementById('video-container');
   if (videoContainer && program && program.videoPath) {
-    // Convert YouTube URL to embed format
     const videoUrl = program.videoPath.replace('watch?v=', 'embed/');
     videoContainer.innerHTML = `
     <iframe width="100%" height="450"
@@ -109,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     videoContainer.innerHTML = `<p style="color: red">❌ Video ikke tilgjengelig</p>`;
   }
 
-  // Adiciona o elemento para a tabela de resultados se não existir
+  // Adds the element to the results table if it does not exist
   if (!document.getElementById('result-table')) {
     const resultTable = document.createElement('div');
     resultTable.id = 'result-table';
@@ -195,15 +192,14 @@ function handleInput(input) {
   }
 
   scores[index] = value;
-  console.log(`Score ${index + 1} definido como ${value}`);
 
   // Mark input as completed
   input.style.backgroundColor = '#e6ffe6'; // Light green to indicate filled
-  // Esconde a linha inteira (tr) do campo preenchido
+  // Hides the entire line (tr) of the filled field
   setTimeout(() => {
     const tr = input.closest('tr');
     if (tr) tr.style.display = 'none';
-  }, 200); // Pequeno delay para feedback visual
+  }, 200); // Small delay for visual feedback
   
   // Move to next input on Enter
   const allInputs = document.querySelectorAll('.score-input');
@@ -239,7 +235,7 @@ function handleInput(input) {
 
 async function showSuccess() {
   document.getElementById('give-characters').style.display = 'none';
-  // Esconde outros elementos principais da tela
+  // Hides other main screen elements
   const videoContainer = document.getElementById('video-container');
   if (videoContainer) videoContainer.style.display = 'none';
   const resultTable = document.getElementById('result-table');
@@ -296,7 +292,7 @@ async function showSuccess() {
     const session = await sessionRes.json();
     const userSessionId = session.userSessionId;
     
-    // Mostramos a mensagem de sucesso depois de salvar
+    // Show success message after saving
     const successMsg = document.getElementById('success-message');
     successMsg.innerHTML = `
       <i class=\"fas fa-check-circle fa-4x mb-3\" style=\"color: var(--secondary)\"></i>
@@ -309,7 +305,7 @@ async function showSuccess() {
     `;
     successMsg.style.display = 'block';
 
-    // Adiciona listeners aos botões
+    // Add listeners to buttons
     document.getElementById('try-again-btn').onclick = function() {
       location.reload();
     };
@@ -317,29 +313,29 @@ async function showSuccess() {
       window.location.href = `resultat.html?sessionId=${userSessionId}`;
     };
   } catch (error) {
-    console.error('Erro ao salvar dados:', error);
+    console.error('Error:', error);
     
-    let errorMessage = 'Erro ao salvar os dados da avaliação.';
+    let errorMessage = 'Error saving assessment data.';
     
     if (error.message.includes('422')) {
-      errorMessage = 'Erro de validação. Por favor, tente novamente.';
+      errorMessage = 'Validation error. Please try again.';
     } else if (error.message.includes('500')) {
-      errorMessage = 'Erro interno no servidor. Tente novamente mais tarde.';
+      errorMessage = 'Internal server error. Please try again later.';
     }
     
     alert(errorMessage);
     
-    // Mostrar mensagem de erro
+    // Show error message
     const successMsg = document.getElementById('success-message');
     if (successMsg) {
       successMsg.innerHTML = `
         <i class="fas fa-exclamation-triangle fa-4x mb-3" style="color: var(--danger)"></i>
-        <h3>Erro ao salvar avaliação</h3>
+        <h3>Error saving scores</h3>
         <p>${errorMessage}</p>
-        <p>Por favor, tente novamente mais tarde.</p>
+        <p>Please try again later.</p>
         <div class="mt-3">
-          <a href="myprofile.html" class="btn btn-outline"><i class="fas fa-user"></i> Ver meu perfil</a>
-          <button onclick="location.reload()" class="btn"><i class="fas fa-sync"></i> Tentar novamente</button>
+          <a href="myprofile.html" class="btn btn-outline"><i class="fas fa-user"></i> Gå til din profil</a>
+          <button onclick="location.reload()" class="btn"><i class="fas fa-sync"></i> Prøv på nytt</button>
         </div>
       `;
       successMsg.style.display = 'block';
@@ -347,7 +343,7 @@ async function showSuccess() {
   }
 }
 
-// Função para calcular as porcentagens de acerto
+// Function to calculate the percentages of success
 function calculateScorePercentages() {
   let totalUserScore = 0;
   let totalExpertScore = 0;
@@ -395,11 +391,11 @@ function calculateScorePercentages() {
 function showComparison() {
   const resultDiv = document.getElementById('result-table');
   if (!resultDiv) {
-    console.error('Elemento result-table não encontrado!');
+    console.error('Result-table element not found!');
     return;
   }
   
-  resultDiv.innerHTML = '<h3 class="text-center mb-3">Score Comparison</h3>';
+  resultDiv.innerHTML = '<h3 class="text-center mb-3">Sammenlinging av resultat</h3>';
 
   const table = document.createElement('table');
   table.classList.add('character-table');
@@ -408,10 +404,10 @@ function showComparison() {
   thead.innerHTML = `
     <tr>
       <th>Nr</th>
-      <th>Description</th>
-      <th>Your Score</th>
-      <th>Expert Score</th>
-      <th>Assessment</th>
+      <th>Beskrivelse</th>
+      <th>Din karakter</th>
+      <th>Fasit</th>
+      <th>Status</th>
     </tr>
   `;
 
