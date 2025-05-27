@@ -27,13 +27,16 @@
 --transition-normal: 0.3s ease; 
 --lightblue: #05c8f0; 
 --lightgreen: #a5d7bb; 
---primaryblue: #75a1ea; 
+--primaryblue: #007bff; 
 --darkwhite: #dff6ff; 
---darkblue: #0040a0; 
+--darkblue: #0056b3; 
 --darkgreen: #146136; 
 --black: #000000; 
 --white: #ffffff; 
 --font: 'Inter', sans-serif; 
+--lightgray: #f8f9fa;
+--gray: #6c757d;
+--darkgray: #343a40;
 } 
 /* Resets e estilos base */ 
 body, html { 
@@ -631,6 +634,202 @@ gap: 2rem; /* mellomrom mellom kortene */
     text-align: center;
     font-size: 14px;
   }
+
+ 
+
+/* Form Styles */
+.register-form, .login-form {
+  background-color: var(--white);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  margin: 2rem auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-form:hover, .login-form:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.register-form h2, .login-form h2 {
+  color: var(--darkblue);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--darkblue);
+  font-size: 0.95rem;
+}
+
+.form-group label i {
+  margin-right: 0.5rem;
+  color: var(--primaryblue);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primaryblue);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  background-color: #fff;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #b8b8b8;
+}
+
+.form-group button {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--primaryblue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.form-group button:hover {
+  background-color: var(--darkblue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-group button:active {
+  transform: translateY(0);
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  color: #28a745;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.link-section {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e1e1e1;
+}
+
+.link-section p {
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+.link-section a {
+  color: var(--primaryblue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link-section a:hover {
+  color: var(--darkblue);
+  text-decoration: underline;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-large {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--darkblue);
+  margin-bottom: 0.5rem;
+}
+
+/* Animations */
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .register-form, .login-form {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .form-group button {
+    padding: 0.75rem;
+  }
+}
 
  
 
