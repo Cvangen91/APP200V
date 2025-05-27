@@ -1,12 +1,16 @@
 from ninja import Schema
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr, SecretStr, Field
-from datetime import datetime
+from datetime import datetime, date
 
 class UserCreateSchema(BaseModel):
     username: str
     email: EmailStr
     password: SecretStr
+    full_name: Optional[str] = None
+    birth_date: Optional[date] = None
+    judge_level: Optional[str] = None
+    judge_since: Optional[int] = None
 
 class UserSchema(BaseModel):
     id: int
@@ -14,6 +18,10 @@ class UserSchema(BaseModel):
     email: str
     isJudge: bool = Field(alias='is_judge')
     createdAt: datetime = Field(alias='created_at')
+    fullName: Optional[str] = Field(alias='full_name', default=None)
+    birthDate: Optional[date] = Field(alias='birth_date', default=None)
+    judgeLevel: Optional[str] = Field(alias='judge_level', default=None)
+    judgeSince: Optional[int] = Field(alias='judge_since', default=None)
 
     class Config:
         from_attributes = True
@@ -21,6 +29,10 @@ class UserSchema(BaseModel):
 
 class UserUpdateSchema(BaseModel):
     email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    birth_date: Optional[date] = None
+    judge_level: Optional[str] = None
+    judge_since: Optional[int] = None
 
 class UserLoginSchema(BaseModel):
     username: str
