@@ -59,28 +59,52 @@ def get_current_user(request):
 
 @api.put("/users/me", response=UserSchema, auth=JWTAuth())
 def update_user(request, payload: UserUpdateSchema):
-    user = request.user
-    
-    print(f"Dados recebidos para atualização: {payload.dict()}")
-    
-    # Atualizar campos básicos
-    if payload.email:
-        user.email = payload.email
-    if payload.full_name:
-        user.full_name = payload.full_name
-    if payload.birth_date:
-        user.birth_date = payload.birth_date
-    if payload.judge_level:
-        user.judge_level = payload.judge_level
-    if payload.judge_since:
-        user.judge_since = payload.judge_since
-    if payload.password:
-        user.set_password(payload.password.get_secret_value())
-    
     try:
+        user = request.user
+        print(f"Atualizando usuário {user.id} com dados: {payload.dict()}")
+        
+        # Atualizar campos básicos
+        if payload.email is not None:
+            user.email = payload.email
+            print(f"Email atualizado para: {payload.email}")
+            
+        if payload.full_name is not None:
+            user.full_name = payload.full_name
+            print(f"Nome atualizado para: {payload.full_name}")
+            
+        if payload.birth_date is not None:
+            user.birth_date = payload.birth_date
+            print(f"Data de nascimento atualizada para: {payload.birth_date}")
+            
+        if payload.judge_level is not None:
+            user.judge_level = payload.judge_level
+            print(f"Nível de juiz atualizado para: {payload.judge_level}")
+            
+        if payload.judge_since is not None:
+            user.judge_since = payload.judge_since
+            print(f"Ano de início como juiz atualizado para: {payload.judge_since}")
+            
+        if payload.password is not None:
+            user.set_password(payload.password.get_secret_value())
+            print("Senha atualizada")
+        
+        # Salvar as alterações
         user.save()
-        print(f"Usuário atualizado com sucesso: {user.id}")
-        return user
+        print(f"Usuário {user.id} atualizado com sucesso")
+        
+        # Retornar os dados atualizados
+        return {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "is_judge": user.is_judge,
+            "created_at": user.created_at,
+            "full_name": user.full_name,
+            "birth_date": user.birth_date,
+            "judge_level": user.judge_level,
+            "judge_since": user.judge_since
+        }
+        
     except Exception as e:
         print(f"Erro ao atualizar usuário: {str(e)}")
         raise e

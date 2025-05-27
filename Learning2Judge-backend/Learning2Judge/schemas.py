@@ -35,6 +35,13 @@ class UserUpdateSchema(BaseModel):
     judge_since: Optional[int] = None
     password: Optional[SecretStr] = None
 
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+        json_encoders = {
+            date: lambda v: v.isoformat() if v else None
+        }
+
 class UserLoginSchema(BaseModel):
     username: str
     password: str

@@ -529,36 +529,41 @@ document.addEventListener('DOMContentLoaded', function() {
         const token = localStorage.getItem('access_token');
         if (!token) return;
 
-        const email = document.getElementById('profile-email').value;
-        const name = document.getElementById('profile-name').value;
-        const birthDate = document.getElementById('profile-birthdate').value;
-        const judgeLevel = document.getElementById('profile-judge-level').value;
-        const judgeSince = document.getElementById('profile-judge-since').value;
-        const newPassword = document.getElementById('profile-password').value;
-        const confirmPassword = document.getElementById('profile-password-confirm').value;
-
-        console.log('Dados do formulário:', {
-            email,
-            name,
-            birthDate,
-            judgeLevel,
-            judgeSince,
-            hasNewPassword: !!newPassword
-        });
-
-        // Validar senha se fornecida
-        if (newPassword) {
-            if (newPassword !== confirmPassword) {
-                alert('Passordene stemmer ikke overens');
-                return;
-            }
-            if (newPassword.length < 8) {
-                alert('Passordet må være minst 8 tegn');
-                return;
-            }
+        // Desabilitar o botão de submit durante o processo
+        const submitButton = event.target.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lagrer...';
         }
 
         try {
+            const email = document.getElementById('profile-email').value;
+            const name = document.getElementById('profile-name').value;
+            const birthDate = document.getElementById('profile-birthdate').value;
+            const judgeLevel = document.getElementById('profile-judge-level').value;
+            const judgeSince = document.getElementById('profile-judge-since').value;
+            const newPassword = document.getElementById('profile-password').value;
+            const confirmPassword = document.getElementById('profile-password-confirm').value;
+
+            console.log('Dados do formulário:', {
+                email,
+                name,
+                birthDate,
+                judgeLevel,
+                judgeSince,
+                hasNewPassword: !!newPassword
+            });
+
+            // Validar senha se fornecida
+            if (newPassword) {
+                if (newPassword !== confirmPassword) {
+                    throw new Error('Passordene stemmer ikke overens');
+                }
+                if (newPassword.length < 8) {
+                    throw new Error('Passordet må være minst 8 tegn');
+                }
+            }
+
             const updateData = {
                 email: email || null,
                 full_name: name || null,
@@ -622,14 +627,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 timeElement.textContent = responseData.judgeSince || 'År ikke definert';
             }
 
+            // Mostrar mensagem de sucesso
+            const successMessage = document.createElement('div');
+            successMessage.className = 'alert alert-success';
+            successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Profil oppdatert!';
+            event.target.insertBefore(successMessage, event.target.firstChild);
+
+            // Remover a mensagem após 3 segundos
+            setTimeout(() => {
+                successMessage.remove();
+            }, 3000);
+
             // Recarregar dados do perfil para garantir que tudo está atualizado
             await loadProfileData();
-
-            alert('Profil oppdatert!');
             
         } catch (error) {
             console.error('Erro ao atualizar perfil:', error);
-            alert(error.message || 'Kunne ikke oppdatere profil. Vennligst prøv igjen.');
+            
+            // Mostrar mensagem de erro
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'alert alert-danger';
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message || 'Kunne ikke oppdatere profil. Vennligst prøv igjen.'}`;
+            event.target.insertBefore(errorMessage, event.target.firstChild);
+
+            // Remover a mensagem após 3 segundos
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 3000);
+        } finally {
+            // Reabilitar o botão de submit
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Lagre endringer';
+            }
         }
     }
     
