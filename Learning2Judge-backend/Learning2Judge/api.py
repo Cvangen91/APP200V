@@ -62,48 +62,25 @@ def update_user(request, payload: UserUpdateSchema):
     user = request.user
     
     print(f"Dados recebidos para atualização: {payload.dict()}")
-    print(f"Usuário atual antes da atualização: {user.id} - {user.username}")
-    print(f"Email atual: {user.email}")
-    print(f"Nome atual: {user.full_name}")
-    print(f"Data de nascimento atual: {user.birth_date}")
-    print(f"Nível de juiz atual: {user.judge_level}")
-    print(f"Juiz desde: {user.judge_since}")
     
     # Atualizar campos básicos
-    if payload.email is not None:
+    if payload.email:
         user.email = payload.email
-    if payload.full_name is not None:
+    if payload.full_name:
         user.full_name = payload.full_name
-    if payload.birth_date is not None:
+    if payload.birth_date:
         user.birth_date = payload.birth_date
-    if payload.judge_level is not None:
+    if payload.judge_level:
         user.judge_level = payload.judge_level
-    if payload.judge_since is not None:
+    if payload.judge_since:
         user.judge_since = payload.judge_since
-    if payload.password is not None:
+    if payload.password:
         user.set_password(payload.password.get_secret_value())
     
     try:
         user.save()
         print(f"Usuário atualizado com sucesso: {user.id}")
-        print(f"Novo email: {user.email}")
-        print(f"Novo nome: {user.full_name}")
-        print(f"Nova data de nascimento: {user.birth_date}")
-        print(f"Novo nível de juiz: {user.judge_level}")
-        print(f"Novo juiz desde: {user.judge_since}")
-        
-        # Retornar dados atualizados
-        return {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "is_judge": user.is_judge,
-            "created_at": user.created_at,
-            "full_name": user.full_name,
-            "birth_date": user.birth_date,
-            "judge_level": user.judge_level,
-            "judge_since": user.judge_since
-        }
+        return user
     except Exception as e:
         print(f"Erro ao atualizar usuário: {str(e)}")
         raise e

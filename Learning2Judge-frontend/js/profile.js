@@ -3,16 +3,101 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileContent = document.getElementById('profile-content');
     
     // Load profile data if user is authenticated
-    function loadProfileData() {
-        // Get username from localStorage to personalize greeting
-        const username = localStorage.getItem('username');
-        
-        // For now, just show a welcome message
-        // This will be replaced with real API data in production
-        const nameElement = document.getElementById('name');
-        if (nameElement && username) {
-            // Personalize with the logged-in username
-            nameElement.textContent = username;
+    async function loadProfileData() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/api/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Kunne ikke laste profil: ${response.status} ${response.statusText}`);
+            }
+
+            const userData = await response.json();
+            console.log('Dados recebidos do backend:', userData);
+            
+            // Atualizar os elementos da UI com os dados do usuário
+            const nameElement = document.getElementById('name');
+            const ageElement = document.getElementById('age');
+            const degreeElement = document.getElementById('degree');
+            const timeElement = document.getElementById('time');
+            const emailElement = document.getElementById('profile-email');
+            const profileNameElement = document.getElementById('profile-name');
+            const birthDateElement = document.getElementById('profile-birthdate');
+            const judgeLevelElement = document.getElementById('profile-judge-level');
+            const judgeSinceElement = document.getElementById('profile-judge-since');
+
+            // Verificar se os elementos existem e atualizar seus valores
+            if (nameElement) {
+                nameElement.textContent = userData.fullName || userData.username || 'Navn ikke definert';
+            }
+            
+            if (ageElement) {
+                // Calcular idade a partir da data de nascimento
+                let age = 'Alder ikke definert';
+                if (userData.birthDate) {
+                    try {
+                        // Converter a string da data para um objeto Date
+                        const [year, month, day] = userData.birthDate.split('-');
+                        const birthDate = new Date(year, month - 1, day);
+                        const today = new Date();
+                        
+                        // Verificar se a data está no futuro
+                        if (birthDate > today) {
+                            age = 'Fremtidig dato';
+                        } else if (!isNaN(birthDate.getTime())) {
+                            age = calculateAge(birthDate);
+                        } else {
+                            age = 'Ugyldig dato';
+                        }
+                    } catch (error) {
+                        console.error('Erro ao calcular idade:', error);
+                        age = 'Beregningsfeil';
+                    }
+                }
+                ageElement.textContent = age;
+            }
+            
+            if (degreeElement) {
+                degreeElement.textContent = userData.judgeLevel || 'Nivå ikke definert';
+            }
+            
+            if (timeElement) {
+                timeElement.textContent = userData.judgeSince || 'År ikke definert';
+            }
+            
+            if (emailElement) {
+                emailElement.value = userData.email || '';
+            }
+            
+            if (profileNameElement) {
+                profileNameElement.value = userData.fullName || userData.username || '';
+            }
+
+            if (birthDateElement) {
+                birthDateElement.value = userData.birthDate || '';
+            }
+
+            if (judgeLevelElement) {
+                judgeLevelElement.value = userData.judgeLevel || '';
+            }
+
+            if (judgeSinceElement) {
+                judgeSinceElement.value = userData.judgeSince || '';
+            }
+
+            console.log('Interface atualizada com os novos dados');
+            
+        } catch (error) {
+            console.error('Erro ao carregar perfil:', error);
+            alert('Kunne ikke laste profil. Vennligst prøv igjen.');
         }
         
         // Load test results from backend
@@ -64,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tableBody.innerHTML = '';
         
         try {
-            // Show charging indicator
+            // Mostrar indicador de carregamento
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center">
@@ -75,20 +160,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>
             `;
             
-            // Load user sessions from the backend
+            // Carregar as sessões do usuário do backend
             const sessionsRes = await fetch(`http://localhost:8000/api/user-sessions`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
             if (!sessionsRes.ok) {
-                throw new Error(`Error loading session: ${sessionsRes.status} ${sessionsRes.statusText}`);
+                throw new Error(`Erro ao buscar sessões: ${sessionsRes.status} ${sessionsRes.statusText}`);
             }
             
             let sessions = await sessionsRes.json();
             
-            // Check if an empty array is returned
+            // Verificar se retornou um array vazio
             if (!sessions || sessions.length === 0) {
-                // There are no results in the database
+                // Não há resultados no banco de dados
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="7" class="text-center">
@@ -102,19 +187,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            console.log('Session:', sessions);
+            console.log('Sessões do backend:', sessions);
             
-            // Process session results
+            // Processar os resultados das sessões
             const results = [];
             
-            // Process each session to extract details
+            // Processar cada sessão para extrair os detalhes
             for (const session of sessions) {
                 try {
-                    // Check if we have details in the session
+                    // Verificar se temos detalhes na sessão
                     if (session.details) {
                         const details = JSON.parse(session.details);
                         
-                        // Add session information that is not in the details
+                        // Adicionar informações da sessão que não estão nos detalhes
                         results.push({
                             ...details,
                             sessionId: session.userSessionId,
@@ -122,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             timestamp: session.timestamp || details.timestamp
                         });
                     } else {
-                        // If we don't have full details, we'll look for individual scores.
+                        // Se não temos detalhes completos, vamos buscar os scores individuais
                         const scoresRes = await fetch(
                             `http://localhost:8000/api/user-scores/session/${session.userSessionId}`,
                             { headers: { Authorization: `Bearer ${token}` } }
@@ -133,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const scores = await scoresRes.json();
                         if (!scores || scores.length === 0) continue;
                         
-                        // Search for program information
+                        // Buscar informações do programa
                         const programRes = await fetch(
                             `http://localhost:8000/api/programs/${session.programId}`,
                             { headers: { Authorization: `Bearer ${token}` } }
@@ -143,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         const program = await programRes.json();
                         
-                        // Calculate the scores
+                        // Calcular as porcentagens
                         let totalUserScore = 0;
                         let totalExpertScore = 0;
                         let totalMatch = 0;
@@ -155,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             totalUserScore += userScore;
                             totalExpertScore += expertScore;
                             
-                            // Calculate and match the scores
+                            // Calcular o match
                             const match = 100 - (Math.abs(userScore - expertScore) / 10 * 100);
                             totalMatch += match;
                         });
@@ -180,12 +265,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }
                 } catch (error) {
-                    console.error(`Error ${session.userSessionId}:`, error);
+                    console.error(`Erro ao processar sessão ${session.userSessionId}:`, error);
                 }
             }
             
             if (results.length === 0) {
-                // If we are unable to process any sessions
+                // Se não conseguimos processar nenhuma sessão
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="7" class="text-center">
@@ -198,10 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Processar os resultados obtidos
             processTestResults(results);
             
         } catch (error) {
-            console.error('Error loading the testresults:', error);
+            console.error('Erro ao carregar resultados:', error);
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center">
@@ -214,14 +300,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Function to process test results
+    // Função para processar os resultados dos testes
     function processTestResults(testResults) {
         const testsTable = document.getElementById('completeTestsTable');
         if (!testsTable) return;
         
         const tableBody = testsTable.querySelector('tbody');
         
-        // Check for results
+        // Verificar se há resultados
         if (!testResults || testResults.length === 0) {
             tableBody.innerHTML = `
                 <tr>
@@ -236,12 +322,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Limpar a tabela
         tableBody.innerHTML = '';
         
-        // Sort results by date, newest first
+        // Ordenar resultados por data, mais recentes primeiro
         testResults.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
-        // Add rows for each result
+        // Adicionar linhas para cada resultado
         testResults.forEach((result, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -256,12 +343,13 @@ document.addEventListener('DOMContentLoaded', function() {
             tableBody.appendChild(row);
         });
         
-        // Save the index of the current result for reference
+        // Guardar o índice do resultado atual para referência
         window.currentResults = testResults;
         
-        // Update statistics
+        // Atualizar estatísticas
         updateStatistics(testResults);
         
+        // Adicionar listeners para os botões de protocolo
         addProtocolButtonListeners(testResults);
     }
     
@@ -279,13 +367,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const statValues = document.querySelectorAll('.stat-value');
         
         if (testResults.length === 0) {
+            // Se não houver resultados, mostrar traços
             if (statValues.length >= 3) {
                 statValues[0].textContent = '-';
                 statValues[1].textContent = '0';
                 statValues[2].textContent = '0';
             }
             
-            // Clear category table and show message
+            // Limpar tabela de categorias e mostrar mensagem
             const statsTable = document.getElementById('statsTable');
             if (statsTable) {
                 const tableBody = statsTable.querySelector('tbody');
@@ -320,13 +409,13 @@ document.addEventListener('DOMContentLoaded', function() {
             statValues[2].textContent = totalExercises;
         }
         
-        // Update accuracy table by category
+        // Atualizar a tabela de precisão por categoria
         updateCategoryAccuracy(testResults);
     }
     
-    // New function to calculate and display accuracy by category
+    // Nova função para calcular e exibir a precisão por categoria
     function updateCategoryAccuracy(testResults) {
-        // Predefined categories (in a real application this would be fetched from the backend)
+        // Categorias predefinidas (em uma aplicação real, isso seria obtido do backend)
         const categories = [
             { id: 1, name: 'Skritt' },
             { id: 2, name: 'Trav' },
@@ -334,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { id: 4, name: 'Allment inntrykk' }
         ];
         
-        // Initialize counters by category
+        // Inicializar contadores por categoria
         const categoryStats = {};
         categories.forEach(cat => {
             categoryStats[cat.name] = {
@@ -343,16 +432,16 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
         
-        // For demonstration purposes, we will distribute the exercises across categories
+        // Para fins de demonstração, vamos distribuir os exercícios pelas categorias
         testResults.forEach(result => {
             if (!result.exercises || !result.scores || !result.correctScores) return;
             
-            // Distribute the exercises among the categories
+            // Distribuir os exercícios entre as categorias
             result.exercises.forEach((exerciseName, index) => {
                 if (result.scores[index] === undefined) return;
                 
-                // Determines category based on exercise name (simplified)
-                let category = 'Allment inntrykk'; 
+                // Determina a categoria com base no nome do exercício (simplificado)
+                let category = 'Allment inntrykk'; // Padrão
                 
                 if (exerciseName.toLowerCase().includes('skritt')) {
                     category = 'Skritt';
@@ -362,12 +451,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     category = 'Galopp';
                 }
                 
-                // Calculate the match for this exercise
+                // Calcula o match para este exercício
                 const userScore = result.scores[index];
                 const correctScore = result.correctScores[index];
                 const match = 100 - (Math.abs(userScore - correctScore) / 10 * 100);
                 
-                // Adds to category totals
+                // Adiciona aos totais da categoria
                 if (categoryStats[category]) {
                     categoryStats[category].totalMatch += match;
                     categoryStats[category].count++;
@@ -375,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Calculate percentages and update the table
+        // Calcular percentagens e atualizar a tabela
         const statsTable = document.getElementById('statsTable');
         if (!statsTable) return;
         
@@ -385,12 +474,12 @@ document.addEventListener('DOMContentLoaded', function() {
         categories.forEach(category => {
             const stats = categoryStats[category.name];
             
-            // If there is no data for this category, use a default value.
+            // Se não houver dados para esta categoria, use um valor padrão
             const accuracy = stats.count > 0 
                 ? (stats.totalMatch / stats.count).toFixed(1) 
                 : 'N/A';
             
-            // Determine the width of the progress bar
+            // Determinar a largura da barra de progresso
             const progressWidth = stats.count > 0 
                 ? `${Math.min((stats.totalMatch / stats.count), 100)}%` 
                 : '0%';
@@ -470,15 +559,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const updateData = {};
-            
-            // Só incluir campos que foram alterados
-            if (email) updateData.email = email;
-            if (name) updateData.full_name = name;
-            if (birthDate) updateData.birth_date = birthDate;
-            if (judgeLevel) updateData.judge_level = judgeLevel;
-            if (judgeSince) updateData.judge_since = parseInt(judgeSince);
-            if (newPassword) updateData.password = newPassword;
+            const updateData = {
+                email: email || null,
+                full_name: name || null,
+                birth_date: birthDate || null,
+                judge_level: judgeLevel || null,
+                judge_since: judgeSince ? parseInt(judgeSince) : null
+            };
+
+            if (newPassword) {
+                updateData.password = newPassword;
+            }
 
             console.log('Dados enviados para o backend:', updateData);
 
@@ -509,12 +600,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const timeElement = document.getElementById('time');
 
             if (nameElement) {
-                nameElement.textContent = responseData.full_name || responseData.username || 'Navn ikke definert';
+                nameElement.textContent = responseData.fullName || responseData.username || 'Navn ikke definert';
             }
 
-            if (ageElement && responseData.birth_date) {
+            if (ageElement && responseData.birthDate) {
                 try {
-                    const [year, month, day] = responseData.birth_date.split('-');
+                    const [year, month, day] = responseData.birthDate.split('-');
                     const birthDate = new Date(year, month - 1, day);
                     ageElement.textContent = calculateAge(birthDate);
                 } catch (error) {
@@ -524,11 +615,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (degreeElement) {
-                degreeElement.textContent = responseData.judge_level || 'Nivå ikke definert';
+                degreeElement.textContent = responseData.judgeLevel || 'Nivå ikke definert';
             }
 
             if (timeElement) {
-                timeElement.textContent = responseData.judge_since || 'År ikke definert';
+                timeElement.textContent = responseData.judgeSince || 'År ikke definert';
             }
 
             // Recarregar dados do perfil para garantir que tudo está atualizado
