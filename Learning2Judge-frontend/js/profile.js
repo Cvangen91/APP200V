@@ -433,13 +433,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${category.name}</td>
                 <td>
                     <div class="progress-bar">
-                        <div class="progress" style="width: ${progressWidth}"></div>
+                        <div class="progress" style="width: ${progressWidth}; background: ${getProgressColor(accuracy)}; transition: all 0.3s ease"></div>
                         <span>${accuracy !== 'N/A' ? accuracy + '%' : accuracy}</span>
                     </div>
                 </td>
             `;
             tableBody.appendChild(row);
         });
+    }
+    
+    function getProgressColor(accuracy) {
+        if (accuracy === 'N/A') return '#6c757d';
+        const value = parseFloat(accuracy);
+        
+        if (value >= 95) {
+            return 'linear-gradient(90deg, #5cb85c 0%, #28a745 100%)';      
+        }
+        if (value >= 90) {
+            return 'linear-gradient(90deg, #ffc107 0%, #5cb85c 100%)';     
+        }
+        if (value >= 85) {
+            return 'linear-gradient(90deg, #ff9800 0%, #ffc107 100%)';      
+        }
+        if (value >= 80) {
+            return 'linear-gradient(90deg, #ff5722 0%, #ff9800 100%)';     
+        }
+        if (value >= 75) {
+            return 'linear-gradient(90deg, #dc3545 0%, #ff5722 100%)';      
+        }
+        return 'linear-gradient(90deg, #bd2130 0%, #dc3545 100%)';         
     }
     
     function updateProfileUI(data) {
