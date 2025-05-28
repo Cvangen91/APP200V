@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
       <header>
         <nav>
         <a href="#maincontent" class="skiplink">Hopp til hovedinnhold</a>
-          <div class="logo">
+          <a href="index.html" class="logo">
             <img src="images/logotextny.png" alt="Learning2Judge">
-          </div>
+          </a>
           <div class="menu-toggle" aria-label="Menu">&#9776;</div>
           <ul class="nav-links">
             <li><a href="index.html" class="${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">
