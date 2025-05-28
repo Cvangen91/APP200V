@@ -1,0 +1,30 @@
+digraph ER {
+    rankdir=LR;
+    node [shape=box, style=filled, fillcolor=lightblue];
+    edge [dir=both];
+
+    // Entidades
+    User [label="User\n\nid (PK)\nusername\nemail\nis_judge\ncreated_at\nfull_name\nbirth_date\njudge_level\njudge_since"];
+    
+    Program [label="Program\n\nprogram_id (PK)\nname\nequipage_id\nvideo_path\nexercise_order"];
+    
+    Category [label="Category\n\ncategory_id (PK)\nname\ndescription"];
+    
+    Exercise [label="Exercise\n\nexercise_id (PK)\nname\ncategory_id (FK)"];
+    
+    ProgramScore [label="ProgramScore\n\nprogram_score_id (PK)\nprogram_id (FK)\nexercise_id (FK)\nscore"];
+    
+    UserSession [label="UserSession\n\nuser_session_id (PK)\nuser_id (FK)\nprogram_id (FK)\ntimestamp\ndetails"];
+    
+    UserScore [label="UserScore\n\nuser_score_id (PK)\nuser_session_id (FK)\ncorrect_score_id (FK)\nuser_score\nexercise_name\nexpert_score\ntimestamp"];
+
+    // Relacionamentos
+    User -> UserSession [label="1:N"];
+    Program -> UserSession [label="1:N"];
+    Program -> ProgramScore [label="1:N"];
+    Exercise -> ProgramScore [label="1:N"];
+    Category -> Exercise [label="1:N"];
+    UserSession -> UserScore [label="1:N"];
+    ProgramScore -> UserScore [label="1:N"];
+    Program -> Exercise [label="N:M"];
+} 
