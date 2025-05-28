@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const userData = await response.json();
-            console.log('Dados recebidos do backend:', userData);
+            console.log('Data received from backend:', userData);
             
             const nameElement = document.getElementById('name');
             const ageElement = document.getElementById('age');
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             age = 'Ugyldig dato';
                         }
                     } catch (error) {
-                        console.error('Erro ao calcular idade:', error);
+                        console.error('Error calculating age:', error);
                         age = 'Beregningsfeil';
                     }
                 }
@@ -86,10 +86,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 judgeSinceElement.value = userData.judgeSince || '';
             }
 
-            console.log('Interface atualizada com os novos dados');
+            console.log('Updated interface with new data');
             
         } catch (error) {
-            console.error('Erro ao carregar perfil:', error);
+            console.error('Error loading profile:', error);
             alert('Kunne ikke laste profil. Vennligst prøv igjen.');
         }
         
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             if (!sessionsRes.ok) {
-                throw new Error(`Erro ao buscar sessões: ${sessionsRes.status} ${sessionsRes.statusText}`);
+                throw new Error(`Error loading results: ${sessionsRes.status} ${sessionsRes.statusText}`);
             }
             
             let sessions = await sessionsRes.json();
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            console.log('Sessões do backend:', sessions);
+            console.log('Backend sessions:', sessions);
             
             const results = [];
             
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }
                 } catch (error) {
-                    console.error(`Erro ao processar sessão ${session.userSessionId}:`, error);
+                    console.error(`Error processing session ${session.userSessionId}:`, error);
                 }
             }
             
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
             processTestResults(results);
             
         } catch (error) {
-            console.error('Erro ao carregar resultados:', error);
+            console.error('Error loading results:', error);
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center">
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
             result.exercises.forEach((exerciseName, index) => {
                 if (result.scores[index] === undefined) return;
                 
-                let category = 'Allment inntrykk'; // Padrão
+                let category = 'Allment inntrykk'; 
                 
                 if (exerciseName.toLowerCase().includes('skritt')) {
                     category = 'Skritt';
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newPassword = document.getElementById('profile-password').value;
             const confirmPassword = document.getElementById('profile-password-confirm').value;
 
-            console.log('Dados do formulário:', {
+            console.log('Form data:', {
                 email,
                 name,
                 birthDate,
@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateData.password = newPassword;
             }
 
-            console.log('Dados enviados para o backend:', updateData);
+            console.log('Data sent to the backend:', updateData);
 
             const response = await fetch('http://localhost:8000/api/users/me', {
                 method: 'PUT',
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const responseData = await response.json();
-            console.log('Resposta do backend:', responseData);
+            console.log('Backend response:', responseData);
 
             if (!response.ok) {
                 throw new Error(responseData.error || 'Kunne ikke oppdatere profil');
@@ -549,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const birthDate = new Date(year, month - 1, day);
                     ageElement.textContent = calculateAge(birthDate);
                 } catch (error) {
-                    console.error('Erro ao calcular idade:', error);
+                    console.error('Error calculating:', error);
                     ageElement.textContent = 'Beregningsfeil';
                 }
             }
@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
             await loadProfileData();
             
         } catch (error) {
-            console.error('Erro ao atualizar perfil:', error);
+            console.error('Error updating profile:', error);
             
             const errorMessage = document.createElement('div');
             errorMessage.className = 'alert alert-danger';
